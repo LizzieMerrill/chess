@@ -226,12 +226,17 @@ public class ChessPiece {
     }
 
     private void addDiagonalMoves(Collection<ChessMove> moves, ChessBoard board, ChessPosition myPosition) {
-        for (int row = 1; row <= 8; row++) {
-            for (int col = 1; col <= 8; col++) {
-                if (row != myPosition.getRow() && col != myPosition.getColumn() &&
-                        Math.abs(row - myPosition.getRow()) == Math.abs(col - myPosition.getColumn())) {
-                    addValidMove(moves, board, myPosition, row - myPosition.getRow(), col - myPosition.getColumn(), null);
-                }
+        int[][] directions = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+
+        for (int[] direction : directions) {
+            int rowChange = direction[0];
+            int colChange = direction[1];
+            ChessPosition to = new ChessPosition(myPosition.getRow() + rowChange, myPosition.getColumn() + colChange);
+
+            // Continue adding valid moves along the diagonal until an invalid position is encountered
+            while (board.isValidPosition(to)) {
+                addValidMove(moves, board, myPosition, rowChange, colChange, null);
+                to = new ChessPosition(to.getRow() + rowChange, to.getColumn() + colChange);
             }
         }
     }
