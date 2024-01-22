@@ -11,8 +11,8 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    ChessGame.TeamColor colorOfPiece = null;
-    ChessPiece.PieceType typeOfPiece = null;
+    ChessGame.TeamColor colorOfPiece;
+    ChessPiece.PieceType typeOfPiece;
 //    ChessBoard board1 = null;
 //    ChessPosition myPosition1 = null;
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
@@ -95,38 +95,6 @@ public class ChessPiece {
         for (int[] move : kingMoves) {
             addValidMove(validMoves, board, myPosition, move[0], move[1], null);
         }
-//        if(board.isValidPosition(myPosition)){
-//            addValidMove(validMoves, board, myPosition, 1, 0, null);
-//        }
-//        if(board.isValidPosition(myPosition)){
-//            addValidMove(validMoves, board, myPosition, -1, 0, null);
-//        }
-//        if(board.isValidPosition(myPosition)){
-//            addValidMove(validMoves, board, myPosition, 0, 1, null);
-//        }
-//        if(board.isValidPosition(myPosition)){
-//            addValidMove(validMoves, board, myPosition, 0, -1, null);
-//        }
-//        if(board.isValidPosition(myPosition)){
-//            addValidMove(validMoves, board, myPosition, 1, 1, null);
-//        }
-//        if(board.isValidPosition(myPosition)){
-//            addValidMove(validMoves, board, myPosition, -1, -1, null);
-//        }
-//        if(board.isValidPosition(myPosition)){
-//            addValidMove(validMoves, board, myPosition, 1, -1, null);
-//        }
-//        if(board.isValidPosition(myPosition)){
-//            addValidMove(validMoves, board, myPosition, -1, 1, null);
-//        }
-//        addValidMove(validMoves, board, myPosition, 1, 0, null);
-//        addValidMove(validMoves, board, myPosition, -1, 0, null);
-//        addValidMove(validMoves, board, myPosition, 0, 1, null);
-//        addValidMove(validMoves, board, myPosition, 0, -1, null);
-//        addValidMove(validMoves, board, myPosition, 1, 1, null);
-//        addValidMove(validMoves, board, myPosition, -1, -1, null);
-//        addValidMove(validMoves, board, myPosition, 1, -1, null);
-//        addValidMove(validMoves, board, myPosition, -1, 1, null);
 
         return validMoves;
     }
@@ -144,7 +112,20 @@ public class ChessPiece {
     private Collection<ChessMove> getBishopMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
 
-        addDiagonalMoves(validMoves, board, myPosition);
+        // Diagonal moves
+        int[][] directions = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+
+        for (int[] direction : directions) {
+            int rowChange = direction[0];
+            int colChange = direction[1];
+            ChessPosition to = new ChessPosition(myPosition.getRow() + rowChange, myPosition.getColumn() + colChange);
+
+            // Continue adding valid moves along the diagonal until an invalid position is encountered
+            while (board.isValidPosition(to)) {
+                addValidMove(validMoves, board, myPosition, rowChange, colChange, null);
+                to = new ChessPosition(to.getRow() + rowChange, to.getColumn() + colChange);
+            }
+        }
 
         return validMoves;
     }

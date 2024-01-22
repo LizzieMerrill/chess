@@ -77,7 +77,7 @@ public class ChessBoard {
         }
         for(int i = 3; i < 7; ++i){
             for(int j = 1; j < 9; ++j){
-                addPiece(new ChessPosition(i, j), null);
+                addPiece(new ChessPosition(j, i), null);
             }
         }
         //throw new RuntimeException("Not implemented");
