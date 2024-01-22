@@ -89,30 +89,36 @@ public class ChessPiece {
     private Collection<ChessMove> getKingMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
 
-        if(board.isValidPosition(myPosition)){
-            addValidMove(validMoves, board, myPosition, 1, 0, null);
+
+        int[][] kingMoves = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+
+        for (int[] move : kingMoves) {
+            addValidMove(validMoves, board, myPosition, move[0], move[1], null);
         }
-        if(board.isValidPosition(myPosition)){
-            addValidMove(validMoves, board, myPosition, -1, 0, null);
-        }
-        if(board.isValidPosition(myPosition)){
-            addValidMove(validMoves, board, myPosition, 0, 1, null);
-        }
-        if(board.isValidPosition(myPosition)){
-            addValidMove(validMoves, board, myPosition, 0, -1, null);
-        }
-        if(board.isValidPosition(myPosition)){
-            addValidMove(validMoves, board, myPosition, 1, 1, null);
-        }
-        if(board.isValidPosition(myPosition)){
-            addValidMove(validMoves, board, myPosition, -1, -1, null);
-        }
-        if(board.isValidPosition(myPosition)){
-            addValidMove(validMoves, board, myPosition, 1, -1, null);
-        }
-        if(board.isValidPosition(myPosition)){
-            addValidMove(validMoves, board, myPosition, -1, 1, null);
-        }
+//        if(board.isValidPosition(myPosition)){
+//            addValidMove(validMoves, board, myPosition, 1, 0, null);
+//        }
+//        if(board.isValidPosition(myPosition)){
+//            addValidMove(validMoves, board, myPosition, -1, 0, null);
+//        }
+//        if(board.isValidPosition(myPosition)){
+//            addValidMove(validMoves, board, myPosition, 0, 1, null);
+//        }
+//        if(board.isValidPosition(myPosition)){
+//            addValidMove(validMoves, board, myPosition, 0, -1, null);
+//        }
+//        if(board.isValidPosition(myPosition)){
+//            addValidMove(validMoves, board, myPosition, 1, 1, null);
+//        }
+//        if(board.isValidPosition(myPosition)){
+//            addValidMove(validMoves, board, myPosition, -1, -1, null);
+//        }
+//        if(board.isValidPosition(myPosition)){
+//            addValidMove(validMoves, board, myPosition, 1, -1, null);
+//        }
+//        if(board.isValidPosition(myPosition)){
+//            addValidMove(validMoves, board, myPosition, -1, 1, null);
+//        }
 //        addValidMove(validMoves, board, myPosition, 1, 0, null);
 //        addValidMove(validMoves, board, myPosition, -1, 0, null);
 //        addValidMove(validMoves, board, myPosition, 0, 1, null);
@@ -128,7 +134,7 @@ public class ChessPiece {
     private Collection<ChessMove> getQueenMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
 
-        // Implement logic for queen moves (simple example: combines rook and bishop movements)
+        // Combine rook and bishop movements
         validMoves.addAll(getRookMoves(board, myPosition));
         validMoves.addAll(getBishopMoves(board, myPosition));
 
@@ -138,7 +144,6 @@ public class ChessPiece {
     private Collection<ChessMove> getBishopMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
 
-        // Implement logic for bishop moves (simple example: diagonal movements)
         addDiagonalMoves(validMoves, board, myPosition);
 
         return validMoves;
@@ -147,15 +152,10 @@ public class ChessPiece {
     private Collection<ChessMove> getKnightMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
 
-        // Implement logic for knight moves (L-shaped moves)
         int[][] knightMoves = {{-2, -1}, {-2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}, {2, -1}, {2, 1}};
 
         for (int[] move : knightMoves) {
-            int rowChange = move[0];
-            int colChange = move[1];
-            ChessPosition to = new ChessPosition(myPosition.getRow() + rowChange, myPosition.getColumn() + colChange);
-
-            addValidMove(validMoves, board, myPosition, rowChange, colChange, null);
+            addValidMove(validMoves, board, myPosition, move[0], move[1], null);
         }
 
         return validMoves;
@@ -164,7 +164,6 @@ public class ChessPiece {
     private Collection<ChessMove> getRookMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
 
-        // Implement logic for rook moves (simple example: horizontal and vertical movements)
         addHorizontalVerticalMoves(validMoves, board, myPosition);
 
         return validMoves;
@@ -173,25 +172,21 @@ public class ChessPiece {
     private Collection<ChessMove> getPawnMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
 
-        // Implement logic for pawn moves (simple example: one square forward, two squares on first move, and captures diagonally)
         int direction = (colorOfPiece == ChessGame.TeamColor.WHITE) ? 1 : -1;
 
-        // One square forward
         addValidMove(validMoves, board, myPosition, direction, 0, null);
 
-        // Two squares forward on the first move
         if ((colorOfPiece == ChessGame.TeamColor.WHITE && myPosition.getRow() == 2) ||
                 (colorOfPiece == ChessGame.TeamColor.BLACK && myPosition.getRow() == 7)) {
             addValidMove(validMoves, board, myPosition, 2 * direction, 0, null);
         }
 
-        // Capture moves diagonally with promotion logic
         addValidMove(validMoves, board, myPosition, direction, 1, ChessPiece.PieceType.QUEEN);
         addValidMove(validMoves, board, myPosition, direction, -1, ChessPiece.PieceType.QUEEN);
 
-        // Normal captures without promotion
         ChessPosition captureLeft = new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn() - 1);
         ChessPosition captureRight = new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn() + 1);
+
         if (isCaptureValid(board, captureLeft)) {
             validMoves.add(new ChessMove(myPosition, captureLeft, null));
         }
@@ -201,6 +196,7 @@ public class ChessPiece {
 
         return validMoves;
     }
+
 
     private boolean isCaptureValid(ChessBoard board, ChessPosition position) {
         // Check if the position is valid on the board
