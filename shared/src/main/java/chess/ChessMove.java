@@ -8,9 +8,9 @@ package chess;
  */
 public class ChessMove {
 
-    ChessPosition startPos = null;
-    ChessPosition endPos = null;
-    ChessPiece.PieceType piece = null;
+    ChessPosition startPos;
+    ChessPosition endPos;
+    ChessPiece.PieceType piece;
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
         startPos = startPosition;
