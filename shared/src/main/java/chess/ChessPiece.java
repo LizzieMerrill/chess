@@ -88,15 +88,38 @@ public class ChessPiece {
     private Collection<ChessMove> getKingMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
 
-        // Implement logic for king moves (simple example: one square in any direction)
-        addValidMove(validMoves, board, myPosition, 1, 0, null);
-        addValidMove(validMoves, board, myPosition, -1, 0, null);
-        addValidMove(validMoves, board, myPosition, 0, 1, null);
-        addValidMove(validMoves, board, myPosition, 0, -1, null);
-        addValidMove(validMoves, board, myPosition, 1, 1, null);
-        addValidMove(validMoves, board, myPosition, -1, -1, null);
-        addValidMove(validMoves, board, myPosition, 1, -1, null);
-        addValidMove(validMoves, board, myPosition, -1, 1, null);
+        if(board.isValidPosition(myPosition)){
+            addValidMove(validMoves, board, myPosition, 1, 0, null);
+        }
+        if(board.isValidPosition(myPosition)){
+            addValidMove(validMoves, board, myPosition, -1, 0, null);
+        }
+        if(board.isValidPosition(myPosition)){
+            addValidMove(validMoves, board, myPosition, 0, 1, null);
+        }
+        if(board.isValidPosition(myPosition)){
+            addValidMove(validMoves, board, myPosition, 0, -1, null);
+        }
+        if(board.isValidPosition(myPosition)){
+            addValidMove(validMoves, board, myPosition, 1, 1, null);
+        }
+        if(board.isValidPosition(myPosition)){
+            addValidMove(validMoves, board, myPosition, -1, -1, null);
+        }
+        if(board.isValidPosition(myPosition)){
+            addValidMove(validMoves, board, myPosition, 1, -1, null);
+        }
+        if(board.isValidPosition(myPosition)){
+            addValidMove(validMoves, board, myPosition, -1, 1, null);
+        }
+//        addValidMove(validMoves, board, myPosition, 1, 0, null);
+//        addValidMove(validMoves, board, myPosition, -1, 0, null);
+//        addValidMove(validMoves, board, myPosition, 0, 1, null);
+//        addValidMove(validMoves, board, myPosition, 0, -1, null);
+//        addValidMove(validMoves, board, myPosition, 1, 1, null);
+//        addValidMove(validMoves, board, myPosition, -1, -1, null);
+//        addValidMove(validMoves, board, myPosition, 1, -1, null);
+//        addValidMove(validMoves, board, myPosition, -1, 1, null);
 
         return validMoves;
     }
