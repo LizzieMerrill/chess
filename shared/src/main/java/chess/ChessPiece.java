@@ -147,11 +147,15 @@ public class ChessPiece {
     private Collection<ChessMove> getKnightMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
 
-        // Implement logic for knight moves (simple example: L-shaped moves)
+        // Implement logic for knight moves (L-shaped moves)
         int[][] knightMoves = {{-2, -1}, {-2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}, {2, -1}, {2, 1}};
 
         for (int[] move : knightMoves) {
-            addValidMove(validMoves, board, myPosition, move[0], move[1], null);
+            int rowChange = move[0];
+            int colChange = move[1];
+            ChessPosition to = new ChessPosition(myPosition.getRow() + rowChange, myPosition.getColumn() + colChange);
+
+            addValidMove(validMoves, board, myPosition, rowChange, colChange, null);
         }
 
         return validMoves;
