@@ -7,11 +7,8 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
-
-    ChessPiece piece1 = null;
-    ChessPosition position1 = null;
+    ChessPiece[][] board = new ChessPiece[8][8];
     public ChessBoard() {
-        
     }
 
     /**
@@ -21,8 +18,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        piece1 = piece;
-        position1 = position;
+        board[position.getRow()-1][position.getColumn()-1] = piece;
         //throw new RuntimeException("Not implemented");
     }
 
@@ -33,39 +29,9 @@ public class ChessBoard {
      * @return Either the piece at the position, or null if no piece is at that
      * position
      */
-    public ChessPiece getPiece(ChessPosition position) {//????????
-//        if(position != null){
-//
-//        }
-//        else{
-//            return
-//        }
-// Iterate through the pieces on the chessboard
-        for (int i = 1; i <= 8; ++i) {
-            for (int j = 1; j <= 8; ++j) {
-                // Check if the current piece's position matches the specified position
-                if (position.equals(new ChessPosition(i, j))) {
-                    // If a matching piece is found, return that piece
-                    return getPieceAtPosition(new ChessPosition(i, j));
-                }
-            }
-        }
-        // If no matching piece is found, return null
-        return null;
-
-
+    public ChessPiece getPiece(ChessPosition position) {
+        return board[position.getRow()-1][position.getColumn()-1];
         //throw new RuntimeException("Not implemented");
-    }
-    private ChessPiece getPieceAtPosition(ChessPosition position) {
-        // Check if the position is valid
-        if (isValidPosition(position)) {
-            // Check if there is a piece at the specified position
-            if (position.equals(position1)) {
-                return piece1;
-            }
-        }
-        // If the position is not valid or no piece is found, return null
-        return null;
     }
     public boolean isValidPosition(ChessPosition position) {
         return position != null && position.getRow() >= 1 && position.getRow() <= 8 &&
