@@ -34,8 +34,8 @@ public class ChessBoard {
         //throw new RuntimeException("Not implemented");
     }
     public boolean isValidPosition(ChessPosition position) {
-        return position != null && position.getRow() >= 1 && position.getRow() <= 8 &&
-                position.getColumn() >= 1 && position.getColumn() <= 8;
+        return (position != null && position.getRow() >= 1 && position.getRow() <= 8 &&
+                position.getColumn() >= 1 && position.getColumn() <= 8);
     }
 
     /**
