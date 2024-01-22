@@ -8,6 +8,8 @@ package chess;
  */
 public class ChessBoard {
 
+    ChessPiece piece1 = null;
+    ChessPosition position1 = null;
     public ChessBoard() {
         
     }
@@ -19,7 +21,9 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        throw new RuntimeException("Not implemented");
+        piece1 = piece;
+        position1 = position;
+        //throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -30,7 +34,13 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        throw new RuntimeException("Not implemented");
+        if(position != null){
+
+        }
+        else{
+            return
+        }
+        //throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -38,6 +48,7 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
+
         throw new RuntimeException("Not implemented");
     }
 }
