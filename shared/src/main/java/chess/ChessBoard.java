@@ -36,9 +36,21 @@ public class ChessBoard {
         return board[position.getRow()-1][position.getColumn()-1];
         //throw new RuntimeException("Not implemented");
     }
-    public boolean isValidPosition(ChessPosition position) {
-        return (position != null && position.getRow() >= 1 && position.getRow() <= 8 &&
-                position.getColumn() >= 1 && position.getColumn() <= 8);
+//    public boolean isValidPosition(ChessPosition position) {
+//        return (position != null && position.getRow() >= 1 && position.getRow() <= 8 &&
+//                position.getColumn() >= 1 && position.getColumn() <= 8);
+//    }
+    public boolean isValidMove(ChessPosition wantedPosition, ChessPiece piece){
+//        if(piece.typeOfPiece != ChessPiece.PieceType.KNIGHT){
+//            for(int i = ){//friendly block check
+//
+//            }
+//        }
+        if(piece.colorOfPiece == getPiece(wantedPosition).colorOfPiece){//blocked by teammate
+            return false;
+        }
+        return (getPiece(wantedPosition) == null && wantedPosition.getRow() >= 1 && wantedPosition.getRow() <= 8 &&
+                wantedPosition.getColumn() >= 1 && wantedPosition.getColumn() <= 8);
     }
 
     /**
@@ -75,11 +87,11 @@ public class ChessBoard {
         for(int i = 1; i < 9; ++i){
             addPiece(new ChessPosition(7,i), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
         }
-        for(int i = 3; i < 7; ++i){
-            for(int j = 1; j < 9; ++j){
-                addPiece(new ChessPosition(j, i), null);
-            }
-        }
+//        for(int i = 3; i < 7; ++i){ WRONG
+//            for(int j = 1; j < 9; ++j){
+//                addPiece(new ChessPosition(j, i), null);
+//            }
+//        }
         //throw new RuntimeException("Not implemented");
     }
 
@@ -88,11 +100,11 @@ public class ChessBoard {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessBoard that = (ChessBoard) o;
-        return Arrays.equals(board, that.board);
+        return Arrays.deepEquals(board, that.board);
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(board);
+        return Arrays.deepHashCode(board);
     }
 }

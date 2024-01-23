@@ -115,6 +115,11 @@ public class ChessPiece {
         // Diagonal moves
         int[][] directions = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
+        for (int i = 1; i < 8; i++){
+
+        }
+
+
         for (int[] direction : directions) {
             int rowChange = direction[0];
             int colChange = direction[1];
