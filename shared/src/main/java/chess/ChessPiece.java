@@ -83,12 +83,12 @@ public class ChessPiece {
                 break;
         }
 
-        // Handle pawn promotion for each move
-        for (ChessMove move : validMoves) {
-            if (movingPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
-                handlePawnPromotion(movesToAddLater, board, myPosition, move.getEndPosition());
-            }
-        }
+//        // Handle pawn promotion for each move
+//        for (ChessMove move : validMoves) {
+//            if (movingPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
+//                handlePawnPromotion(movesToAddLater, board, myPosition, move.getEndPosition());
+//            }
+//        }
 
         // Add movesToAddLater to validMoves after iteration
         validMoves.addAll(movesToAddLater);
@@ -125,7 +125,7 @@ public class ChessPiece {
 
     private Collection<ChessMove> getQueenMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
-        
+
         validMoves.addAll(getRookMoves(board, myPosition));
         validMoves.addAll(getBishopMoves(board, myPosition));
 
@@ -265,8 +265,25 @@ public class ChessPiece {
 
 
 
+
+
+
+
+
+
+
+
+
+
     private Collection<ChessMove> getPawnMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
+
+
+//        for (ChessMove move : validMoves) {
+//            if (movingPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
+//                handlePawnPromotion(movesToAddLater, board, myPosition, move.getEndPosition());
+//            }
+//        }
 
         int direction = (colorOfPiece == ChessGame.TeamColor.WHITE) ? 1 : -1;
 
@@ -465,12 +482,16 @@ public class ChessPiece {
 
     private void addValidMove(Collection<ChessMove> moves, ChessBoard board, ChessPosition from, int rowChange, int colChange, ChessPiece.PieceType promotionPiece) {
         ChessPosition to = new ChessPosition(from.getRow() + rowChange, from.getColumn() + colChange);
-
-        if (board.isValidPosition(to)) {
-            ChessPiece pieceAtTo = board.getPiece(to);
-            if (pieceAtTo == null || pieceAtTo.getTeamColor() != colorOfPiece) {
-                // If the position is empty or contains an opponent's piece, add the move
-                moves.add(new ChessMove(from, to, null));
+        if(board.getPiece(from).typeOfPiece == PieceType.PAWN && isPawnPromotionRow(to)){
+            addPawnPromotionMoves(moves, board, from, to);
+        }
+        else {
+            if (board.isValidPosition(to)) {
+                ChessPiece pieceAtTo = board.getPiece(to);
+                if (pieceAtTo == null || pieceAtTo.getTeamColor() != colorOfPiece) {
+                    // If the position is empty or contains an opponent's piece, add the move
+                    moves.add(new ChessMove(from, to, null));
+                }
             }
         }
     }
