@@ -13,7 +13,7 @@ import java.util.Objects;
 public class ChessPiece {
     ChessGame.TeamColor colorOfPiece;
     ChessPiece.PieceType typeOfPiece;
-//    ChessBoard board1 = null;
+    //    ChessBoard board1 = null;
 //    ChessPosition myPosition1 = null;
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         colorOfPiece = pieceColor;
@@ -58,7 +58,7 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
 
-    ChessPiece movingPiece = board.getPiece(myPosition);
+        ChessPiece movingPiece = board.getPiece(myPosition);
 
 
         switch (movingPiece.typeOfPiece) {

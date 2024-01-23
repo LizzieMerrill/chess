@@ -36,22 +36,22 @@ public class ChessBoard {
         return board[position.getRow()-1][position.getColumn()-1];
         //throw new RuntimeException("Not implemented");
     }
-//    public boolean isValidPosition(ChessPosition position) {
-//        return (position != null && position.getRow() >= 1 && position.getRow() <= 8 &&
-//                position.getColumn() >= 1 && position.getColumn() <= 8);
-//    }
-    public boolean isValidMove(ChessPosition wantedPosition, ChessPiece piece){
-//        if(piece.typeOfPiece != ChessPiece.PieceType.KNIGHT){
-//            for(int i = ){//friendly block check
-//
-//            }
-//        }
-        if(piece.colorOfPiece == getPiece(wantedPosition).colorOfPiece){//blocked by teammate
-            return false;
-        }
-        return (getPiece(wantedPosition) == null && wantedPosition.getRow() >= 1 && wantedPosition.getRow() <= 8 &&
-                wantedPosition.getColumn() >= 1 && wantedPosition.getColumn() <= 8);
+        public boolean isValidPosition(ChessPosition position) {
+        return (position != null && position.getRow() >= 1 && position.getRow() <= 8 &&
+                position.getColumn() >= 1 && position.getColumn() <= 8);
     }
+//    public boolean isValidMove(ChessPosition wantedPosition, ChessPiece piece){
+////        if(piece.typeOfPiece != ChessPiece.PieceType.KNIGHT){
+////            for(int i = ){//friendly block check
+////
+////            }
+////        }
+//        if(piece.colorOfPiece == getPiece(wantedPosition).colorOfPiece){//blocked by teammate
+//            return false;
+//        }
+//        return (getPiece(wantedPosition) == null && wantedPosition.getRow() >= 1 && wantedPosition.getRow() <= 8 &&
+//                wantedPosition.getColumn() >= 1 && wantedPosition.getColumn() <= 8);
+//    }
 
     /**
      * Sets the board to the default starting board
