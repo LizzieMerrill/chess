@@ -89,15 +89,27 @@ public class ChessPiece {
     private Collection<ChessMove> getKingMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
 
-
         int[][] kingMoves = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
         for (int[] move : kingMoves) {
-            addValidMove(validMoves, board, myPosition, move[0], move[1], null);
+            int rowChange = move[0];
+            int colChange = move[1];
+
+            ChessPosition to = new ChessPosition(myPosition.getRow() + rowChange, myPosition.getColumn() + colChange);
+
+            if (board.isValidPosition(to)) {
+                ChessPiece pieceAtNewPosition = board.getPiece(to);
+
+                if (pieceAtNewPosition == null || pieceAtNewPosition.getTeamColor() != colorOfPiece) {
+                    // If the position is empty or contains an opponent's piece, add the move
+                    addValidMove(validMoves, board, myPosition, rowChange, colChange, null);
+                }
+            }
         }
 
         return validMoves;
     }
+
 
     private Collection<ChessMove> getQueenMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
@@ -112,28 +124,60 @@ public class ChessPiece {
     private Collection<ChessMove> getBishopMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
 
-        // Diagonal moves
         int[][] directions = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-
-        for (int i = 1; i < 8; i++){
-
-        }
-
 
         for (int[] direction : directions) {
             int rowChange = direction[0];
             int colChange = direction[1];
+
             ChessPosition to = new ChessPosition(myPosition.getRow() + rowChange, myPosition.getColumn() + colChange);
 
-            // Continue adding valid moves along the diagonal until an invalid position is encountered
             while (board.isValidPosition(to)) {
-                addValidMove(validMoves, board, myPosition, rowChange, colChange, null);
+                ChessPiece pieceAtNewPosition = board.getPiece(to);
+
+                if (pieceAtNewPosition == null) {
+                    // If the position is empty, add the move
+                    addValidMove(validMoves, board, myPosition, rowChange, colChange, null);
+                } else {
+                    // If the position contains a piece, check if it's an opponent's piece and then add the move
+                    if (pieceAtNewPosition.getTeamColor() != colorOfPiece) {
+                        addValidMove(validMoves, board, myPosition, rowChange, colChange, null);
+                    }
+                    break;  // Stop if there is a piece, regardless of color
+                }
+
+                // Move to the next diagonal position
                 to = new ChessPosition(to.getRow() + rowChange, to.getColumn() + colChange);
             }
         }
 
         return validMoves;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private Collection<ChessMove> getKnightMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
@@ -211,15 +255,19 @@ public class ChessPiece {
     }
 
     // Helper method to check if the pawn is in the promotion row
+//    private boolean isPawnPromotionRow(ChessPosition position) {
+//        int promotionRowWhite = 8;
+//        int promotionRowBlack = 1;
+//
+//        return (colorOfPiece == ChessGame.TeamColor.WHITE && position.getRow() == promotionRowWhite) ||
+//                (colorOfPiece == ChessGame.TeamColor.BLACK && position.getRow() == promotionRowBlack);
+//    }
     private boolean isPawnPromotionRow(ChessPosition position) {
-        int promotionRowWhite = 8;
-        int promotionRowBlack = 1;
-
-        return (colorOfPiece == ChessGame.TeamColor.WHITE && position.getRow() == promotionRowWhite) ||
-                (colorOfPiece == ChessGame.TeamColor.BLACK && position.getRow() == promotionRowBlack);
+        return (colorOfPiece == ChessGame.TeamColor.WHITE && position.getRow() == 8) ||
+                (colorOfPiece == ChessGame.TeamColor.BLACK && position.getRow() == 1);
     }
 
-    private void addHorizontalVerticalMoves(Collection<ChessMove> moves, ChessBoard board, ChessPosition myPosition) {
+        private void addHorizontalVerticalMoves(Collection<ChessMove> moves, ChessBoard board, ChessPosition myPosition) {
         // Horizontal moves
         for (int col = 1; col <= 8; col++) {
             if (col != myPosition.getColumn()) {
