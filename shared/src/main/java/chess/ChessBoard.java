@@ -40,29 +40,13 @@ public class ChessBoard {
         return (position != null && position.getRow() >= 1 && position.getRow() <= 8 &&
                 position.getColumn() >= 1 && position.getColumn() <= 8);
     }
-//    public boolean isValidMove(ChessPosition wantedPosition, ChessPiece piece){
-////        if(piece.typeOfPiece != ChessPiece.PieceType.KNIGHT){
-////            for(int i = ){//friendly block check
-////
-////            }
-////        }
-//        if(piece.colorOfPiece == getPiece(wantedPosition).colorOfPiece){//blocked by teammate
-//            return false;
-//        }
-//        return (getPiece(wantedPosition) == null && wantedPosition.getRow() >= 1 && wantedPosition.getRow() <= 8 &&
-//                wantedPosition.getColumn() >= 1 && wantedPosition.getColumn() <= 8);
-//    }
+
 
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-//        public void addPiece(ChessPosition position, ChessPiece piece) {
-//            piece1 = piece;
-//            position1 = position;
-//            //throw new RuntimeException("Not implemented");
-//        }
         addPiece(new ChessPosition(1,1), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
         addPiece(new ChessPosition(1,2), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
         addPiece(new ChessPosition(1,3), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP));
@@ -87,11 +71,6 @@ public class ChessBoard {
         for(int i = 1; i < 9; ++i){
             addPiece(new ChessPosition(7,i), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
         }
-//        for(int i = 3; i < 7; ++i){ WRONG
-//            for(int j = 1; j < 9; ++j){
-//                addPiece(new ChessPosition(j, i), null);
-//            }
-//        }
         //throw new RuntimeException("Not implemented");
     }
 
