@@ -1,6 +1,8 @@
 package chess;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.ArrayList;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -39,6 +41,39 @@ public class ChessBoard {
     public boolean isValidPosition(ChessPosition position) {
         return (position != null && position.getRow() >= 1 && position.getRow() <= 8 &&
                 position.getColumn() >= 1 && position.getColumn() <= 8);
+    }
+
+    public ChessPosition findKing(ChessGame.TeamColor teamColor) {
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPiece piece = board[row - 1][col - 1];
+                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING &&
+                        piece.getTeamColor() == teamColor) {
+                    return new ChessPosition(row, col);
+                }
+            }
+        }
+        return null; // Should not reach here if the board is set up correctly.
+    }
+
+    public Collection<ChessMove> getAllMovesForOpponent(ChessGame.TeamColor currentTurn) {
+        Collection<ChessMove> allMoves = new ArrayList<>();
+
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPiece piece = board[row - 1][col - 1];
+
+                if (piece != null && piece.getTeamColor() != currentTurn) {
+                    ChessPosition startPosition = new ChessPosition(row, col);
+                    Collection<ChessMove> moves = piece.pieceMoves(this, startPosition);
+                    if (moves != null) {
+                        allMoves.addAll(moves);
+                    }
+                }
+            }
+        }
+
+        return allMoves;
     }
 
 
