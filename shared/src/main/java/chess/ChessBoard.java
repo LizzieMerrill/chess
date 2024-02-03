@@ -99,6 +99,18 @@ public class ChessBoard {
     }
 
 
+    public void setBoardConfiguration(ChessPiece[][] newBoard) {
+        if (newBoard.length == 8 && newBoard[0].length == 8) {
+            for (int row = 0; row < 8; row++) {
+                for (int col = 0; col < 8; col++) {
+                    board[row][col] = newBoard[row][col];
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("Invalid board configuration dimensions");
+        }
+    }
+
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
