@@ -140,7 +140,7 @@ public class ChessGame {
 
         for (ChessMove move : allMoves) {
             ChessGame tempGame = new ChessGame();
-            tempGame.setBoard(new ChessBoard(board1));
+            tempGame.setBoard(board1);
             try {
                 tempGame.makeMove(move);
             } catch (InvalidMoveException e) {
@@ -173,7 +173,7 @@ public class ChessGame {
 
         for (ChessMove move : allMoves) {
             ChessGame tempGame = new ChessGame();
-            tempGame.setBoard(new ChessBoard(board1));
+            tempGame.setBoard(board1);//tempGame.setBoard(new ChessBoard(board1));//??????????????
             try {
                 tempGame.makeMove(move);
             } catch (InvalidMoveException e) {
