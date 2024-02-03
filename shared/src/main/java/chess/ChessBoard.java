@@ -77,6 +77,28 @@ public class ChessBoard {
     }
 
 
+
+    public Collection<ChessMove> getAllMovesForTeam(ChessGame.TeamColor teamColor) {
+        Collection<ChessMove> allMoves = new ArrayList<>();
+
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPiece piece = board[row - 1][col - 1];
+
+                if (piece != null && piece.getTeamColor() == teamColor) {
+                    ChessPosition startPosition = new ChessPosition(row, col);
+                    Collection<ChessMove> moves = piece.pieceMoves(this, startPosition);
+                    if (moves != null) {
+                        allMoves.addAll(moves);
+                    }
+                }
+            }
+        }
+
+        return allMoves;
+    }
+
+
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
