@@ -84,7 +84,7 @@ public class ChessPiece {
         }
 
 
-        System.out.println("Valid moves for piece at " + myPosition + ": " + validMoves);
+     //   System.out.println("Valid moves for piece at " + myPosition + ": " + validMoves);
         return validMoves;
     }
 
@@ -95,12 +95,12 @@ public class ChessPiece {
 
 
     public void setFirstMove(boolean firstMove) {
-        System.out.println("setFirstMove called for piece: " + this);
-        System.out.println("Before setFirstMove - firstMove: " + this.firstMove);
+      //  System.out.println("setFirstMove called for piece: " + this);
+       // System.out.println("Before setFirstMove - firstMove: " + this.firstMove);
 
         this.firstMove = firstMove;
 
-        System.out.println("After setFirstMove - firstMove: " + this.firstMove);
+      //  System.out.println("After setFirstMove - firstMove: " + this.firstMove);
     }
 
 
@@ -163,7 +163,7 @@ public class ChessPiece {
 
 //                //next diagonal position
                 to = new ChessPosition(to.getRow() + rowChange, to.getColumn() + colChange);
-                System.out.println(board.isValidPosition(to));
+              //  System.out.println(board.isValidPosition(to));
             }
         }
 
@@ -246,7 +246,7 @@ public class ChessPiece {
         addPawnCaptureMoves(validMoves, board, myPosition, direction, -1);
         addPawnCaptureMoves(validMoves, board, myPosition, direction, 1);
 
-        System.out.println("Valid moves for pawn at " + myPosition + ": " + validMoves);
+       // System.out.println("Valid moves for pawn at " + myPosition + ": " + validMoves);
         return validMoves;
     }
 
