@@ -139,7 +139,6 @@ public class ChessGame {
             //switch turns
             color1 = (color1 == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
 
-            System.out.println("setFirstMove called for piece: " + piece);
         } else {
             throw new InvalidMoveException("Invalid move: The specified move is not valid for the given piece.");
         }
