@@ -14,6 +14,7 @@ import java.lang.Math;
 public class ChessPiece {
     ChessGame.TeamColor colorOfPiece;
     ChessPiece.PieceType typeOfPiece;
+    private boolean firstMove = true;
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         colorOfPiece = pieceColor;
         typeOfPiece = type;
@@ -87,6 +88,20 @@ public class ChessPiece {
         return validMoves;
     }
 
+
+
+
+    public boolean isFirstMove() {
+        return firstMove;
+    }
+    public void setFirstMove(boolean firstMove) {
+        System.out.println("setFirstMove called for piece: " + this);
+        System.out.println("Before setFirstMove - firstMove: " + this.firstMove);
+
+        this.firstMove = firstMove;
+
+        System.out.println("After setFirstMove - firstMove: " + this.firstMove);
+    }
 
 
     private Collection<ChessMove> getKingMoves(ChessBoard board, ChessPosition myPosition) {

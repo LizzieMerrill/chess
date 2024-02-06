@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -61,25 +62,72 @@ public class ChessGame {
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-//        if(board1.getPiece(startPosition) == null){
-//            return null;
-//        }
-//        else{
+//    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+////        if(board1.getPiece(startPosition) == null){
+////            return null;
+////        }
+////        else{
+////
+////        }
 //
+//
+//
+//        ChessPiece piece = board1.getPiece(startPosition);
+//
+//        if (piece == null || piece.getTeamColor() != color1) {
+//            return null;
+//        } else {
+//            return piece.pieceMoves(board1, startPosition);
 //        }
+//        //throw new RuntimeException("Not implemented");
+//    }
 
 
-
+    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = board1.getPiece(startPosition);
 
         if (piece == null || piece.getTeamColor() != color1) {
-            return null;
-        } else {
-            return piece.pieceMoves(board1, startPosition);
+            return Collections.emptyList();
         }
-        //throw new RuntimeException("Not implemented");
+
+        Collection<ChessMove> moves = piece.pieceMoves(board1, startPosition);
+
+        if (moves == null) {
+            return Collections.emptyList();
+        }
+
+        return moves;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Makes a move in a chess game
@@ -109,12 +157,58 @@ public class ChessGame {
 //        } else {
 //            throw new InvalidMoveException("Invalid move: The specified move is not valid for the given piece.");
 //        }
+//    }
+
+
+
+
+
+
+    //REAL ONE
+//    public void makeMove(ChessMove move) throws InvalidMoveException {
+//        ChessPiece piece = board1.getPiece(move.getStartPosition());
 //
+//        if (piece == null || piece.getTeamColor() != color1) {
+//            throw new InvalidMoveException("Invalid move: No piece at the specified starting position.");
+//        }
 //
+//        Collection<ChessMove> validMoves = piece.pieceMoves(board1, move.getStartPosition());
 //
+//        if (validMoves != null && validMoves.contains(move)) {
+//            // Check for pawn promotion
+//            if (piece.getPieceType() == ChessPiece.PieceType.PAWN && move.getPromotionPiece() != null) {
+//                // Remove the original pawn from the starting position
+//                board1.addPiece(move.getStartPosition(), null);
 //
+//                // Add the promoted piece to the ending position
+//                board1.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
+//            } else {
+//                // Perform the move as usual
+//                board1.addPiece(move.getEndPosition(), piece);
+//            }
+//
+//            // Remove the original piece from the starting position
+//            board1.addPiece(move.getStartPosition(), null);
+//
+//            moveHistory.add(move);
+//            // Switch turns
+//            color1 = (color1 == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+//        } else {
+//            throw new InvalidMoveException("Invalid move: The specified move is not valid for the given piece.");
+//        }
 //        //throw new RuntimeException("Not implemented");
 //    }
+
+
+
+
+
+
+
+
+
+
+
 
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = board1.getPiece(move.getStartPosition());
@@ -135,6 +229,7 @@ public class ChessGame {
                 board1.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
             } else {
                 // Perform the move as usual
+                piece.setFirstMove(false);  // Add this line to set firstMove to false
                 board1.addPiece(move.getEndPosition(), piece);
             }
 
@@ -144,10 +239,19 @@ public class ChessGame {
             moveHistory.add(move);
             // Switch turns
             color1 = (color1 == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+
+            // Print statement to check if setFirstMove(false) is called
+            System.out.println("setFirstMove called for piece: " + piece);
         } else {
             throw new InvalidMoveException("Invalid move: The specified move is not valid for the given piece.");
         }
     }
+
+
+
+
+
+
 
 
 
