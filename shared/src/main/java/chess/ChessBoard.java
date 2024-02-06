@@ -16,6 +16,7 @@ public class ChessBoard {
         //setCopyOfBoard(board);
     }
 
+
     /**
      * Adds a chess piece to the chessboard
      *
@@ -53,7 +54,7 @@ public class ChessBoard {
                 }
             }
         }
-        return null; // Should not reach here if the board is set up correctly.
+        return null;
     }
 
     public Collection<ChessMove> getAllMovesForOpponent(ChessGame.TeamColor currentTurn) {
@@ -78,38 +79,7 @@ public class ChessBoard {
 
 
 
-    public Collection<ChessMove> getAllMovesForTeam(ChessGame.TeamColor teamColor) {
-        Collection<ChessMove> allMoves = new ArrayList<>();
 
-        for (int row = 1; row <= 8; row++) {
-            for (int col = 1; col <= 8; col++) {
-                ChessPiece piece = board[row - 1][col - 1];
-
-                if (piece != null && piece.getTeamColor() == teamColor) {
-                    ChessPosition startPosition = new ChessPosition(row, col);
-                    Collection<ChessMove> moves = piece.pieceMoves(this, startPosition);
-                    if (moves != null) {
-                        allMoves.addAll(moves);
-                    }
-                }
-            }
-        }
-
-        return allMoves;
-    }
-
-
-    public void setBoardConfiguration(ChessPiece[][] newBoard) {
-        if (newBoard.length == 8 && newBoard[0].length == 8) {
-            for (int row = 0; row < 8; row++) {
-                for (int col = 0; col < 8; col++) {
-                    board[row][col] = newBoard[row][col];
-                }
-            }
-        } else {
-            throw new IllegalArgumentException("Invalid board configuration dimensions");
-        }
-    }
 
 
 
@@ -122,10 +92,11 @@ public class ChessBoard {
     }
 
 
-    public void setCopyOfBoard(ChessPiece[][] newBoard) {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                newBoard[i][j] = board[i][j];
+    public void setCopyOfBoard(ChessBoard newBoard) {
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPosition pos = new ChessPosition(i, j);
+                newBoard.addPiece(pos, getPiece(pos));
             }
         }
     }
@@ -147,8 +118,6 @@ public class ChessBoard {
         ChessPiece movedPiece = getPiece(move.getEndPosition());
         addPiece(move.getEndPosition(), null);//removePiece(move.getEndPosition());
         addPiece(move.getStartPosition(), movedPiece);
-
-        // Handle special cases like pawn promotion if needed
     }
 
 

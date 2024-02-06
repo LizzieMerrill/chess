@@ -46,6 +46,8 @@ public class ChessMove {
         return piece;
         //throw new RuntimeException("Not implemented");
     }
+
+
     public String toString(){
         return String.format("{%d, %d}", endPos.getRow(), endPos.getColumn());
     }

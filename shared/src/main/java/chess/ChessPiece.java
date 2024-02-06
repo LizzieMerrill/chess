@@ -55,9 +55,10 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
+    // Inside ChessPiece class
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
-        Collection<ChessMove> movesToAddLater = new ArrayList<>();
 
         ChessPiece movingPiece = board.getPiece(myPosition);
 
@@ -83,17 +84,16 @@ public class ChessPiece {
         }
 
 
-        validMoves.addAll(movesToAddLater);
-
+        System.out.println("Valid moves for piece at " + myPosition + ": " + validMoves);
         return validMoves;
     }
 
 
 
 
-    public boolean isFirstMove() {
-        return firstMove;
-    }
+
+
+
     public void setFirstMove(boolean firstMove) {
         System.out.println("setFirstMove called for piece: " + this);
         System.out.println("Before setFirstMove - firstMove: " + this.firstMove);
@@ -226,7 +226,6 @@ public class ChessPiece {
     private Collection<ChessMove> getPawnMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
 
-
         int direction = (colorOfPiece == ChessGame.TeamColor.WHITE) ? 1 : -1;
 
         ChessPosition moveForward = new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn());
@@ -247,8 +246,37 @@ public class ChessPiece {
         addPawnCaptureMoves(validMoves, board, myPosition, direction, -1);
         addPawnCaptureMoves(validMoves, board, myPosition, direction, 1);
 
+        System.out.println("Valid moves for pawn at " + myPosition + ": " + validMoves);
         return validMoves;
     }
+
+    private void addPawnCaptureMoves(Collection<ChessMove> moves, ChessBoard board, ChessPosition myPosition, int rowChange, int colChange) {
+        ChessPosition capturePosition = new ChessPosition(myPosition.getRow() + rowChange, myPosition.getColumn() + colChange);
+        if (board.isValidPosition(capturePosition)) {
+            ChessPiece pieceAtCapture = board.getPiece(capturePosition);
+            if (pieceAtCapture != null && pieceAtCapture.getTeamColor() != colorOfPiece) {
+                addValidMove(moves, board, myPosition, rowChange, colChange, null);
+            }
+        }
+    }
+    private void addValidMove(Collection<ChessMove> moves, ChessBoard board, ChessPosition from, int rowChange, int colChange, ChessPiece.PieceType promotionPiece) {
+        ChessPosition to = new ChessPosition(from.getRow() + rowChange, from.getColumn() + colChange);
+        if(board.getPiece(from).typeOfPiece == PieceType.PAWN && isPawnPromotionRow(to)){
+            addPawnPromotionMoves(moves, board, from, to);
+        }
+        else {
+            if (board.isValidPosition(to)) {
+                ChessPiece pieceAtTo = board.getPiece(to);
+                if (pieceAtTo == null || pieceAtTo.getTeamColor() != colorOfPiece) {
+                    moves.add(new ChessMove(from, to, null));
+                }
+            }
+        }
+    }
+
+
+
+
 
 
 
@@ -270,36 +298,14 @@ public class ChessPiece {
         moves.add(new ChessMove(myPosition, moveForward, ChessPiece.PieceType.KNIGHT));
     }
 
-
-
-    private void addPawnCaptureMoves(Collection<ChessMove> moves, ChessBoard board, ChessPosition myPosition, int rowChange, int colChange) {
-        ChessPosition capturePosition = new ChessPosition(myPosition.getRow() + rowChange, myPosition.getColumn() + colChange);
-        if (board.isValidPosition(capturePosition)) {
-            ChessPiece pieceAtCapture = board.getPiece(capturePosition);
-            if (pieceAtCapture != null && pieceAtCapture.getTeamColor() != colorOfPiece) {
-                addValidMove(moves, board, myPosition, rowChange, colChange, null);
-            }
-        }
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "colorOfPiece=" + colorOfPiece +
+                ", typeOfPiece=" + typeOfPiece +
+                ", firstMove=" + firstMove +
+                '}';
     }
-
-
-    private void addValidMove(Collection<ChessMove> moves, ChessBoard board, ChessPosition from, int rowChange, int colChange, ChessPiece.PieceType promotionPiece) {
-        ChessPosition to = new ChessPosition(from.getRow() + rowChange, from.getColumn() + colChange);
-        if(board.getPiece(from).typeOfPiece == PieceType.PAWN && isPawnPromotionRow(to)){
-            addPawnPromotionMoves(moves, board, from, to);
-        }
-        else {
-            if (board.isValidPosition(to)) {
-                ChessPiece pieceAtTo = board.getPiece(to);
-                if (pieceAtTo == null || pieceAtTo.getTeamColor() != colorOfPiece) {
-                    // If the position is empty or contains an opponent's piece, add the move
-                    moves.add(new ChessMove(from, to, null));
-                }
-            }
-        }
-    }
-
-
 
     @Override
     public boolean equals(Object o) {
