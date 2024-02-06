@@ -163,7 +163,7 @@ public class ChessPiece {
 
 //                //next diagonal position
                 to = new ChessPosition(to.getRow() + rowChange, to.getColumn() + colChange);
-              //  System.out.println(board.isValidPosition(to));
+              //lollllllllllllllllll  System.out.println(board.isValidPosition(to));
             }
         }
 
