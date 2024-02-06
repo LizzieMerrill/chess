@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class ChessBoard {
     ChessPiece[][] board = new ChessPiece[8][8];
     public ChessBoard() {
-
+        //setCopyOfBoard(board);
     }
 
     /**
@@ -110,6 +110,51 @@ public class ChessBoard {
             throw new IllegalArgumentException("Invalid board configuration dimensions");
         }
     }
+
+
+
+    public void setBoard(ChessPiece[][] newBoard) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                board[i][j] = newBoard[i][j];
+            }
+        }
+    }
+
+
+    public void setCopyOfBoard(ChessPiece[][] newBoard) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                newBoard[i][j] = board[i][j];
+            }
+        }
+    }
+
+    public ChessPiece[][] getBoard() {
+        ChessPiece[][] copy = new ChessPiece[8][8];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                copy[i][j] = board[i][j];
+            }
+        }
+        return copy;
+    }
+
+
+
+
+    public void undoMove(ChessMove move) {
+        ChessPiece movedPiece = getPiece(move.getEndPosition());
+        addPiece(move.getEndPosition(), null);//removePiece(move.getEndPosition());
+        addPiece(move.getStartPosition(), movedPiece);
+
+        // Handle special cases like pawn promotion if needed
+    }
+
+
+
+
+
 
     /**
      * Sets the board to the default starting board

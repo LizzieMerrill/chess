@@ -1,6 +1,8 @@
 package chess;
 
 import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -12,8 +14,18 @@ public class ChessGame {
 
     TeamColor color1 = null;
     ChessBoard board1 = null;
+
+
+    private List<ChessMove> moveHistory = new ArrayList<>();
     public ChessGame() {
 
+    }
+
+
+    public ChessGame(TeamColor color, ChessBoard board) {
+        color1 = color;
+        board1 = board;
+        // You may need to copy other fields as well, depending on your implementation
     }
 
     /**
@@ -129,12 +141,36 @@ public class ChessGame {
             // Remove the original piece from the starting position
             board1.addPiece(move.getStartPosition(), null);
 
+            moveHistory.add(move);
             // Switch turns
             color1 = (color1 == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
         } else {
             throw new InvalidMoveException("Invalid move: The specified move is not valid for the given piece.");
         }
     }
+
+
+
+
+
+
+    public void undoLastMove() {
+        if (!moveHistory.isEmpty()) {
+            // Get the last move
+            ChessMove lastMove = moveHistory.remove(moveHistory.size() - 1);
+
+            // Revert the board to the state before the move
+            board1.undoMove(lastMove);
+
+            // Switch turns back
+            color1 = (color1 == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+        }
+    }
+
+
+
+
+
 
 
     /**
@@ -163,8 +199,32 @@ public class ChessGame {
      * @param teamColor which team to check for checkmate
      * @return True if the specified team is in checkmate
      */
+//    public boolean isInCheckmate(TeamColor teamColor) {
+//
+//        if (!isInCheck(teamColor)) {
+//            return false;
+//        }
+//
+//        Collection<ChessMove> allMoves = board1.getAllMovesForTeam(teamColor);
+//
+//        for (ChessMove move : allMoves) {
+//            ChessGame tempGame = new ChessGame();
+//            tempGame.setBoard(board1);
+//            try {
+//                tempGame.makeMove(move);
+//            } catch (InvalidMoveException e) {
+//                continue;
+//            }
+//
+//            if (!tempGame.isInCheck(teamColor)) {
+//                return false;
+//            }
+//        }
+//
+//        return true;
+//        //throw new RuntimeException("Not implemented");
+//    }
     public boolean isInCheckmate(TeamColor teamColor) {
-
         if (!isInCheck(teamColor)) {
             return false;
         }
@@ -172,8 +232,7 @@ public class ChessGame {
         Collection<ChessMove> allMoves = board1.getAllMovesForTeam(teamColor);
 
         for (ChessMove move : allMoves) {
-            ChessGame tempGame = new ChessGame();
-            tempGame.setBoard(board1);
+            ChessGame tempGame = new ChessGame(teamColor, board1);
             try {
                 tempGame.makeMove(move);
             } catch (InvalidMoveException e) {
@@ -186,8 +245,23 @@ public class ChessGame {
         }
 
         return true;
-        //throw new RuntimeException("Not implemented");
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Determines if the given team is in stalemate, which here is defined as having
@@ -196,31 +270,66 @@ public class ChessGame {
      * @param teamColor which team to check for stalemate
      * @return True if the specified team is in stalemate, otherwise false
      */
+//    public boolean isInStalemate(TeamColor teamColor) {
+//
+//        if (isInCheck(teamColor)) {
+//            return false;
+//        }
+//
+//        Collection<ChessMove> allMoves = board1.getAllMovesForTeam(teamColor);
+//
+//        for (ChessMove move : allMoves) {
+//            ChessGame tempGame = new ChessGame();
+//            tempGame.setBoard(board1);//tempGame.setBoard(new ChessBoard(board1));//??????????????
+//            try {
+//                tempGame.makeMove(move);
+//            } catch (InvalidMoveException e) {
+//                continue;
+//            }
+//
+//            if (!tempGame.isInCheck(teamColor)) {
+//                return false;
+//            }
+//        }
+//
+//        return true;
+//        //throw new RuntimeException("Not implemented");
+//    }
+
+
     public boolean isInStalemate(TeamColor teamColor) {
+        ChessBoard boardCopy = new ChessBoard();
+        boardCopy.setBoard(board1.getBoard());
 
-        if (isInCheck(teamColor)) {
-            return false;
-        }
-
-        Collection<ChessMove> allMoves = board1.getAllMovesForTeam(teamColor);
+        Collection<ChessMove> allMoves = boardCopy.getAllMovesForTeam(teamColor);
 
         for (ChessMove move : allMoves) {
-            ChessGame tempGame = new ChessGame();
-            tempGame.setBoard(board1);//tempGame.setBoard(new ChessBoard(board1));//??????????????
+            ChessPiece piece = boardCopy.getPiece(move.getStartPosition());
             try {
-                tempGame.makeMove(move);
+                makeMove(move);
             } catch (InvalidMoveException e) {
-                continue;
+                // Ignore invalid moves
             }
 
-            if (!tempGame.isInCheck(teamColor)) {
+            if (!isInCheck(teamColor)) {//make sure this applies to current board
+                undoLastMove();
                 return false;
             }
+
+            undoLastMove();
         }
 
         return true;
-        //throw new RuntimeException("Not implemented");
     }
+
+
+
+
+
+
+
+
+
 
     /**
      * Sets this game's chessboard with a given board
