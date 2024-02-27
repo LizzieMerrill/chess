@@ -5,9 +5,7 @@ import dataAccess.data.GameData;
 public interface GameDAO {
     void addGame(GameData gameData);
     GameData getGame(int gameID);
-
-
-    // Other game-related methods
+    void clearChessData();
 }
 
 

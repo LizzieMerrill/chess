@@ -1,6 +1,7 @@
 package dataAccess.dao;
 
 import dataAccess.data.AuthData;
+import dataAccess.data.UserData;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,6 +13,7 @@ public class SQLAuthDAO implements AuthDAO {
     private final String jdbcUrl = "jdbc:mysql://your-database-host:3306/your-database-name";
     private final String username = "your-username";
     private final String password = "your-password";
+    private final String authenticateUserQuery = "SELECT * FROM user_table WHERE username = ? AND password = ?";
 
     // Adjust the SQL statements based on your database schema
     private final String addAuthTokenQuery = "INSERT INTO auth_table(authToken, username) VALUES (?, ?)";
@@ -26,6 +28,47 @@ public class SQLAuthDAO implements AuthDAO {
         // This can include loading the JDBC driver, etc.
         // Example: Class.forName("com.mysql.cj.jdbc.Driver");
     }
+
+
+//    @Override
+//    public boolean authenticateUser(String username, String password) {
+//        try (Connection connection = DriverManager.getConnection(jdbcUrl, this.username, this.password);
+//             PreparedStatement preparedStatement = connection.prepareStatement(authenticateUserQuery)) {
+//
+//            preparedStatement.setString(1, username);
+//            preparedStatement.setString(2, password);
+//
+//            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+//                return resultSet.next(); // Return true if a matching user is found
+//            }
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace(); // Handle the exception appropriately
+//            return false; // Authentication fails on exception
+//        }
+//    }
+
+
+
+    @Override
+    public boolean authenticateUser(UserData userData) {
+        try (Connection connection = null;// Obtain a database connection here
+                     PreparedStatement preparedStatement = connection.prepareStatement(
+                     "SELECT * FROM users WHERE username = ? AND password = ?")) {
+
+            preparedStatement.setString(1, userData.getUsername());
+            preparedStatement.setString(2, userData.getPassword());
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next(); // If a row is returned, authentication is successful
+            }
+        } catch (SQLException e) {
+            // Handle SQL exceptions, log them, or throw a custom exception
+            e.printStackTrace(); // Handle this more appropriately in a real application
+            return false; // Authentication failed due to an exception
+        }
+    }
+
 
     @Override
     public void addAuthToken(AuthData authData) {

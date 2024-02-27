@@ -13,10 +13,12 @@ public class SQLGameDAO implements GameDAO {
     private final String username = "your-username";
     private final String password = "your-password";
 
-    // Adjust the SQL statements based on your database schema
+    // Adjust the SQL statement based on your database schema
     private final String addGameQuery = "INSERT INTO game_table(gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
     private final String getGameQuery = "SELECT * FROM game_table WHERE gameID = ?";
-    // Add other SQL statements for additional game-related methods
+    private final String clearGameDataQuery = "DELETE FROM game_table"; // Adjust based on your database schema
+
+    // Adjust the SQL statements based on your database schema
 
     public SQLGameDAO() {
         // Initialize your database connection if needed
@@ -61,6 +63,15 @@ public class SQLGameDAO implements GameDAO {
         return null;
     }
 
-    // Add implementations for other game-related methods if needed
-    // ...
+    @Override
+    public void clearChessData() {
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
+             PreparedStatement preparedStatement = connection.prepareStatement(clearGameDataQuery)) {
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle the exception appropriately
+        }
+    }
 }

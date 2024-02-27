@@ -1,11 +1,12 @@
 package dataAccess.dao;
 
+import dataAccess.DataAccessException;
 import dataAccess.data.UserData;
 
 public interface UserDAO {
-    void addUser(UserData userData);
-    boolean authenticateUser(String username, String password);
+    //boolean authenticateUser(String username, String password);
     // Other user-related methods
+    void addUser(UserData userData) throws DataAccessException;
 }
 
 

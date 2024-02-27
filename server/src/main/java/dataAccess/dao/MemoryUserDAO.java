@@ -1,5 +1,6 @@
 package dataAccess.dao;
 
+import dataAccess.DataAccessException;
 import dataAccess.data.UserData;
 
 import java.util.HashMap;
@@ -15,14 +16,15 @@ public class MemoryUserDAO implements UserDAO {
 
     @Override
     public void addUser(UserData userData) {
+
         users.put(userData.getUsername(), userData);
     }
 
-    @Override
-    public boolean authenticateUser(String username, String password) {
-        UserData storedUser = users.get(username);
-        return storedUser != null && storedUser.getPassword().equals(password);
-    }
+//    @Override
+//    public boolean authenticateUser(String username, String password) {
+//        UserData storedUser = users.get(username);
+//        return storedUser != null && storedUser.getPassword().equals(password);
+//    }
 
     // Add other user-related methods as needed
 

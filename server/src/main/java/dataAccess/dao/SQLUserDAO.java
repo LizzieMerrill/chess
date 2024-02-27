@@ -36,20 +36,20 @@ public class SQLUserDAO implements UserDAO {
         }
     }
 
-    @Override
-    public boolean authenticateUser(String username, String password) {
-        try (Connection connection = DriverManager.getConnection(jdbcUrl, this.username, this.password);
-             PreparedStatement preparedStatement = connection.prepareStatement(authenticateUserQuery)) {
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return resultSet.next(); // Return true if a matching user is found
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception appropriately
-            return false;
-        }
-    }
+//    @Override
+//    public boolean authenticateUser(String username, String password) {
+//        try (Connection connection = DriverManager.getConnection(jdbcUrl, this.username, this.password);
+//             PreparedStatement preparedStatement = connection.prepareStatement(authenticateUserQuery)) {
+//            preparedStatement.setString(1, username);
+//            preparedStatement.setString(2, password);
+//            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+//                return resultSet.next(); // Return true if a matching user is found
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace(); // Handle the exception appropriately
+//            return false;
+//        }
+//    }
 
     // Add implementations for other user-related methods if needed
     // ...

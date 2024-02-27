@@ -24,6 +24,8 @@ public class MemoryGameDAO implements GameDAO {
         return gameDataMap.get(gameID);
     }
 
-    // Implement other game-related methods if needed
+    public void clearChessData() {
+        gameDataMap.clear();
+    }
 
 }
