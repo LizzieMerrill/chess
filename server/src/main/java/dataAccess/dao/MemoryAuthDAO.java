@@ -5,20 +5,31 @@ import dataAccess.data.UserData;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO {
 
     private final Map<String, AuthData> authDataMap;
     private final Map<String, AuthData> authTokenMap;
 
+
     public MemoryAuthDAO() {
         this.authDataMap = new HashMap<>();
         this.authTokenMap = new HashMap<>();
     }
 
+//    @Override
+//    public void addAuthToken(AuthData authData) {
+//        authTokenMap.put(authData.getAuthToken(), authData);
+//        authDataMap.put(authData.getUsername(), authData);
+//    }
+
     @Override
     public void addAuthToken(AuthData authData) {
-        authTokenMap.put(authData.getAuthToken(), authData);
+        String authToken = generateUniqueAuthToken(); // Generate a unique auth token
+        authData.setAuthToken(authToken); // Set the auth token in AuthData
+        authTokenMap.put(authToken, authData);
+        authDataMap.put(authData.getUsername(), authData);
     }
 
     @Override
@@ -40,10 +51,11 @@ public class MemoryAuthDAO implements AuthDAO {
                 .orElse(null);
     }
 
-    @Override
-    public void addAuthData(AuthData authData) {
-        authDataMap.put(authData.getUsername(), authData);
-    }
+//    @Override
+//    public void addAuthData(AuthData authData) {
+//        authDataMap.put(authData.getUsername(), authData);
+//        addAuthToken(authData);
+//    }
 
     @Override
     public void removeAuthData(String authToken) {
@@ -54,16 +66,28 @@ public class MemoryAuthDAO implements AuthDAO {
         }
     }
 
-//    @Override
-//    public boolean authenticateUser(String username, String password) {
-//        // Simulate user authentication in memory
-//        AuthData authData = getByUsername(username);
-//        return authData != null && authData.getPassword().equals(password);
-//    }
-
     @Override
     public boolean authenticateUser(UserData userData) {
         AuthData authData = authDataMap.get(userData.getUsername());
-        return authData != null && authData.getPassword().equals(userData.getPassword());
+
+        System.out.println("Received authentication request for user: " + userData.getUsername());
+        System.out.println("Stored password: " + (authData != null ? authData.getPassword() : "null"));
+        System.out.println("Provided password: " + userData.getPassword());
+
+        // Check if the user is found and the password matches
+        if (authData != null && authData.getPassword().equals(userData.getPassword())) {
+            return true;
+        } else {
+            // Authentication failed, return false without causing a server error
+            return false;
+        }
     }
+
+    public boolean isValidAuthToken(String authToken) {
+        return authTokenMap.containsKey(authToken);
+    }
+    public String generateUniqueAuthToken() {
+        return UUID.randomUUID().toString();
+    }
+
 }

@@ -1,7 +1,10 @@
 package dataAccess.data;
 
+import java.util.Objects;
+
 public class GameData {
     private int gameID;
+    private String gameData;
     private String whiteUsername;
     private String blackUsername;
     private String gameName;
@@ -14,6 +17,10 @@ public class GameData {
         blackUsername = null;
         gameName = null;
         game = null;
+    }
+
+    public GameData(String gameData){
+        this.gameData = gameData;
     }
 
     // Constructor with parameters
@@ -65,5 +72,22 @@ public class GameData {
 
     public void setGame(Object game) {
         this.game = game;
+    }
+    public String getGameData(){
+        return gameData;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GameData gameData1 = (GameData) o;
+        return gameID == gameData1.gameID && Objects.equals(gameData, gameData1.gameData) && Objects.equals(whiteUsername, gameData1.whiteUsername) && Objects.equals(blackUsername, gameData1.blackUsername) && Objects.equals(gameName, gameData1.gameName) && Objects.equals(game, gameData1.game);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(gameID, gameData, whiteUsername, blackUsername, gameName, game);
     }
 }

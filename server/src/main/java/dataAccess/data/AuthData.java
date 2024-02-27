@@ -1,29 +1,28 @@
 package dataAccess.data;
 
+import java.util.Objects;
+import java.util.UUID;
+
 public class AuthData {
-    private String authToken;
+
     private String username;
-    private String password;  // Added password field
+    private String password;  // Make sure to set this when adding a user
+    private String authToken;
 
-    // Constructors
-    public AuthData() {
-        // Default constructor
-        authToken = null;
-        username = null;
-        password = null;  // Initialize password
-    }
-    public AuthData(String authToken, String username){
+    public AuthData(String authToken, String username) {
         this.authToken = authToken;
         this.username = username;
     }
-
-    public AuthData(String authToken, String username, String password) {
-        this.authToken = authToken;
-        this.username = username;
-        this.password = password;  // Set password
+    public AuthData(UserData userData) {
+        this.authToken = UUID.randomUUID().toString();
+        this.username = userData.getUsername();
     }
 
-    // Getters
+    // Constructors, getters, and setters
+
+    public void setAuthToken(String authToken){
+        this.authToken = authToken;
+    }
     public String getAuthToken() {
         return authToken;
     }
@@ -32,20 +31,21 @@ public class AuthData {
         return username;
     }
 
-    public String getPassword() {
+    public Object getPassword() {
         return password;
     }
 
-    // Setters
-    public void setAuthToken(String authToken) {
-        this.authToken = authToken;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AuthData authData = (AuthData) o;
+        return Objects.equals(username, authData.username) && Objects.equals(password, authData.password) && Objects.equals(authToken, authData.authToken);
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, password, authToken);
     }
 }

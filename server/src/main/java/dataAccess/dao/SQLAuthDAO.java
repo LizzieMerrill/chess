@@ -3,11 +3,8 @@ package dataAccess.dao;
 import dataAccess.data.AuthData;
 import dataAccess.data.UserData;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Objects;
 
 public class SQLAuthDAO implements AuthDAO {
     private final String jdbcUrl = "jdbc:mysql://your-database-host:3306/your-database-name";
@@ -97,17 +94,17 @@ public class SQLAuthDAO implements AuthDAO {
         return fetchDataByQuery(getByUsernameQuery, username);
     }
 
-    @Override
-    public void addAuthData(AuthData authData) {
-        try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
-             PreparedStatement preparedStatement = connection.prepareStatement(addAuthDataQuery)) {
-            preparedStatement.setString(1, authData.getAuthToken());
-            preparedStatement.setString(2, authData.getUsername());
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception appropriately
-        }
-    }
+//    @Override
+//    public void addAuthData(AuthData authData) {
+//        try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
+//             PreparedStatement preparedStatement = connection.prepareStatement(addAuthDataQuery)) {
+//            preparedStatement.setString(1, authData.getAuthToken());
+//            preparedStatement.setString(2, authData.getUsername());
+//            preparedStatement.executeUpdate();
+//        } catch (SQLException e) {
+//            e.printStackTrace(); // Handle the exception appropriately
+//        }
+//    }
 
     @Override
     public void removeAuthData(String authToken) {
@@ -133,5 +130,50 @@ public class SQLAuthDAO implements AuthDAO {
             e.printStackTrace(); // Handle the exception appropriately
         }
         return null;
+    }
+
+    public boolean isValidAuthToken(String authToken) {
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = connection;// obtain your database connection here
+
+                    statement = connection.createStatement();
+
+            // Assuming you have a table named 'auth_data' with a column 'auth_token'
+            String query = "SELECT * FROM auth_data WHERE auth_token = '" + authToken + "'";
+            resultSet = statement.executeQuery(query);
+
+            return resultSet.next(); // Returns true if a row is found, indicating a valid auth token
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            // Close resources in reverse order of their creation
+            try {
+                if (resultSet != null) resultSet.close();
+                if (statement != null) ((Statement) statement).close();
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SQLAuthDAO that = (SQLAuthDAO) o;
+        return Objects.equals(jdbcUrl, that.jdbcUrl) && Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(authenticateUserQuery, that.authenticateUserQuery) && Objects.equals(addAuthTokenQuery, that.addAuthTokenQuery) && Objects.equals(getAuthTokenQuery, that.getAuthTokenQuery) && Objects.equals(getByAuthTokenQuery, that.getByAuthTokenQuery) && Objects.equals(getByUsernameQuery, that.getByUsernameQuery) && Objects.equals(addAuthDataQuery, that.addAuthDataQuery) && Objects.equals(removeAuthDataQuery, that.removeAuthDataQuery);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(jdbcUrl, username, password, authenticateUserQuery, addAuthTokenQuery, getAuthTokenQuery, getByAuthTokenQuery, getByUsernameQuery, addAuthDataQuery, removeAuthDataQuery);
     }
 }
