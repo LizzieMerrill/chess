@@ -1,6 +1,8 @@
 package dataAccess.data;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class GameData {
     private int gameID;
@@ -9,18 +11,16 @@ public class GameData {
     private String blackUsername;
     private String gameName;
     private Object game; // Change 'Object' to the actual type of your game
+    private Set<String> watcherTokens;
 
     // Default constructor
+    // Default constructor
     public GameData() {
-        //gameID = null;
         whiteUsername = null;
         blackUsername = null;
         gameName = null;
         game = null;
-    }
-
-    public GameData(String gameData){
-        this.gameData = gameData;
+        watcherTokens = new HashSet<>();
     }
 
     // Constructor with parameters
@@ -30,6 +30,11 @@ public class GameData {
         this.blackUsername = blackUsername;
         this.gameName = gameName;
         this.game = game;
+        this.watcherTokens = new HashSet<>();
+    }
+
+    public GameData(String gameData){
+        this.gameData = gameData;
     }
 
     // Getters and setters
@@ -75,6 +80,25 @@ public class GameData {
     }
     public String getGameData(){
         return gameData;
+    }
+
+    public Set<String> getWatcherTokens() {
+        return watcherTokens;
+    }
+
+    public void addWatcherToken(String watcherToken) {
+        watcherTokens.add(watcherToken);
+    }
+
+    public String getCurrentPlayerAuthToken(String user) {
+        if (user.equals(whiteUsername)) {
+            return whiteUsername;
+        } else if (user.equals(blackUsername)) {
+            return blackUsername;
+        } else {
+            // The specified user is not the current player
+            return null;
+        }
     }
 
 

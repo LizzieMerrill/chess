@@ -1,13 +1,16 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dataAccess.access.DataAccessException;
 import dataAccess.dao.*;
 import dataAccess.data.AuthData;
+import dataAccess.data.GameData;
 import dataAccess.data.UserData;
 import spark.Spark;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -120,6 +123,13 @@ public class Server {
 
         Spark.post("/game", (request, response) -> {
             try {
+                // Check if the request contains a valid Authorization header
+                String authToken = request.headers("Authorization");
+                if (authToken == null || !authDAO.isValidAuthToken(authToken)) {
+                    response.status(401); // Unauthorized
+                    return gson.toJson(new StandardResponse(401, "Error: Unauthorized"));
+                }
+
                 // Your implementation for creating a game
                 // Example: gameDAO.createGame(request.body());
                 // Adapt based on how your client sends game data in the request.
@@ -131,11 +141,36 @@ public class Server {
             } catch (DataAccessException e) {
                 response.status(500);
                 return gson.toJson(new StandardResponse(500, "Error: " + e.getMessage()));
+            } catch (Exception e) {
+                response.status(403); // Forbidden
+                return gson.toJson(new StandardResponse(403, "Error: Invalid team color"));
             }
         });
 
+
+
         Spark.put("/game", (request, response) -> {
             try {
+                // Check if the request contains a valid Authorization header
+                String authToken = request.headers("Authorization");
+                if (authToken == null || !authDAO.isValidAuthToken(authToken)) {
+                    response.status(401); // Unauthorized
+                    return gson.toJson(new StandardResponse(401, "Error: Unauthorized"));
+                }
+                // Check if the game ID in the request is valid (e.g., not null or empty)
+                String gameId = request.queryParams("gameId");
+                if (isNullOrEmpty(gameId)) {
+                    response.status(400); // Bad Request
+                    return gson.toJson(new StandardResponse(400, "Error: Bad Request - Invalid Game ID"));
+                }
+
+//
+//                // Check if the user is authorized to watch the game
+//                if (!gameDAO.isPlayerInGame(authToken, gameId)) {
+//                    response.status(401); // Unauthorized
+//                    return gson.toJson(new StandardResponse(401, "Error: Unauthorized - You are not authorized to watch this game"));
+//                }
+
                 // Your implementation for updating a game
                 // Example: gameDAO.updateGame(request.body());
                 // Adapt based on how your client sends game data in the request.
@@ -152,17 +187,34 @@ public class Server {
             }
         });
 
+
+
+
+
         Spark.get("/game", (request, response) -> {
             try {
                 // Your implementation for handling the GET request for /game
-                // Return the list of games as JSON
+
+                // Get the list of games
+                JsonArray gamesList = gameDAO.getAllGames();
+
+                // Check if there are no games
+                if (gamesList == null || gamesList.isEmpty()) {
+                    response.type("application/json");
+                    return "{ \"noGames\": true }";
+                }
+
+                // Check if there are multiple games
                 response.type("application/json");
-                return "{ \"games\": " + gameDAO.getAllGames() + "}";
+                return gson.toJson(new StandardResponse(200, gamesList.toString()));
             } catch (Exception e) {
                 response.status(500);
                 return gson.toJson(new StandardResponse(500, "Error: " + e.getMessage()));
             }
         });
+
+
+
 
         // Register other endpoints similarly
         // ...

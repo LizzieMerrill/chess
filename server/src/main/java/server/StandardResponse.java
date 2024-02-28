@@ -1,15 +1,24 @@
 package server;
 
+import dataAccess.data.UserData;
+
 import java.util.Objects;
 
 public class StandardResponse {
     private final int status;
     private final String message;
 
+    //private final UserData userData;
+
     public StandardResponse(int status, String message) {
         this.status = status;
         this.message = message;
+        //this.userData = userData;
     }
+//    public StandardResponse(int status, String message){
+//        this.status = status;
+//        this.message = message;
+//    }
 
 //    public StandardResponse(int status, AuthData auth){
 //        this.status = status;

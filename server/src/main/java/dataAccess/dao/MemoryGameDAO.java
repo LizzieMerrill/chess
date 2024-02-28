@@ -1,9 +1,7 @@
 package dataAccess.dao;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import dataAccess.data.GameData;
 
 import java.util.*;
@@ -11,21 +9,23 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MemoryGameDAO implements GameDAO {
 
-    // In-memory storage for game data
     private final Map<Integer, GameData> gameDataMap;
+    private final Map<Integer, Set<String>> watchers; // Map gameID to set of watcher tokens
     private int nextGameId = 1;
-    private final Map<String, GameData> games = new ConcurrentHashMap<>();
-    private List<GameData> listOfGames;
+    private final List<GameData> listOfGames;
 
     public MemoryGameDAO() {
         this.gameDataMap = new HashMap<>();
+        this.watchers = new ConcurrentHashMap<>();
         this.listOfGames = new ArrayList<>();
     }
 
     @Override
     public void addGame(GameData gameData) {
-        gameDataMap.put(gameData.getGameID(), gameData);
-        listOfGames.add(gameData);
+        int gameId = gameData.getGameID();
+        gameDataMap.put(gameId, gameData);
+        watchers.put(gameId, new HashSet<>());
+        listOfGames.add(gameData); // Add the game to the list
     }
 
     @Override
@@ -36,66 +36,87 @@ public class MemoryGameDAO implements GameDAO {
     @Override
     public void clearChessData() {
         gameDataMap.clear();
-        listOfGames.clear();
+        watchers.clear();
     }
 
     @Override
     public int createGame(String gameData) {
-        // Placeholder implementation, replace with actual logic
         GameData newGameData = new GameData(gameData);
+        int gameId = nextGameId++;
+        newGameData.setGameID(gameId);
         addGame(newGameData);
-        return newGameData.getGameID();
+        return gameId;
     }
 
+//    @Override
+//    public void updateGame(GameData gameData) {
+//        int gameId = gameData.getGameID();
+//        gameDataMap.put(gameId, gameData);
+//    }
+
+//    @Override
+//    public void updateGame(GameData gameData) {
+//        int gameId = gameData.getGameID();
+//
+//        // Update the game data in the in-memory map
+//        gameDataMap.put(gameId, gameData);
+//
+//        // Also update the game data in the list
+//        int index = listOfGames.indexOf(gameData);
+//        if (index != -1) {
+//            listOfGames.set(index, gameData);
+//        } else {
+//            listOfGames.add(gameData); // Add the game to the list if not present
+//        }
+//
+//        // Add the watcher to the game's watcher set
+//        gameData.addWatcherToken(gameData.getCurrentPlayerAuthToken());
+//    }
+
     @Override
-    public void updateGame(GameData gameData) {
-        // Assuming each game is identified by a unique key, such as game ID
-        String gameId = Integer.toString(gameData.getGameID());
+    public void updateGame(GameData gameData, String currentPlayerUsername) {
+        int gameId = gameData.getGameID();
 
         // Update the game data in the in-memory map
-        games.put(gameId, gameData);
+        gameDataMap.put(gameId, gameData);
 
         // Also update the game data in the list
         int index = listOfGames.indexOf(gameData);
         if (index != -1) {
             listOfGames.set(index, gameData);
+        } else {
+            listOfGames.add(gameData); // Add the game to the list if not present
         }
+
+        // Add the watcher to the game's watcher set
+        gameData.addWatcherToken(currentPlayerUsername);
     }
+
+
 
     @Override
     public JsonArray getAllGames() {
-        try {
-            // Fetch the list of games from listOfGames
-            List<GameData> gamesList = new ArrayList<>(listOfGames);
-
-            // Convert the list to a JSON array
-            JsonArray jsonArray = new JsonArray();
-            for (GameData gameData : gamesList) {
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("gameID", gameData.getGameID());
-                jsonObject.addProperty("gameData", gameData.getGameData());
-                jsonArray.add(jsonObject);
-            }
-
-            // Return the JSON array
-            return jsonArray;
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error retrieving games from memory: " + e.getMessage());
-            return null;
+        JsonArray jsonArray = new JsonArray();
+        for (GameData gameData : gameDataMap.values()) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("gameID", gameData.getGameID());
+            jsonObject.addProperty("gameData", gameData.getGameData());
+            jsonArray.add(jsonObject);
         }
+        return jsonArray;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MemoryGameDAO that = (MemoryGameDAO) o;
-        return nextGameId == that.nextGameId && Objects.equals(gameDataMap, that.gameDataMap) && Objects.equals(games, that.games) && Objects.equals(listOfGames, that.listOfGames);
+    public boolean isPlayerInGame(String authToken, String gameId) {
+        // Assuming a player is considered in the game if they are a watcher
+        return getWatcherTokens(gameId).contains(authToken);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(gameDataMap, nextGameId, games, listOfGames);
+    public Set<String> getWatcherTokens(String gameId) {
+        return watchers.getOrDefault(Integer.parseInt(gameId), Collections.emptySet());
     }
+
+    // Other methods...
+
 }

@@ -4,19 +4,18 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dataAccess.access.DataAccessException;
 import dataAccess.data.GameData;
+
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import java.sql.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 import static java.sql.DriverManager.getConnection;
 
 import java.sql.ResultSet;
-import java.util.Objects;
 
 
 public class SQLGameDAO implements GameDAO {
@@ -24,6 +23,7 @@ public class SQLGameDAO implements GameDAO {
     private final String username = "your-username";
     private final String password = "your-password";
     private Connection connection = null;
+    private DataSource dataSource = null;
 
 
     // Adjust the SQL statement based on your database schema
@@ -41,6 +41,10 @@ public class SQLGameDAO implements GameDAO {
     }
     public SQLGameDAO(){
         this.connection = null;
+    }
+
+    public SQLGameDAO(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -119,13 +123,14 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(GameData gameData) {
-        // Assuming you have a SQL table named 'games' with columns 'game_id' and 'game_data'
-        String sql = "UPDATE games SET game_data = ? WHERE game_id = ?";
+    public void updateGame(GameData gameData, String currentPlayerUsername) {
+        // Assuming you have a SQL table named 'games' with columns 'game_id', 'game_data', and 'current_player_username'
+        String sql = "UPDATE games SET game_data = ?, current_player_username = ? WHERE game_id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, gameData.getGameData());
-            preparedStatement.setString(2, Integer.toString(gameData.getGameID()));
+            preparedStatement.setString(2, currentPlayerUsername);
+            preparedStatement.setString(3, Integer.toString(gameData.getGameID()));
 
             // Execute the update query
             preparedStatement.executeUpdate();
@@ -134,6 +139,7 @@ public class SQLGameDAO implements GameDAO {
             e.printStackTrace(); // You might want to log this or throw a custom exception
         }
     }
+
 
     @Override
     public JsonArray getAllGames() {
@@ -173,6 +179,46 @@ public class SQLGameDAO implements GameDAO {
 
         // Return the JSON array as a string, or an empty JSON object if the array is empty
         return games.isEmpty() ? new JsonArray() : jsonArray;
+    }
+
+    @Override
+    public boolean isPlayerInGame(String authToken, String gameId) {
+        // Implement the logic to check if the player with authToken is in the game with gameId
+        // You'll need to query your database to get the relevant information
+        // Update the SQL query and logic based on your database schema
+        String sql = "SELECT COUNT(*) FROM game_players WHERE game_id = ? AND player_token = ?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, gameId);
+            statement.setString(2, authToken);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                int count = resultSet.getInt(1);
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle the exception appropriately
+        }
+        return false;
+    }
+
+    @Override
+    public Set<String> getWatcherTokens(String gameId) {
+        Set<String> watcherTokens = new HashSet<>();
+        try {
+            // Implement SQL SELECT to retrieve watcher tokens for the given game
+            String sql = "SELECT watcher_token FROM watchers WHERE game_id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setInt(1, Integer.parseInt(gameId));
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    watcherTokens.add(resultSet.getString("watcher_token"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return watcherTokens;
     }
 
     @Override
