@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import dataAccess.access.DataAccessException;
 import dataAccess.dao.*;
 import dataAccess.data.AuthData;
@@ -10,6 +11,7 @@ import dataAccess.data.GameData;
 import dataAccess.data.UserData;
 import spark.Spark;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -57,6 +59,7 @@ public class Server {
                     return gson.toJson(new StandardResponse(401, "Error: unauthorized"));
                 }
 
+
                 authDAO.removeAuthData(authToken);
                 return gson.toJson(new StandardResponse(200, "Logout successful"));
             } catch (Exception e) {
@@ -91,11 +94,10 @@ public class Server {
             }
         });
 
+        // Inside the /session POST endpoint
         Spark.post("/session", (request, response) -> {
             try {
                 UserData userData = gson.fromJson(request.body(), UserData.class);
-
-                System.out.println("Received login request for user: " + userData.getUsername());
 
                 // Authenticate the user
                 UserData storedUserData = userDAO.getUser(userData.getUsername());
@@ -103,8 +105,10 @@ public class Server {
                     AuthData existingAuthData = authDAO.getByUsername(userData.getUsername());
 
                     if (existingAuthData != null) {
+                        // Return existing token if user already has one
                         return gson.toJson(existingAuthData);
                     } else {
+                        // Generate a new token
                         AuthData authData = new AuthData(userData);
                         String newAuthToken = generateUniqueAuthToken();
                         authData.setAuthToken(newAuthToken);
@@ -120,6 +124,7 @@ public class Server {
                 return gson.toJson(new StandardResponse(500, "{ \"message\": \"Error: " + e.getMessage() + "\" }"));
             }
         });
+
 
         Spark.post("/game", (request, response) -> {
             try {
@@ -138,6 +143,8 @@ public class Server {
                 int gameId = gameDAO.createGame(request.body());
 
                 return gson.toJson(new StandardResponse(200, "Game created successfully. Game ID: " + gameId));
+
+
             } catch (DataAccessException e) {
                 response.status(500);
                 return gson.toJson(new StandardResponse(500, "Error: " + e.getMessage()));
@@ -157,6 +164,7 @@ public class Server {
                     response.status(401); // Unauthorized
                     return gson.toJson(new StandardResponse(401, "Error: Unauthorized"));
                 }
+
                 // Check if the game ID in the request is valid (e.g., not null or empty)
                 String gameId = request.queryParams("gameId");
                 if (isNullOrEmpty(gameId)) {
@@ -164,12 +172,20 @@ public class Server {
                     return gson.toJson(new StandardResponse(400, "Error: Bad Request - Invalid Game ID"));
                 }
 
-//
-//                // Check if the user is authorized to watch the game
-//                if (!gameDAO.isPlayerInGame(authToken, gameId)) {
-//                    response.status(401); // Unauthorized
-//                    return gson.toJson(new StandardResponse(401, "Error: Unauthorized - You are not authorized to watch this game"));
-//                }
+                // Check if the user is authorized to update the game
+                if (!gameDAO.isPlayerInGame(authToken, gameId)) {
+                    response.status(401); // Unauthorized
+                    return gson.toJson(new StandardResponse(401, "Error: Unauthorized - You are not authorized to update this game"));
+                }
+
+                // Get the team color from the request
+                String teamColorParam = request.queryParams("teamColor");
+
+                // Check if the team color is invalid (e.g., not "WHITE" or "BLACK")
+                if (!isValidTeamColor(teamColorParam)) {
+                    response.status(403); // Forbidden
+                    return gson.toJson(new StandardResponse(403, "Error: Forbidden - Invalid team color"));
+                }
 
                 // Your implementation for updating a game
                 // Example: gameDAO.updateGame(request.body());
@@ -191,6 +207,7 @@ public class Server {
 
 
 
+
         Spark.get("/game", (request, response) -> {
             try {
                 // Your implementation for handling the GET request for /game
@@ -206,7 +223,12 @@ public class Server {
 
                 // Check if there are multiple games
                 response.type("application/json");
-                return gson.toJson(new StandardResponse(200, gamesList.toString()));
+
+                // Convert the JsonArray to a list and sort it based on gameID
+                List<JsonObject> sortedGamesList = gson.fromJson(gamesList, new TypeToken<List<JsonObject>>() {}.getType());
+                sortedGamesList.sort(Comparator.comparingInt(o -> o.get("gameID").getAsInt()));
+
+                return gson.toJson(new StandardResponse(200, sortedGamesList.toString()));
             } catch (Exception e) {
                 response.status(500);
                 return gson.toJson(new StandardResponse(500, "Error: " + e.getMessage()));
@@ -216,14 +238,20 @@ public class Server {
 
 
 
+
         // Register other endpoints similarly
         // ...
     }
 
+    private boolean isValidTeamColor(String teamColor) {
+        return "WHITE".equalsIgnoreCase(teamColor) || "BLACK".equalsIgnoreCase(teamColor);
+    }
+
     // Helper method to check if a string is null or empty
     private boolean isNullOrEmpty(String str) {
-        return str == null || str.trim().isEmpty();
+        return (str == null || str.trim().isEmpty());
     }
+
 
     @Override
     public boolean equals(Object o) {
