@@ -1,5 +1,6 @@
 package dataAccess.dao;
 
+import chess.ChessGame;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dataAccess.data.GameData;
@@ -95,15 +96,15 @@ public class MemoryGameDAO implements GameDAO {
 
 
     @Override
-    public JsonArray getAllGames() {
-        JsonArray jsonArray = new JsonArray();
-        for (GameData gameData : gameDataMap.values()) {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("gameID", gameData.getGameID());
-            jsonObject.addProperty("gameData", gameData.getGameData());
-            jsonArray.add(jsonObject);
-        }
-        return jsonArray;
+    public Collection<GameData> getAllGames() {
+//        JsonArray jsonArray = new JsonArray();
+//        for (GameData gameData : gameDataMap.values()) {
+//            JsonObject jsonObject = new JsonObject();
+//            jsonObject.addProperty("gameID", gameData.getGameID());
+//            jsonObject.addProperty("gameData", gameData.getGameData());
+//            jsonArray.add(jsonObject);
+//        }
+        return gameDataMap.values();
     }
 
     @Override
@@ -116,6 +117,28 @@ public class MemoryGameDAO implements GameDAO {
     public Set<String> getWatcherTokens(String gameId) {
         return watchers.getOrDefault(Integer.parseInt(gameId), Collections.emptySet());
     }
+
+    @Override
+    public boolean isGameCreated(String gameId) {
+        return listOfGames.contains(gameId);
+    }
+
+    @Override
+    public int getSpectatorCount(String gameId) {
+        if (!isGameCreated(gameId)) {
+            return -1; // or throw an exception, depending on your design
+        }
+
+        int index = Integer.parseInt(gameId) - 1;
+        if (index >= 0 && index < watchers.size()) {
+            Set<String> spectatorSet = watchers.get(index);
+            return spectatorSet.size();
+        }
+
+        return -1; // Return -1 if gameId is out of bounds
+    }
+
+
 
     // Other methods...
 

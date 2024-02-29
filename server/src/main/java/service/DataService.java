@@ -18,14 +18,31 @@
 //}
 package service;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dataAccess.dao.AuthDAO;
 import dataAccess.dao.GameDAO;
 import dataAccess.dao.MemoryGameDAO;
+import dataAccess.dao.UserDAO;
+import dataAccess.data.GameData;
+import server.StandardResponse;
+import spark.Response;
+
+import java.util.Collection;
 
 public class DataService {
-
-    private final GameDAO gameDAO = new MemoryGameDAO();  // You can adjust this based on your actual implementation
+    AuthDAO authDAO;
+    UserDAO userDAO;
+    GameDAO gameDAO;
+    public DataService(AuthDAO authDAO, UserDAO userDAO, GameDAO gameDAO){
+        this.authDAO = authDAO;
+        this.userDAO = userDAO;
+        this.gameDAO = gameDAO;
+    }
+    private final Gson gson = new Gson();
+    //private final GameDAO gameDAO = new MemoryGameDAO();  // You can adjust this based on your actual implementation
 
     public JsonObject clear() {
         JsonObject response = new JsonObject();
@@ -43,18 +60,64 @@ public class DataService {
         return response;
     }
 
-    public JsonArray listGames() {
-        JsonArray gamesList = new JsonArray();
-        try {
-            // Your logic here
-            gamesList = gameDAO.getAllGames();
-            // Additional logic if needed
-        } catch (Exception e) {
-            // Handle exceptions
-            JsonObject errorObject = new JsonObject();
-            errorObject.addProperty("error", "Error: " + e.getMessage());
-            gamesList.add(errorObject);
-        }
-        return gamesList;
+    public String listGames(String authToken, Response response) {
+//        if(authDAO.isValidAuthToken(authToken)){
+//
+//        }
+        Collection<GameData> gamesList = null;
+            try {
+                if(authDAO.isValidAuthToken(authToken)) {
+                    gamesList = gameDAO.getAllGames();
+                    //return null;//TODO
+                    //make copy of gamelist
+                    //200 success
+                    response.status(200);
+//                    for(GameData game : gamesList){
+//
+//                    }
+                    return gson.toJson("{ \" games\": " + gamesList);
+                }
+                else{
+                    response.status(401);
+                    return gson.toJson(new StandardResponse(401, "Error: unauthorized"));
+                }
+//
+//                    // Check if there are no games
+//                    if (gamesList == null || gamesList.size() == 0) {
+//                        JsonObject noGamesObject = new JsonObject();
+//                        noGamesObject.addProperty("noGames", true);
+//                        gamesList.add(noGamesObject);
+//                    } else {
+//                        // Format the response as required
+//                        JsonArray formattedGamesList = new JsonArray();
+//                        for (JsonElement gameElement : gamesList) {
+//                            JsonObject gameObject = gameElement.getAsJsonObject();
+//                            JsonObject formattedGame = new JsonObject();
+//                            formattedGame.addProperty("gameID", gameObject.get("gameID").getAsInt());
+//                            formattedGame.addProperty("whiteUsername", gameObject.has("whiteUsername") ? gameObject.get("whiteUsername").getAsString() : null);
+//                            formattedGame.addProperty("blackUsername", gameObject.has("blackUsername") ? gameObject.get("blackUsername").getAsString() : null);
+//                            formattedGame.addProperty("gameName", gameObject.has("gameName") ? gameObject.get("gameName").getAsString() : "");
+//                            formattedGamesList.add(formattedGame);
+//                        }
+//                        return formattedGamesList;
+//                    }
+//                }
+//                else{
+//                    response.status(401);
+//                }
+                // Additional logic if needed
+            } catch (Exception e) {
+                // Handle exceptions
+//                GameData errorObject = new JsonObject();
+//                errorObject.addProperty("error", "Error: " + e.getMessage());
+//                gamesList.add(errorObject);
+                response.status(500);
+                return gson.toJson(new StandardResponse(500, "Error: " + e.getMessage()));
+            }
     }
+
+    public boolean validate(String authToken){
+        return authDAO.isValidAuthToken(authToken);
+    }
+
 }

@@ -1,5 +1,7 @@
 package dataAccess.data;
 
+import chess.ChessGame;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -10,7 +12,7 @@ public class GameData {
     private String whiteUsername;
     private String blackUsername;
     private String gameName;
-    private Object game; // Change 'Object' to the actual type of your game
+    private ChessGame game; // Change 'Object' to the actual type of your game
     private Set<String> watcherTokens;
 
     // Default constructor
@@ -24,7 +26,7 @@ public class GameData {
     }
 
     // Constructor with parameters
-    public GameData(int gameID, String whiteUsername, String blackUsername, String gameName, Object game) {
+    public GameData(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {
         this.gameID = gameID;
         this.whiteUsername = whiteUsername;
         this.blackUsername = blackUsername;
@@ -75,7 +77,7 @@ public class GameData {
         return game;
     }
 
-    public void setGame(Object game) {
+    public void setGame(ChessGame game) {
         this.game = game;
     }
     public String getGameData(){

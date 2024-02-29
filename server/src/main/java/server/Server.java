@@ -12,13 +12,16 @@ import dataAccess.dao.*;
 
 public class Server {
 
-    protected final Gson gson = new Gson();
-    protected final UserDAO userDAO = new MemoryUserDAO();
-    protected final GameDAO gameDAO = new MemoryGameDAO();
-    protected final AuthDAO authDAO = new MemoryAuthDAO();
-    protected final DataService dataService = new DataService();
-    protected final UserService userService = new UserService(gson, userDAO);
-    protected final GameService gameService = new GameService();
+    final Gson gson = new Gson();
+    final UserDAO userDAO = new MemoryUserDAO();
+    final GameDAO gameDAO = new MemoryGameDAO();
+
+    final AuthDAO authDAO = new MemoryAuthDAO();
+
+
+//    protected final DataService dataService = new DataService(authDAO, userDAO, gameDAO);
+//    protected final UserService userService = new UserService(authDAO, userDAO);
+//    protected final GameService gameService = new GameService(authDAO, userDAO, gameDAO);
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -38,7 +41,7 @@ public class Server {
     }
 
     private void registerEndpoints() {
-        Spark.delete("/db", new ClearHandler());
+        Spark.delete("/db", new ClearHandler(authDAO, userDAO, gameDAO));
 //        Spark.delete("/db", (request, response) -> {
 ////            try {
 ////                gameDAO.clearChessData();
@@ -50,22 +53,22 @@ public class Server {
 //        });
 
         //logout
-        Spark.delete("/session", new LogoutHandler());
+        Spark.delete("/session", new LogoutHandler(userDAO, authDAO));
 
         //register
-        Spark.post("/user", new RegisterHandler(gson, userService));
+        Spark.post("/user", new RegisterHandler(gson, userDAO, authDAO));
 
         //login
-        Spark.post("/session", new LoginHandler());
+        Spark.post("/session", new LoginHandler(userDAO, authDAO));
 
         //create game
-        Spark.post("/game", new CreateGameHandler());
+        Spark.post("/game", new CreateGameHandler(authDAO, gameDAO, userDAO));
 
         //join game
-        Spark.put("/game", new JoinGameHandler());
+        Spark.put("/game", new JoinGameHandler(authDAO, gameDAO, userDAO));
 
         //list game
-        Spark.get("/game", new ListGamesHandler());
+        Spark.get("/game", new ListGamesHandler(authDAO, gameDAO, userDAO));
 
     }
 
@@ -102,8 +105,8 @@ public class Server {
                 '}';
     }
 
-    public static void main(String[] args) {
-        Server server = new Server();
-        server.run(8080);
-    }
+//    public static void main(String[] args) {
+//        Server server = new Server();
+//        server.run(8080);
+//    }
 }

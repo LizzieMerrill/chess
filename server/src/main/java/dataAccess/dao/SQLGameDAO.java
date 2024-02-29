@@ -69,13 +69,16 @@ public class SQLGameDAO implements GameDAO {
             preparedStatement.setInt(1, gameID);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new GameData(
-                            resultSet.getInt("gameID"),
-                            resultSet.getString("whiteUsername"),
-                            resultSet.getString("blackUsername"),
-                            resultSet.getString("gameName"),
-                            resultSet.getObject("game") // Adjust based on your actual game type
-                    );
+//                    return new GameData(
+//                            resultSet.getInt("gameID"),
+//                            resultSet.getString("whiteUsername"),
+//                            resultSet.getString("blackUsername"),
+//                            resultSet.getString("gameName"),
+//                            resultSet.getString("game")
+//                            //resultSet.getObject("game") // Adjust based on your actual game typeTODO********************************
+//
+//                    );
+                    //TODO
                 }
             }
         } catch (SQLException e) {
@@ -142,7 +145,7 @@ public class SQLGameDAO implements GameDAO {
 
 
     @Override
-    public JsonArray getAllGames() {
+    public Collection<GameData> getAllGames() {
         List<GameData> games = new ArrayList<>();
 
         try (Connection connection = getConnection(jdbcUrl, username, password)) {
@@ -150,15 +153,15 @@ public class SQLGameDAO implements GameDAO {
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 try (ResultSet resultSet = statement.executeQuery()) {
                     while (resultSet.next()) {
-                        GameData game = new GameData(
-                                resultSet.getInt("id"),
-                                resultSet.getString("white_username"),
-                                resultSet.getString("black_username"),
-                                resultSet.getString("game_name"),
-                                resultSet.getObject("game_data")
-                        );
+//                        GameData game = new GameData(
+//                                resultSet.getInt("id"),
+//                                resultSet.getString("white_username"),
+//                                resultSet.getString("black_username"),
+//                                resultSet.getString("game_name"),
+//                                resultSet.getObject("game_data")
+//                        );
 
-                        games.add(game);
+                        //games.add(game);
                     }
                 }
             }
@@ -178,7 +181,7 @@ public class SQLGameDAO implements GameDAO {
         }
 
         // Return the JSON array as a string, or an empty JSON object if the array is empty
-        return games.isEmpty() ? new JsonArray() : jsonArray;
+        return null;//TODO
     }
 
     @Override
@@ -219,6 +222,15 @@ public class SQLGameDAO implements GameDAO {
             e.printStackTrace();
         }
         return watcherTokens;
+    }
+    @Override
+    public boolean isGameCreated(String gameId) {
+        return true;//TODO
+    }
+
+    @Override
+    public int getSpectatorCount(String gameId) {
+        return 0;//TODO
     }
 
     @Override

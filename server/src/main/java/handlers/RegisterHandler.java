@@ -57,12 +57,17 @@
 package handlers;
 
 import com.google.gson.Gson;
+import dataAccess.dao.AuthDAO;
+import dataAccess.dao.UserDAO;
 import service.UserService;
 import dataAccess.data.UserData;
 import server.StandardResponse;
 import spark.Request;
 import spark.Response;
 import spark.Route;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static jdk.internal.joptsimple.internal.Strings.isNullOrEmpty;
 
@@ -70,9 +75,9 @@ public class RegisterHandler implements Route {
     private final Gson gson;
     private final UserService userService;
 
-    public RegisterHandler(Gson gson, UserService userService) {
+    public RegisterHandler(Gson gson, UserDAO userDAO, AuthDAO authDAO) {
         this.gson = gson;
-        this.userService = userService;
+        this.userService = new UserService(authDAO, userDAO);
     }
 
     @Override
@@ -105,6 +110,15 @@ public class RegisterHandler implements Route {
 
     private int getStatusCode(String responseJson) {
         StandardResponse standardResponse = gson.fromJson(responseJson, StandardResponse.class);
-        return standardResponse.getStatus();
+        if(standardResponse.getMessage() == null){
+            return 200;
+        }
+        else if(standardResponse.getMessage().contains("already taken")){
+            return 403;
+        }
+        else{
+            return 500;
+        }
+        //return standardResponse.getStatus();
     }
 }

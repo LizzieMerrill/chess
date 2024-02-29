@@ -2,26 +2,29 @@ package dataAccess.dao;
 
 import dataAccess.data.UserData;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.Collection;
+import java.util.HashSet;
+
 
 public class MemoryUserDAO implements UserDAO {
 
-    private final Map<String, UserData> users;
+    //private static final Map<String, UserData> users = new HashMap<>();
+    private static final Collection<UserData> users = new HashSet<>();
 
-    public MemoryUserDAO() {
-        this.users = new HashMap<>();
-    }
 
     @Override
     public void addUser(UserData userData) {
-        users.put(userData.getUsername(), userData);
+        users.add(userData);
     }
 
     @Override
     public UserData getUser(String username) {
-        return users.get(username);
+        for(UserData userData : users){
+            if(userData.getUsername().equals(username)){
+                return userData;
+            }
+        }
+        return null;
     }
 
 //    @Override
@@ -32,16 +35,5 @@ public class MemoryUserDAO implements UserDAO {
 
     // Add other user-related methods as needed
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MemoryUserDAO that = (MemoryUserDAO) o;
-        return Objects.equals(users, that.users);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(users);
-    }
 }

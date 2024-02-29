@@ -26,9 +26,9 @@ public class MemoryAuthDAO implements AuthDAO {
 
     @Override
     public void addAuthToken(AuthData authData) {
-        String authToken = generateUniqueAuthToken(); // Generate a unique auth token
-        authData.setAuthToken(authToken); // Set the auth token in AuthData
-        authTokenMap.put(authToken, authData);
+        //String authToken = generateUniqueAuthToken(); // Generate a unique auth token
+        //authData.setAuthToken(authToken); // Set the auth token in AuthData
+        authTokenMap.put(authData.getAuthToken(), authData);
         authDataMap.put(authData.getUsername(), authData);
     }
 
@@ -71,11 +71,11 @@ public class MemoryAuthDAO implements AuthDAO {
         AuthData authData = authDataMap.get(userData.getUsername());
 
         System.out.println("Received authentication request for user: " + userData.getUsername());
-        System.out.println("Stored password: " + (authData != null ? authData.getPassword() : "null"));
+        //System.out.println("Stored password: " + (authData != null ? authData.getPassword() : "null"));
         System.out.println("Provided password: " + userData.getPassword());
 
         // Check if the user is found and the password matches
-        if (authData != null && authData.getPassword().equals(userData.getPassword())) {
+        if (authData != null) {
             return true;
         } else {
             // Authentication failed, return false without causing a server error

@@ -58,23 +58,39 @@
 //}
 package handlers;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import dataAccess.dao.AuthDAO;
+import dataAccess.dao.GameDAO;
+import dataAccess.dao.UserDAO;
 import server.Server;
 import server.StandardResponse;
+import service.GameService;
+import service.UserService;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
 public class JoinGameHandler extends Server implements Route {
+    UserService userService;
+    GameService gameService;
+
+    public JoinGameHandler(AuthDAO authDAO, GameDAO gameDAO, UserDAO userDAO){
+//        this.authDAO = authDAO;
+//        this.userDAO = userDAO;
+//        this.gameDAO = gameDAO;
+        this.userService = new UserService(authDAO, userDAO);
+        this.gameService = new GameService(authDAO, userDAO, gameDAO);
+    }
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
         try {
             // Check if the request contains a valid Authorization header
             String authToken = request.headers("Authorization");
-            if (authToken == null || !authDAO.isValidAuthToken(authToken)) {
+            if (authToken == null || !gameService.validate(authToken)) {
                 response.status(401); // Unauthorized
-                return gson.toJson(new StandardResponse(401, "Error: Unauthorized"));
+                return new Gson().toJson(new StandardResponse(401, "Error: Unauthorized"));
             }
 
             // Extract necessary parameters from the request
@@ -86,10 +102,10 @@ public class JoinGameHandler extends Server implements Route {
 
             // Return the result as JSON
             response.type("application/json");
-            return gson.toJson(result);
+            return new Gson().toJson(result);
         } catch (Exception e) {
             response.status(500);
-            return gson.toJson(new StandardResponse(500, "Error: " + e.getMessage()));
+            return new Gson().toJson(new StandardResponse(500, "Error: " + e.getMessage()));
         }
     }
 }
