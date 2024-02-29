@@ -64,6 +64,11 @@ public class SQLUserDAO implements UserDAO {
         return null; // Return null if the user is not found
     }
 
+    @Override
+    public void clearUserData() {
+        //TODO
+    }
+
 //    @Override
 //    public boolean authenticateUser(String username, String password) {
 //        try (Connection connection = DriverManager.getConnection(jdbcUrl, this.username, this.password);

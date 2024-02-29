@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import dataAccess.dao.AuthDAO;
 import dataAccess.dao.GameDAO;
 import dataAccess.dao.UserDAO;
+import dataAccess.data.GameData;
 import server.Server;
 import server.StandardResponse;
 import service.DataService;
@@ -15,8 +16,10 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class ListGamesHandler extends Server implements Route {
 //    AuthDAO authDAO;
@@ -35,11 +38,11 @@ public class ListGamesHandler extends Server implements Route {
     }
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        String gamesList = null;
+        Collection<GameData> gamesList = null;
         try {
             // Call the service method to get the list of games
-            gamesList = dataService.listGames(request.headers("Authorization"), response);
-            List<JsonObject> sortedGamesList = gson.fromJson(gamesList, new TypeToken<List<JsonObject>>() {}.getType());
+            gamesList = (Collection<GameData>) dataService.listGames(request.headers("Authorization"), response);
+            //List<JsonObject> sortedGamesList = gson.fromJson(gamesList, new TypeToken<List<JsonObject>>() {}.getType());
 
             // Check if there are no games
             if (gamesList == null || gamesList.isEmpty()) {
@@ -55,15 +58,12 @@ public class ListGamesHandler extends Server implements Route {
                 // Convert the JsonArray to a list and sort it based on gameID
                 //List<JsonObject> sortedGamesList = gson.fromJson(gamesList, new TypeToken<List<JsonObject>>() {}.getType());
 
-                if (sortedGamesList.size() > 1) {
+                if (gamesList.size() >= 1) {
                     // If there are multiple games, sort and return the list
-                    sortedGamesList.sort(Comparator.comparingInt(o -> o.get("gameID").getAsInt()));
+                    //gamesList.sort(Comparator.comparingInt(o -> o.get("gameID").getAsInt()));
                     response.status(200);
-                    return gson.toJson(sortedGamesList);
-                } else if (sortedGamesList.size() == 1) {
-                    // If there is exactly one game, return it without sorting
-                    response.status(200);
-                    return gson.toJson(sortedGamesList.get(0));
+                    return gson.toJson(gamesList);
+
                 } else {
                     // If there are no games
                     response.status(200);
@@ -83,6 +83,20 @@ public class ListGamesHandler extends Server implements Route {
 //        response.status(200);
 //        return gson.toJson(gamesList);
     }
+
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        if (!super.equals(o)) return false;
+//        ListGamesHandler that = (ListGamesHandler) o;
+//        return Objects.equals(userService, that.userService) && Objects.equals(dataService, that.dataService) && Objects.equals(gson, that.gson);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(super.hashCode(), userService, dataService, gson);
+//    }
 }
 
 

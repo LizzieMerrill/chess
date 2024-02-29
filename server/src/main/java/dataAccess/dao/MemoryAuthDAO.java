@@ -83,6 +83,12 @@ public class MemoryAuthDAO implements AuthDAO {
         }
     }
 
+    @Override
+    public void clearAuthData() {
+        authDataMap.clear();
+        authTokenMap.clear();
+    }
+
     public boolean isValidAuthToken(String authToken) {
         return authTokenMap.containsKey(authToken);
     }

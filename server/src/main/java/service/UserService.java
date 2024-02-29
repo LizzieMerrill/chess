@@ -169,12 +169,12 @@ public class UserService {
 
     public Object logout(String authToken) {
         try {
-            // Your logic here for logging out a user
-            // ...
-
-            // Additional logic if needed
-
-            return new StandardResponse(200, "Logout successful");
+            if (authDAO.isValidAuthToken(authToken)) {
+                authDAO.removeAuthData(authToken);
+                return new StandardResponse(200, "Logout successful");
+            } else {
+                return new StandardResponse(401, "Error: Unauthorized");
+            }
         } catch (Exception e) {
             // Handle exceptions
             return new StandardResponse(500, "Error: " + e.getMessage());

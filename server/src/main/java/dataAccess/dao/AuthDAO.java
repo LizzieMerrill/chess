@@ -12,6 +12,7 @@ public interface AuthDAO {
     void removeAuthData(String authToken);
     //boolean authenticateUser(String username, String password);
     boolean authenticateUser(UserData userData);
+    void clearAuthData();
 
     boolean isValidAuthToken(String authToken);
 }

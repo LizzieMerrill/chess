@@ -31,6 +31,7 @@ import server.StandardResponse;
 import spark.Response;
 
 import java.util.Collection;
+import java.util.List;
 
 public class DataService {
     AuthDAO authDAO;
@@ -49,6 +50,8 @@ public class DataService {
         try {
             // Your logic here
             gameDAO.clearChessData();
+            userDAO.clearUserData();
+            authDAO.clearAuthData();
             // Additional logic if needed
             response.addProperty("status", "success");
             response.addProperty("message", "Chess data cleared successfully");
@@ -60,7 +63,7 @@ public class DataService {
         return response;
     }
 
-    public String listGames(String authToken, Response response) {
+    public Object listGames(String authToken, Response response) {
 //        if(authDAO.isValidAuthToken(authToken)){
 //
 //        }
@@ -75,7 +78,7 @@ public class DataService {
 //                    for(GameData game : gamesList){
 //
 //                    }
-                    return gson.toJson("{ \" games\": " + gamesList);
+                    return gamesList;
                 }
                 else{
                     response.status(401);

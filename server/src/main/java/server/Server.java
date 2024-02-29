@@ -53,7 +53,7 @@ public class Server {
 //        });
 
         //logout
-        Spark.delete("/session", new LogoutHandler(userDAO, authDAO));
+        Spark.delete("/session", new LogoutHandler(authDAO));
 
         //register
         Spark.post("/user", new RegisterHandler(gson, userDAO, authDAO));

@@ -66,6 +66,11 @@ public class SQLAuthDAO implements AuthDAO {
         }
     }
 
+    @Override
+    public void clearAuthData() {
+        //TODO
+    }
+
 
     @Override
     public void addAuthToken(AuthData authData) {
