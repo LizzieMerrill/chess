@@ -36,8 +36,8 @@ public class GameData {
         this.watcherUsernames = new HashSet<>();
     }
 
-    public GameData(String gameData){
-        this.gameData = gameData;
+    public GameData(String gameName){
+        this.gameName = gameName;
     }
 
     // Getters and setters

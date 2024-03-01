@@ -126,13 +126,13 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(GameData gameData, String currentPlayerUsername) {
+    public void updateGame(GameData gameData) {
         // Assuming you have a SQL table named 'games' with columns 'game_id', 'game_data', and 'current_player_username'
         String sql = "UPDATE games SET game_data = ?, current_player_username = ? WHERE game_id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, gameData.getGameData());
-            preparedStatement.setString(2, currentPlayerUsername);
+            //preparedStatement.setString(2, currentPlayerUsername);
             preparedStatement.setString(3, Integer.toString(gameData.getGameID()));
 
             // Execute the update query
@@ -184,60 +184,60 @@ public class SQLGameDAO implements GameDAO {
         return null;//TODO
     }
 
-    @Override
-    public boolean isPlayerInGame(String authToken, int gameId) {
-        // Implement the logic to check if the player with authToken is in the game with gameId
-        // You'll need to query your database to get the relevant information
-        // Update the SQL query and logic based on your database schema
-        String sql = "SELECT COUNT(*) FROM game_players WHERE game_id = ? AND player_token = ?";
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, gameId);
-            statement.setString(2, authToken);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                int count = resultSet.getInt(1);
-                return count > 0;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception appropriately
-        }
-        return false;
-    }
+//    @Override
+//    public boolean isPlayerInGame(String authToken, int gameId) {
+//        // Implement the logic to check if the player with authToken is in the game with gameId
+//        // You'll need to query your database to get the relevant information
+//        // Update the SQL query and logic based on your database schema
+//        String sql = "SELECT COUNT(*) FROM game_players WHERE game_id = ? AND player_token = ?";
+//        try (Connection connection = dataSource.getConnection();
+//             PreparedStatement statement = connection.prepareStatement(sql)) {
+//            statement.setInt(1, gameId);
+//            statement.setString(2, authToken);
+//            ResultSet resultSet = statement.executeQuery();
+//            if (resultSet.next()) {
+//                int count = resultSet.getInt(1);
+//                return count > 0;
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace(); // Handle the exception appropriately
+//        }
+//        return false;
+//    }
 
-    @Override
-    public Set<String> getWatcherTokens(int gameId) {
-        Set<String> watcherTokens = new HashSet<>();
-        try {
-            // Implement SQL SELECT to retrieve watcher tokens for the given game
-            String sql = "SELECT watcher_token FROM watchers WHERE game_id = ?";
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setInt(1, gameId);
-                ResultSet resultSet = statement.executeQuery();
-                while (resultSet.next()) {
-                    watcherTokens.add(resultSet.getString("watcher_token"));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return watcherTokens;
-    }
+//    @Override
+//    public Set<String> getWatcherTokens(int gameId) {
+//        Set<String> watcherTokens = new HashSet<>();
+//        try {
+//            // Implement SQL SELECT to retrieve watcher tokens for the given game
+//            String sql = "SELECT watcher_token FROM watchers WHERE game_id = ?";
+//            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+//                statement.setInt(1, gameId);
+//                ResultSet resultSet = statement.executeQuery();
+//                while (resultSet.next()) {
+//                    watcherTokens.add(resultSet.getString("watcher_token"));
+//                }
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return watcherTokens;
+//    }
 
-    @Override
-    public int getSpectatorCount(int gameId) {
-        return 0;//TODO
-    }
-
-    @Override
-    public boolean isWhiteTaken(int gameId) {
-        return false;//TODO
-    }
-
-    @Override
-    public boolean isBlackTaken(int gameId) {
-        return false;//TODO
-    }
+//    @Override
+//    public int getSpectatorCount(int gameId) {
+//        return 0;//TODO
+//    }
+//
+//    @Override
+//    public boolean isWhiteTaken(int gameId) {
+//        return false;//TODO
+//    }
+//
+//    @Override
+//    public boolean isBlackTaken(int gameId) {
+//        return false;//TODO
+//    }
 
     @Override
     public boolean equals(Object o) {

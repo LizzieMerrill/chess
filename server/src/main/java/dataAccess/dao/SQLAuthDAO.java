@@ -47,24 +47,24 @@ public class SQLAuthDAO implements AuthDAO {
 
 
 
-    @Override
-    public boolean authenticateUser(UserData userData) {
-        try (Connection connection = null;// Obtain a database connection here
-                     PreparedStatement preparedStatement = connection.prepareStatement(
-                     "SELECT * FROM users WHERE username = ? AND password = ?")) {
-
-            preparedStatement.setString(1, userData.getUsername());
-            preparedStatement.setString(2, userData.getPassword());
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return resultSet.next(); // If a row is returned, authentication is successful
-            }
-        } catch (SQLException e) {
-            // Handle SQL exceptions, log them, or throw a custom exception
-            e.printStackTrace(); // Handle this more appropriately in a real application
-            return false; // Authentication failed due to an exception
-        }
-    }
+//    @Override
+//    public boolean authenticateUser(UserData userData) {
+//        try (Connection connection = null;// Obtain a database connection here
+//                     PreparedStatement preparedStatement = connection.prepareStatement(
+//                     "SELECT * FROM users WHERE username = ? AND password = ?")) {
+//
+//            preparedStatement.setString(1, userData.getUsername());
+//            preparedStatement.setString(2, userData.getPassword());
+//
+//            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+//                return resultSet.next(); // If a row is returned, authentication is successful
+//            }
+//        } catch (SQLException e) {
+//            // Handle SQL exceptions, log them, or throw a custom exception
+//            e.printStackTrace(); // Handle this more appropriately in a real application
+//            return false; // Authentication failed due to an exception
+//        }
+//    }
 
     @Override
     public void clearAuthData() {
@@ -89,15 +89,16 @@ public class SQLAuthDAO implements AuthDAO {
         return fetchDataByQuery(getAuthTokenQuery, authToken);
     }
 
-    @Override
-    public String getByAuthToken(String authToken) {
-        return "no sql lolz";//fetchDataByQuery(getByAuthTokenQuery, authToken);
-    }//TODO
+//    @Override
+//    public String getUsernameByAuthToken(String authToken) {
+//        return "no sql lolz";//fetchDataByQuery(getByAuthTokenQuery, authToken);
+//    }
 
-    @Override
-    public AuthData getByUsername(String username) {
-        return fetchDataByQuery(getByUsernameQuery, username);
-    }
+//    @Override
+//    public AuthData getByUsername(String username) {
+//
+//        return fetchDataByQuery(getByUsernameQuery, username);
+//    }
 
 //    @Override
 //    public void addAuthData(AuthData authData) {

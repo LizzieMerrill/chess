@@ -13,11 +13,11 @@ public interface GameDAO {
     GameData getGame(int gameID);
     void clearChessData();
     int createGame(String gameData) throws DataAccessException;
-    void updateGame(GameData gameData, String currentPlayersUsername);
+    void updateGame(GameData gameData);
     Collection<GameData> getAllGames();
-    boolean isPlayerInGame(String authToken, int gameId);
-    Set<String> getWatcherTokens(int gameId);
-    int getSpectatorCount(int gameId);
-    boolean isWhiteTaken(int gameId);
-    boolean isBlackTaken(int gameId);
+    //boolean isPlayerInGame(String authToken, int gameId);
+    //Set<String> getWatcherTokens(int gameId);
+    //int getSpectatorCount(int gameId);
+    //boolean isWhiteTaken(int gameId);
+    //boolean isBlackTaken(int gameId);
 }

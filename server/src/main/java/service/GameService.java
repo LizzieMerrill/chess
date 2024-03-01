@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import dataAccess.dao.AuthDAO;
 import dataAccess.dao.GameDAO;
 import dataAccess.dao.UserDAO;
+import dataAccess.data.AuthData;
 import dataAccess.data.GameData;
 import requests.CreateResponse;
 import requests.JoinObject;
@@ -107,60 +108,42 @@ public class GameService {
 
     public JoinResponse join(String authToken, int gameId, ChessGame.TeamColor teamColor) {
         try {
-            GameData gameData = gameDAO.getGame(gameId);
-            // Check if the request contains a valid Authorization header
-            if (authToken == null || !authDAO.isValidAuthToken(authToken)) {
+            if (authToken == null){
                 return new JoinResponse("Error: unauthorized");
             }
 
-            // Check if the game ID in the request is valid (e.g., not null or empty)
-            else if (gameId <= 0 || gameDAO.getGame(gameId) == null) {
+            AuthData authorization = authDAO.getAuthToken(authToken);
+            if (authorization == null) {
+                return new JoinResponse("Error: unauthorized");
+            }
+
+            GameData gameData = gameDAO.getGame(gameId);
+            if(gameData == null){
                 return new JoinResponse("Error: bad request");
             }
-//            } else {
-//                GameData gameData = gameDAO.getGame(gameId);
-//
-////                // Check if the team color is invalid
-////                if (teamColor != null && (teamColor != ChessGame.TeamColor.WHITE && teamColor != ChessGame.TeamColor.BLACK)) {
-////                    return new JoinResponse("Error: invalid team color");
-////                }
-//
-//                // Check if the team color is already taken by a player
 
-//                else if (teamColor == ChessGame.TeamColor.WHITE && gameData.getWhiteUsername() == null) {
-//                    gameData.setWhiteUsername(authDAO.getByAuthToken(authToken));
-//                }
-//                else if (teamColor == ChessGame.TeamColor.BLACK && gameData.getBlackUsername() == null) {
-//                    gameData.setBlackUsername(authDAO.getByAuthToken(authToken));
-//                }
-//                else if(teamColor == null){
-//                    gameData.setWatcherUsername(authDAO.getByAuthToken(authToken));
-//                }
-                else if ((teamColor == ChessGame.TeamColor.WHITE && gameDAO.isWhiteTaken(gameId)) ||
-                        (teamColor == ChessGame.TeamColor.BLACK && gameDAO.isBlackTaken(gameId))) {
-//                else{
-                    return new JoinResponse("Error: already taken");
-               }
-//
-//                // If joining as a white player and the position is still available
-//                if (teamColor == ChessGame.TeamColor.WHITE && gameData.getWhiteUsername() == null) {
-//                    gameData.setWhiteUsername(authDAO.getByAuthToken(authToken));
-//                }
-//                // If joining as a black player and the position is still available
-//                else if (teamColor == ChessGame.TeamColor.BLACK && gameData.getBlackUsername() == null) {
-//                    gameData.setBlackUsername(authDAO.getByAuthToken(authToken));
-//                }
-//                // If joining as a spectator or if the requested position is already taken
-//                else {
-//                    gameData.setWatcherUsername(authDAO.getByAuthToken(authToken));
-//                }
 
-                gameDAO.updateGame(gameData, authDAO.getByAuthToken(authToken));
-                return new JoinResponse(null); // Success
+            if ((teamColor == ChessGame.TeamColor.WHITE && gameData.getWhiteUsername() != null) ||
+                    (teamColor == ChessGame.TeamColor.BLACK && gameData.getBlackUsername() != null)) {
+                return new JoinResponse("Error: already taken");
+            }
+
+            if(teamColor == ChessGame.TeamColor.WHITE){
+                gameData.setWhiteUsername(authorization.getUsername());
+            }
+            else if(teamColor == ChessGame.TeamColor.BLACK){
+                gameData.setBlackUsername(authorization.getUsername());
+            }
+            else{
+                gameData.setWatcherUsername(authorization.getUsername());
+            }
+            gameDAO.updateGame(gameData);
+            return new JoinResponse(null); // Success
+
             } catch (Exception e) {
             return new JoinResponse("Error: " + e.getMessage());
         }
-        }
+    }
 
 
 
