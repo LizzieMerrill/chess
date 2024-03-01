@@ -103,13 +103,13 @@ public class JoinGameHandler extends Server implements Route {
             if(result.message() == null){
                 response.status(200);
             }
-            else if (result.message().contains("Error: bad request")) {
+            else if (result.message().contains("bad request")) {
                 response.status(400); //bad request
             }
-            else if (result.message().contains("Error: unauthorized")) {
+            else if (result.message().contains("unauthorized")) {
                 response.status(401); // Unauthorized
             }
-            else if (result.message().contains("Error: already taken")) {
+            else if (result.message().contains("already taken")) {
                 response.status(403); // color taken
             }
             else{
