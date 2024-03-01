@@ -44,6 +44,7 @@ import com.google.gson.JsonObject;
 import dataAccess.dao.AuthDAO;
 import dataAccess.dao.GameDAO;
 import dataAccess.dao.UserDAO;
+import requests.CreateResponse;
 import server.Server;
 import server.StandardResponse;
 import service.DataService;
@@ -68,23 +69,22 @@ public class CreateGameHandler extends Server implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        try {
             // Check if the request contains a valid Authorization header
             String authToken = request.headers("Authorization");
-            if (authToken == null || !gameService.validate(authToken)) {
+            CreateResponse result = gameService.create(authToken, request.body());//authtoken and game name input
+            if(result.message() == null){
+                response.status(200);
+            }
+            else if (result.message().contains("Error: unauthorized")) {
                 response.status(401); // Unauthorized
-                return new Gson().toJson(new StandardResponse(401, "Error: Unauthorized"));
+            }
+            else if (result.message().contains("Error: bad request")){
+                response.status(403);
+            }
+            else{
+                response.status(500);
             }
 
-            // Call the GameService to handle the logic
-            JsonObject result = gameService.create(authToken, request.body());
-
-            // Return the result as JSON
-            response.type("application/json");
             return new Gson().toJson(result);
-        } catch (Exception e) {
-            response.status(500);
-            return new Gson().toJson(new StandardResponse(500, "Error: " + e.getMessage()));
-        }
     }
 }

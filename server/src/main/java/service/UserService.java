@@ -173,9 +173,9 @@ public class UserService {
         try {
             if (authDAO.isValidAuthToken(authToken)) {
                 authDAO.removeAuthData(authToken);
-                return new ErrorObject( "");
+                return new ErrorObject(null);
             } else {
-                return new ErrorObject( "Error: unauthorized");
+                return new ErrorObject("Error: unauthorized");
             }
         } catch (Exception e) {
             // Handle exceptions

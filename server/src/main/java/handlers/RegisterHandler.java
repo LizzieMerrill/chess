@@ -86,7 +86,7 @@ public class RegisterHandler implements Route {
             UserData userData = gson.fromJson(request.body(), UserData.class);
             RegisterResponse registerResponse = userService.register(userData);
             // Check for bad request
-            if (registerResponse.message().isEmpty()){
+            if (registerResponse.message() == null){
                 response.status(200);
             }
             else if (registerResponse.message().contains("Error: bad request")) {

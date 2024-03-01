@@ -82,7 +82,7 @@ public class LoginHandler extends Server implements Route {
                     // Authenticate the user using the UserService
                     RegisterResponse loginResponse = userService.login(userData);
 
-                    if(loginResponse.message().isEmpty()){
+                    if(loginResponse.message() == null){
                         response.status(200);
                     }
                     else if(loginResponse.message().contains("unauthorized")){

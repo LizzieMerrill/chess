@@ -28,9 +28,11 @@ import dataAccess.dao.MemoryGameDAO;
 import dataAccess.dao.UserDAO;
 import dataAccess.data.GameData;
 import requests.ErrorObject;
+import requests.ListResponse;
 import server.StandardResponse;
 import spark.Response;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -47,43 +49,29 @@ public class DataService {
     //private final GameDAO gameDAO = new MemoryGameDAO();  // You can adjust this based on your actual implementation
 
     public ErrorObject clear() {
-        JsonObject response = new JsonObject();
+
         try {
             // Your logic here
             gameDAO.clearChessData();
             userDAO.clearUserData();
             authDAO.clearAuthData();
-            // Additional logic if needed
-            response.addProperty("status", "success");
-            response.addProperty("message", "Chess data cleared successfully");
+            return new ErrorObject("");
+
         } catch (Exception e) {
             // Handle exceptions
-            response.addProperty("status", "error");
-            response.addProperty("message", "Error: " + e.getMessage());
+            return new ErrorObject("Error: " + e.getMessage());
         }
-        return response;
     }
 
-    public Object listGames(String authToken, Response response) {
-//        if(authDAO.isValidAuthToken(authToken)){
-//
-//        }
+    public ListResponse listGames(String authToken) {
+try{
         Collection<GameData> gamesList = null;
-            try {
-                if(authDAO.isValidAuthToken(authToken)) {
+        if(authDAO.isValidAuthToken(authToken)) {
                     gamesList = gameDAO.getAllGames();
-                    //return null;//TODO
-                    //make copy of gamelist
-                    //200 success
-                    response.status(200);
-//                    for(GameData game : gamesList){
-//
-//                    }
-                    return gamesList;
+                    return new ListResponse(gamesList, null);
                 }
                 else{
-                    response.status(401);
-                    return gson.toJson(new StandardResponse(401, "Error: unauthorized"));
+                    return new ListResponse(null, "Error: unauthorized");
                 }
 //
 //                    // Check if there are no games
@@ -115,8 +103,8 @@ public class DataService {
 //                GameData errorObject = new JsonObject();
 //                errorObject.addProperty("error", "Error: " + e.getMessage());
 //                gamesList.add(errorObject);
-                response.status(500);
-                return gson.toJson(new StandardResponse(500, "Error: " + e.getMessage()));
+
+                return new ListResponse(null,"Error: " + e.getMessage());
             }
     }
 

@@ -7,6 +7,7 @@ import dataAccess.dao.AuthDAO;
 import dataAccess.dao.GameDAO;
 import dataAccess.dao.UserDAO;
 import dataAccess.data.GameData;
+import requests.CreateResponse;
 import requests.JoinObject;
 import requests.JoinResponse;
 import server.StandardResponse;
@@ -43,7 +44,7 @@ public class GameService {
             }
 
             // Check if the game ID in the request is valid (e.g., not null or empty)
-            else if (gameId == 0 || gameDAO.getGame(gameId) == null) {
+            else if (gameId == 0 || gameId == -1 || gameDAO.getGame(gameId) == null) {
                 return new JoinResponse("Error: bad request");
             }
 
@@ -56,8 +57,8 @@ public class GameService {
 //            else if (!isValidTeamColor(teamColor)) {
 //                return createErrorResponse(403, "Error: already taken");
 //            }
-            else if((!gameDAO.getGame(gameId).getWhiteUsername().isEmpty() && teamColor == ChessGame.TeamColor.WHITE)
-                    || (!gameDAO.getGame(gameId).getBlackUsername().isEmpty() && teamColor == ChessGame.TeamColor.BLACK)){
+            else if((!(gameDAO.getGame(gameId).getWhiteUsername() == null) && teamColor == ChessGame.TeamColor.WHITE)
+                    || (!(gameDAO.getGame(gameId).getBlackUsername() == null) && teamColor == ChessGame.TeamColor.BLACK)){
                 return new JoinResponse("Error: already taken");
             }
             else {//success criteria
@@ -101,24 +102,21 @@ public class GameService {
         }
     }
 
-    public JsonObject create(String authToken, String gameData) {
+    public CreateResponse create(String authToken, String gameName) {
         try {
             // Check if the request contains a valid Authorization header
             if (authToken == null || !authDAO.isValidAuthToken(authToken)) {
-                return createErrorResponse(401, "Error: Unauthorized");
+                return new CreateResponse(null, "Error: unauthorized");
+            }
+            else if(gameName == null){
+                return new CreateResponse(null, "Error: bad request");
+            }
+            else{
+                return new CreateResponse(gameDAO.createGame(gameName), null);
             }
 
-            // Your implementation for creating a game
-            // Example: gameDAO.createGame(authToken, gameData);
-            // Adapt based on how your client sends create game data.
-
-            // Return a success message as JSON with the gameID
-            int gameID = Integer.parseInt(gameData); // Replace with the actual game ID generated
-            JsonObject successResponse = new JsonObject();
-            successResponse.addProperty("gameID", gameID);
-            return createSuccessResponse(successResponse);
         } catch (Exception e) {
-            return createErrorResponse(500, "Error: " + e.getMessage());
+            return new CreateResponse(null, "Error: " + e.getMessage());
         }
     }
 

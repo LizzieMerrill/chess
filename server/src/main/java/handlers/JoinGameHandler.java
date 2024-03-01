@@ -100,7 +100,7 @@ public class JoinGameHandler extends Server implements Route {
             String authToken = request.headers("Authorization");
             JoinResponse result = gameService.join(authToken, gameId, teamColorParam);
 
-            if(result.message().isEmpty()){
+            if(result.message() == null){
                 response.status(200);
             }
             else if (result.message().contains("Error: bad request")) {

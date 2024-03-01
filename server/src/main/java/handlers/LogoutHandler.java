@@ -92,7 +92,7 @@ public class LogoutHandler extends Server implements Route {
             String authToken = request.headers("Authorization");
             ErrorObject returnValue = userService.logout(authToken);
 
-            if (returnValue.message().isEmpty()) {
+            if (returnValue.message() == null) {
                 response.status(200);
             }
             else if (returnValue.message().contains("Error: unauthorized")){

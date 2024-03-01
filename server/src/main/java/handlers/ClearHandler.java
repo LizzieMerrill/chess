@@ -52,7 +52,7 @@ public class ClearHandler extends Server implements Route {
 //                response.status(401);
 //                //return "";
 //            }
-                return "{}";
+                return new Gson().toJson(returnValue);
 
         } catch (Exception e) {
             response.status(500);

@@ -8,6 +8,7 @@ import dataAccess.dao.AuthDAO;
 import dataAccess.dao.GameDAO;
 import dataAccess.dao.UserDAO;
 import dataAccess.data.GameData;
+import requests.ListResponse;
 import server.Server;
 import server.StandardResponse;
 import service.DataService;
@@ -38,48 +39,54 @@ public class ListGamesHandler extends Server implements Route {
     }
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        Collection<GameData> gamesList = null;
-        try {
-            // Call the service method to get the list of games
-            gamesList = (Collection<GameData>) dataService.listGames(request.headers("Authorization"), response);
-            //List<JsonObject> sortedGamesList = gson.fromJson(gamesList, new TypeToken<List<JsonObject>>() {}.getType());
-
-            // Check if there are no games
-            if (gamesList == null || gamesList.isEmpty()) {
-                response.type("application/json");
+        //Collection<GameData> gamesList = dataService.listGames(request.headers("Authorization")).games();
+            ListResponse listResponse = dataService.listGames(request.headers("Authorization"));
+            if(listResponse.message() == null){
                 response.status(200);
-                return "{ \"noGames\": true }";
-            } else{
-
-
-                // Check if there are multiple games
-                response.type("application/json");
-
-                // Convert the JsonArray to a list and sort it based on gameID
-                //List<JsonObject> sortedGamesList = gson.fromJson(gamesList, new TypeToken<List<JsonObject>>() {}.getType());
-
-                if (gamesList.size() >= 1) {
-                    // If there are multiple games, sort and return the list
-                    //gamesList.sort(Comparator.comparingInt(o -> o.get("gameID").getAsInt()));
-                    response.status(200);
-                    return gson.toJson(gamesList);
-
-                } else {
-                    // If there are no games
-                    response.status(200);
-                    return "{ \"noGames\": true }";
-                }
             }
-//            else if (authDAO.isValidAuthToken(request.headers("Authorization")) == false){
-//                response.status(401);
-//                return gson.toJson(new StandardResponse(401, "Error: unauthorized"));
+            else if(listResponse.message().contains("Error: unauthorized")){
+                response.status(401);
+            }
+            else{
+                response.status(500);
+            }
+            return new Gson().toJson(listResponse);
+//            // Check if there are no games
+//            if (gamesList == null || gamesList.isEmpty()) {
+//                response.type("application/json");
+//                response.status(200);
+//                return "{ \"noGames\": true }";
+//            } else{
+//
+//
+//                // Check if there are multiple games
+//                response.type("application/json");
+//
+//                // Convert the JsonArray to a list and sort it based on gameID
+//                //List<JsonObject> sortedGamesList = gson.fromJson(gamesList, new TypeToken<List<JsonObject>>() {}.getType());
+//
+//                if (gamesList.size() >= 1) {
+//                    // If there are multiple games, sort and return the list
+//                    //gamesList.sort(Comparator.comparingInt(o -> o.get("gameID").getAsInt()));
+//                    response.status(200);
+//                    return gson.toJson(gamesList);
+//
+//                } else {
+//                    // If there are no games
+//                    response.status(200);
+//                    return "{ \"noGames\": true }";
+//                }
 //            }
-
-            //response.status(200);
-        } catch (Exception e) {
-            response.status(500);
-            return gson.toJson(new StandardResponse(500, "Error: " + e.getMessage()));
-        }
+////            else if (authDAO.isValidAuthToken(request.headers("Authorization")) == false){
+////                response.status(401);
+////                return gson.toJson(new StandardResponse(401, "Error: unauthorized"));
+////            }
+//
+//            //response.status(200);
+//        } catch (Exception e) {
+//            response.status(500);
+//            return gson.toJson(new StandardResponse(500, "Error: " + e.getMessage()));
+//        }
 //        response.status(200);
 //        return gson.toJson(gamesList);
     }

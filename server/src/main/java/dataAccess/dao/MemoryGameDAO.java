@@ -13,12 +13,12 @@ public class MemoryGameDAO implements GameDAO {
     private final Map<Integer, GameData> gameDataMap;
     private final Map<Integer, Set<String>> watchers; // Map gameID to set of watcher tokens
     private int nextGameId = 1;
-    private final List<GameData> listOfGames;
+//    private final List<GameData> listOfGames;
 
     public MemoryGameDAO() {
         this.gameDataMap = new HashMap<>();
         this.watchers = new ConcurrentHashMap<>();
-        this.listOfGames = new ArrayList<>();
+        //this.listOfGames = new ArrayList<>();
     }
 
     @Override
@@ -26,7 +26,7 @@ public class MemoryGameDAO implements GameDAO {
         int gameId = gameData.getGameID();
         gameDataMap.put(gameId, gameData);
         watchers.put(gameId, new HashSet<>());
-        listOfGames.add(gameData); // Add the game to the list
+        //listOfGames.add(gameData); // Add the game to the list
     }
 
     @Override
@@ -82,12 +82,12 @@ public class MemoryGameDAO implements GameDAO {
         gameDataMap.put(gameId, gameData);
 
         // Also update the game data in the list
-        int index = listOfGames.indexOf(gameData);
-        if (index != -1) {
-            listOfGames.set(index, gameData);
-        } else {
-            listOfGames.add(gameData); // Add the game to the list if not present
-        }
+//        int index = gameId;//listOfGames.indexOf(gameData);
+//        if (index != -1 || index != 0) {
+//            gameDataMap.put(index, gameData);
+//        } else {
+//            gameDataMap.(gameData); // Add the game to the list if not present
+//        }
 
         // Add the watcher to the game's watcher set
         gameData.setWatcherUsername(currentPlayerUsername);
