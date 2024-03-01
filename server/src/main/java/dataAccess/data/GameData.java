@@ -89,7 +89,7 @@ public class GameData {
         return watcherUsernames;
     }
 
-    public void addWatcherUsername(String watcherUsername) {
+    public void setWatcherUsername(String watcherUsername) {
         watcherUsernames.add(watcherUsername);
     }
 

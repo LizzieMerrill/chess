@@ -38,8 +38,8 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     @Override
-    public AuthData getByAuthToken(String authToken) {
-        return authTokenMap.get(authToken);
+    public String getByAuthToken(String authToken) {
+        return authDataMap.get(authToken).getUsername();
     }
 
     @Override

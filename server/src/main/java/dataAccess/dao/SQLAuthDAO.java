@@ -90,9 +90,9 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
     @Override
-    public AuthData getByAuthToken(String authToken) {
-        return fetchDataByQuery(getByAuthTokenQuery, authToken);
-    }
+    public String getByAuthToken(String authToken) {
+        return "no sql lolz";//fetchDataByQuery(getByAuthTokenQuery, authToken);
+    }//TODO
 
     @Override
     public AuthData getByUsername(String username) {

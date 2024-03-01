@@ -59,6 +59,7 @@ package handlers;
 import com.google.gson.Gson;
 import dataAccess.dao.AuthDAO;
 import dataAccess.dao.UserDAO;
+import requests.RegisterResponse;
 import service.UserService;
 import dataAccess.data.UserData;
 import server.StandardResponse;
@@ -84,24 +85,25 @@ public class RegisterHandler implements Route {
     public Object handle(Request request, Response response) throws Exception {
         try {
             UserData userData = gson.fromJson(request.body(), UserData.class);
-
+            RegisterResponse registerResponse = userService.register(userData);
             // Check for bad request
-            if (userData.getUsername() == null || userData.getUsername().isEmpty() ||
-                    userData.getPassword() == null || userData.getPassword().isEmpty() ||
-                    userData.getEmail() == null || userData.getEmail().isEmpty()) {
+            if (registerResponse.message().isEmpty()){
+                response.status(200);
+            }
+            else if (registerResponse.message().contains("Error: bad request")) {
                 // Handle bad request
+
                 response.status(400);
-                return gson.toJson(new StandardResponse(400, "Error: Bad request"));
+                //return gson.toJson(new StandardResponse(400, "Error: Bad request"));
+            }
+            else if (registerResponse.message().contains("Error: already taken")){
+                response.status(403);
+            }
+            else{
+                response.status(500);
             }
 
-            // Continue with user registration
-            String registrationResponse = userService.register(userData, response);
-
-            // Set the status code based on the response
-            response.status(getStatusCode(registrationResponse));
-
-            // Include the status code in the response body
-            return registrationResponse;
+            return registerResponse;
         } catch (Exception e) {
             response.status(500);
             return gson.toJson(new StandardResponse(500, "Error: " + e.getMessage()));

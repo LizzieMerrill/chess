@@ -90,7 +90,7 @@ public class MemoryGameDAO implements GameDAO {
         }
 
         // Add the watcher to the game's watcher set
-        gameData.addWatcherToken(currentPlayerUsername);
+        gameData.setWatcherUsername(currentPlayerUsername);
     }
 
 

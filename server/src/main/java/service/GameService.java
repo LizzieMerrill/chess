@@ -81,6 +81,17 @@ public class GameService {
 //                jsonResponse.addProperty("message", "Game updated successfully");
 //                jsonResponse.addProperty("spectatorCount", spectatorCount);
 //                jsonResponse.addProperty("isGameCreated", isGameCreated);
+
+                if(teamColor == ChessGame.TeamColor.WHITE){
+                    gameDAO.getGame(gameId).setWhiteUsername(authDAO.getByAuthToken(authToken));
+                }
+                else if(teamColor == ChessGame.TeamColor.BLACK){
+                    gameDAO.getGame(gameId).setBlackUsername(authDAO.getByAuthToken(authToken));
+                }
+                else{
+                    gameDAO.getGame(gameId).setWatcherUsername(authDAO.getByAuthToken(authToken));
+                }
+                gameDAO.updateGame(gameDAO.getGame(gameId), authDAO.getByAuthToken(authToken));
                 return new JoinResponse("");//success
             }
 

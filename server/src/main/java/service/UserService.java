@@ -87,6 +87,7 @@ import dataAccess.dao.MemoryUserDAO;
 import dataAccess.dao.UserDAO;
 import dataAccess.data.AuthData;
 import dataAccess.data.UserData;
+import requests.ErrorObject;
 import requests.RegisterResponse;
 import server.StandardResponse;
 import spark.Response;
@@ -142,40 +143,43 @@ public class UserService {
         }
     }
 
-    public String register(UserData user) {
+    public RegisterResponse register(UserData user) {
         try {
-            UserData existingUser = userDAO.getUser(user.getUsername());
+            UserData existingUser = userDAO.getUser(user.getUsername());//checks if user was already in database
 
             if (existingUser != null) {
-                response.status(403);
-                return gson.toJson(new StandardResponse(403, "Error: already taken"));
+                return new RegisterResponse(null, null, "Error: already taken");
             }
-
-            AuthData authData = new AuthData(user);
-            String authDataJson = gson.toJson(authData);
-            userDAO.addUser(user);
-            authDAO.addAuthToken(authData);
-            response.status(200);
-            return authDataJson;
+            else if (user.getUsername() == null || user.getUsername().isEmpty() ||
+                    user.getPassword() == null || user.getPassword().isEmpty() ||
+                    user.getEmail() == null || user.getEmail().isEmpty()){
+                return new RegisterResponse(null, null, "Error: bad request");
+            }
+            else{
+                AuthData authData = new AuthData(user);
+                //String authDataJson = gson.toJson(authData);
+                userDAO.addUser(user);
+                authDAO.addAuthToken(authData);
+                return new RegisterResponse(user.getUsername(), authData.getAuthToken(), null);
+            }
         } catch (Exception e) {
-            response.status(500);
-            return gson.toJson(new StandardResponse(500, "Error: " + e.getMessage()));
+            return new RegisterResponse(null, null, "Error: " + e.getMessage());
         }
     }
 
 
 
-    public Object logout(String authToken) {
+    public ErrorObject logout(String authToken) {
         try {
             if (authDAO.isValidAuthToken(authToken)) {
                 authDAO.removeAuthData(authToken);
-                return new StandardResponse(200, "Logout successful");
+                return new ErrorObject( "");
             } else {
-                return new StandardResponse(401, "Error: Unauthorized");
+                return new ErrorObject( "Error: unauthorized");
             }
         } catch (Exception e) {
             // Handle exceptions
-            return new StandardResponse(500, "Error: " + e.getMessage());
+            return new ErrorObject( "Error: " + e.getMessage());
         }
     }
 

@@ -1,4 +1,4 @@
 package requests;
 
-public record ErrorObject(String messageLabel, String messageContent) {
+public record ErrorObject(String messageContent) {
 }
