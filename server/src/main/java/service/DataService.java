@@ -3,7 +3,7 @@ package service;
 import dataAccess.dao.AuthDAO;
 import dataAccess.dao.GameDAO;
 import dataAccess.dao.UserDAO;
-import dataAccess.data.GameData;
+import model.GameData;
 import requests.ErrorObject;
 import requests.ListResponse;
 import java.util.Collection;

@@ -1,6 +1,6 @@
 package dataAccess.dao;
 
-import dataAccess.data.UserData;
+import model.UserData;
 
 import java.util.Collection;
 import java.util.HashSet;

@@ -4,8 +4,8 @@ import chess.ChessGame;
 import dataAccess.dao.AuthDAO;
 import dataAccess.dao.GameDAO;
 import dataAccess.dao.UserDAO;
-import dataAccess.data.AuthData;
-import dataAccess.data.GameData;
+import model.AuthData;
+import model.GameData;
 import requests.CreateResponse;
 import requests.JoinResponse;
 

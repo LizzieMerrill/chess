@@ -1,8 +1,7 @@
-package dataAccess.data;
+package model;
 
 import chess.ChessGame;
 
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 

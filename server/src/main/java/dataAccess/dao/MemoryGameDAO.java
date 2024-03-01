@@ -1,6 +1,6 @@
 package dataAccess.dao;
 
-import dataAccess.data.GameData;
+import model.GameData;
 import java.util.*;
 
 public class MemoryGameDAO implements GameDAO {

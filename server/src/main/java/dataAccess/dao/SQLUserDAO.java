@@ -1,7 +1,7 @@
 package dataAccess.dao;
 
 import dataAccess.access.DataAccessException;
-import dataAccess.data.UserData;
+import model.UserData;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -3,7 +3,7 @@ package dataAccess.dao;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dataAccess.access.DataAccessException;
-import dataAccess.data.GameData;
+import model.GameData;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

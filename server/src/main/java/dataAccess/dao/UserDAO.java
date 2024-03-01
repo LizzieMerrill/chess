@@ -1,7 +1,7 @@
 package dataAccess.dao;
 
 import dataAccess.access.DataAccessException;
-import dataAccess.data.UserData;
+import model.UserData;
 
 public interface UserDAO {
     void addUser(UserData userData) throws DataAccessException;

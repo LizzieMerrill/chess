@@ -2,8 +2,8 @@ package service;
 
 import dataAccess.dao.AuthDAO;
 import dataAccess.dao.UserDAO;
-import dataAccess.data.AuthData;
-import dataAccess.data.UserData;
+import model.AuthData;
+import model.UserData;
 import requests.ErrorObject;
 import requests.RegisterResponse;
 

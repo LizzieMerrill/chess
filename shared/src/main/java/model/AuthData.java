@@ -1,4 +1,4 @@
-package dataAccess.data;
+package model;
 
 import java.util.Objects;
 import java.util.UUID;

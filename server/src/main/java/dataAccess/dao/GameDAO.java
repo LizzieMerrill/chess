@@ -1,7 +1,7 @@
 package dataAccess.dao;
 
 import dataAccess.access.DataAccessException;
-import dataAccess.data.GameData;
+import model.GameData;
 import java.util.Collection;
 
 

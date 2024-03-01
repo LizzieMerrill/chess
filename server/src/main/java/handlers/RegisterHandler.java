@@ -5,7 +5,7 @@ import dataAccess.dao.AuthDAO;
 import dataAccess.dao.UserDAO;
 import requests.RegisterResponse;
 import service.UserService;
-import dataAccess.data.UserData;
+import model.UserData;
 import spark.Request;
 import spark.Response;
 import spark.Route;
