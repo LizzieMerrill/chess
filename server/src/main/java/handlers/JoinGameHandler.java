@@ -110,7 +110,7 @@ public class JoinGameHandler extends Server implements Route {
                 response.status(401); // Unauthorized
             }
             else if (result.message().contains("Error: already taken")) {
-                response.status(403); // Unauthorized
+                response.status(403); // color taken
             }
             else{
                 response.status(500);

@@ -134,9 +134,15 @@ public class MemoryGameDAO implements GameDAO {
         return -1; // Return -1 if gameId is out of bounds
     }
 
+    @Override
+    public boolean isWhiteTaken(int gameId) {
+        return getGame(gameId).getWhiteUsername() != null;
+    }
 
+    @Override
+    public boolean isBlackTaken(int gameId) {
+        return getGame(gameId).getBlackUsername() != null;
+    }
 
-
-    // Other methods...
 
 }

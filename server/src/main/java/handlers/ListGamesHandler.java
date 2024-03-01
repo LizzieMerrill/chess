@@ -23,34 +23,35 @@ import java.util.List;
 import java.util.Objects;
 
 public class ListGamesHandler extends Server implements Route {
-//    AuthDAO authDAO;
+    //    AuthDAO authDAO;
 //    UserDAO userDAO;
 //    GameDAO gameDAO;
     UserService userService;
     DataService dataService;
     private final Gson gson = new Gson();
 
-    public ListGamesHandler(AuthDAO authDAO, GameDAO gameDAO, UserDAO userDAO){
+    public ListGamesHandler(AuthDAO authDAO, GameDAO gameDAO, UserDAO userDAO) {
 //        this.authDAO = authDAO;
 //        this.userDAO = userDAO;
 //        this.gameDAO = gameDAO;
         this.userService = new UserService(authDAO, userDAO);
         this.dataService = new DataService(authDAO, userDAO, gameDAO);
     }
+
     @Override
     public Object handle(Request request, Response response) throws Exception {
         //Collection<GameData> gamesList = dataService.listGames(request.headers("Authorization")).games();
-            ListResponse listResponse = dataService.listGames(request.headers("Authorization"));
-            if(listResponse.message() == null){
-                response.status(200);
-            }
-            else if(listResponse.message().contains("Error: unauthorized")){
-                response.status(401);
-            }
-            else{
-                response.status(500);
-            }
-            return new Gson().toJson(listResponse);
+        ListResponse listResponse = dataService.listGames(request.headers("Authorization"));
+        if (listResponse.message() == null) {
+            response.status(200);
+        } else if (listResponse.message().contains("Error: unauthorized")) {
+            response.status(401);
+        } else {
+            response.status(500);
+        }
+        return new Gson().toJson(listResponse);
+    }
+}
 //            // Check if there are no games
 //            if (gamesList == null || gamesList.isEmpty()) {
 //                response.type("application/json");
@@ -89,7 +90,7 @@ public class ListGamesHandler extends Server implements Route {
 //        }
 //        response.status(200);
 //        return gson.toJson(gamesList);
-    }
+
 
 //    @Override
 //    public boolean equals(Object o) {
@@ -104,7 +105,7 @@ public class ListGamesHandler extends Server implements Route {
 //    public int hashCode() {
 //        return Objects.hash(super.hashCode(), userService, dataService, gson);
 //    }
-}
+
 
 
 

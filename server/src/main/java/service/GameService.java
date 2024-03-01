@@ -33,74 +33,137 @@ public class GameService {
         this.userDAO = userDAO;
     }
 
+//    public JoinResponse join(String authToken, int gameId, ChessGame.TeamColor teamColor) {
+//        try {
+//            // Check if the request contains a valid Authorization header
+//            if (authToken == null || !authDAO.isValidAuthToken(authToken)) {
+//                return new JoinResponse("Error: unauthorized");
+//                //return createErrorResponse(401, "Error: Unauthorized");
+////                response.status(403);
+////                return gson.toJson(new StandardResponse(403, "Error: already taken"));
+//            }
+//
+//            // Check if the game ID in the request is valid (e.g., not null or empty)
+//            else if (gameId == 0 || gameId == -1 || gameDAO.getGame(gameId) == null) {
+//                return new JoinResponse("Error: bad request");
+//            }
+//
+////            // Check if the user is authorized to update the game
+////            else if (!gameDAO.isPlayerInGame(authToken, gameId)) {
+////                return createErrorResponse(401, "Error: Unauthorized - You are not authorized to update this game");
+////            }
+//
+//            // Check if the team color is invalid (e.g., not "WHITE" or "BLACK")
+////            else if (!isValidTeamColor(teamColor)) {
+////                return createErrorResponse(403, "Error: already taken");
+////            }
+////            else if((!(gameDAO.getGame(gameId).getWhiteUsername() == null) && teamColor == ChessGame.TeamColor.WHITE)
+////                    || (!(gameDAO.getGame(gameId).getBlackUsername() == null) && teamColor == ChessGame.TeamColor.BLACK)){
+//            else if ((teamColor == ChessGame.TeamColor.WHITE && gameDAO.getGame(gameId).getWhiteUsername() != null) ||
+//                    (teamColor == ChessGame.TeamColor.BLACK && gameDAO.getGame(gameId).getBlackUsername() != null)) {
+//                return new JoinResponse("Error: already taken");
+//            }
+//            else {//success criteria
+//
+//                // Your implementation for updating a game
+//                // Example: gameDAO.updateGame(request.body());
+//                // Adapt based on how your client sends game data in the request.
+//
+//                // Check if there are one or more spectators
+////                int spectatorCount = gameDAO.getSpectatorCount(gameId);
+////
+////                // Check if people are joining an already created game
+////                boolean isGameCreated = gameDAO.getGame(gameId) != null;
+////                //gameDAO.updateGame();
+////
+////                // Your additional logic here...
+////
+////                // Return a success message as JSON
+////                JsonObject jsonResponse = new JsonObject();
+////                jsonResponse.addProperty("status", "success");
+////                jsonResponse.addProperty("message", "Game updated successfully");
+////                jsonResponse.addProperty("spectatorCount", spectatorCount);
+////                jsonResponse.addProperty("isGameCreated", isGameCreated);
+//
+//                if(teamColor == ChessGame.TeamColor.WHITE){
+//                    gameDAO.getGame(gameId).setWhiteUsername(authDAO.getByAuthToken(authToken));
+//                }
+//                else if(teamColor == ChessGame.TeamColor.BLACK){
+//                    gameDAO.getGame(gameId).setBlackUsername(authDAO.getByAuthToken(authToken));
+//                }
+//                else{
+//                    gameDAO.getGame(gameId).setWatcherUsername(authDAO.getByAuthToken(authToken));
+//                }
+//                gameDAO.updateGame(gameDAO.getGame(gameId), authDAO.getByAuthToken(authToken));
+//                return new JoinResponse(null);//success
+//            }
+//
+//
+//        } catch (Exception e) {
+//            return new JoinResponse("Error: " + e.getMessage());
+//        }
+//    }
+
+
     public JoinResponse join(String authToken, int gameId, ChessGame.TeamColor teamColor) {
         try {
+            GameData gameData = gameDAO.getGame(gameId);
             // Check if the request contains a valid Authorization header
             if (authToken == null || !authDAO.isValidAuthToken(authToken)) {
                 return new JoinResponse("Error: unauthorized");
-                //return createErrorResponse(401, "Error: Unauthorized");
-//                response.status(403);
-//                return gson.toJson(new StandardResponse(403, "Error: already taken"));
             }
 
             // Check if the game ID in the request is valid (e.g., not null or empty)
-            else if (gameId == 0 || gameId == -1 || gameDAO.getGame(gameId) == null) {
+            else if (gameId <= 0 || gameDAO.getGame(gameId) == null) {
                 return new JoinResponse("Error: bad request");
             }
-
-//            // Check if the user is authorized to update the game
-//            else if (!gameDAO.isPlayerInGame(authToken, gameId)) {
-//                return createErrorResponse(401, "Error: Unauthorized - You are not authorized to update this game");
-//            }
-
-            // Check if the team color is invalid (e.g., not "WHITE" or "BLACK")
-//            else if (!isValidTeamColor(teamColor)) {
-//                return createErrorResponse(403, "Error: already taken");
-//            }
-            else if((!(gameDAO.getGame(gameId).getWhiteUsername() == null) && teamColor == ChessGame.TeamColor.WHITE)
-                    || (!(gameDAO.getGame(gameId).getBlackUsername() == null) && teamColor == ChessGame.TeamColor.BLACK)){
-                return new JoinResponse("Error: already taken");
-            }
-            else {//success criteria
-
-                // Your implementation for updating a game
-                // Example: gameDAO.updateGame(request.body());
-                // Adapt based on how your client sends game data in the request.
-
-                // Check if there are one or more spectators
-//                int spectatorCount = gameDAO.getSpectatorCount(gameId);
+//            } else {
+//                GameData gameData = gameDAO.getGame(gameId);
 //
-//                // Check if people are joining an already created game
-//                boolean isGameCreated = gameDAO.getGame(gameId) != null;
-//                //gameDAO.updateGame();
+////                // Check if the team color is invalid
+////                if (teamColor != null && (teamColor != ChessGame.TeamColor.WHITE && teamColor != ChessGame.TeamColor.BLACK)) {
+////                    return new JoinResponse("Error: invalid team color");
+////                }
 //
-//                // Your additional logic here...
+//                // Check if the team color is already taken by a player
+
+//                else if (teamColor == ChessGame.TeamColor.WHITE && gameData.getWhiteUsername() == null) {
+//                    gameData.setWhiteUsername(authDAO.getByAuthToken(authToken));
+//                }
+//                else if (teamColor == ChessGame.TeamColor.BLACK && gameData.getBlackUsername() == null) {
+//                    gameData.setBlackUsername(authDAO.getByAuthToken(authToken));
+//                }
+//                else if(teamColor == null){
+//                    gameData.setWatcherUsername(authDAO.getByAuthToken(authToken));
+//                }
+                else if ((teamColor == ChessGame.TeamColor.WHITE && gameDAO.isWhiteTaken(gameId)) ||
+                        (teamColor == ChessGame.TeamColor.BLACK && gameDAO.isBlackTaken(gameId))) {
+//                else{
+                    return new JoinResponse("Error: already taken");
+               }
 //
-//                // Return a success message as JSON
-//                JsonObject jsonResponse = new JsonObject();
-//                jsonResponse.addProperty("status", "success");
-//                jsonResponse.addProperty("message", "Game updated successfully");
-//                jsonResponse.addProperty("spectatorCount", spectatorCount);
-//                jsonResponse.addProperty("isGameCreated", isGameCreated);
+//                // If joining as a white player and the position is still available
+//                if (teamColor == ChessGame.TeamColor.WHITE && gameData.getWhiteUsername() == null) {
+//                    gameData.setWhiteUsername(authDAO.getByAuthToken(authToken));
+//                }
+//                // If joining as a black player and the position is still available
+//                else if (teamColor == ChessGame.TeamColor.BLACK && gameData.getBlackUsername() == null) {
+//                    gameData.setBlackUsername(authDAO.getByAuthToken(authToken));
+//                }
+//                // If joining as a spectator or if the requested position is already taken
+//                else {
+//                    gameData.setWatcherUsername(authDAO.getByAuthToken(authToken));
+//                }
 
-                if(teamColor == ChessGame.TeamColor.WHITE){
-                    gameDAO.getGame(gameId).setWhiteUsername(authDAO.getByAuthToken(authToken));
-                }
-                else if(teamColor == ChessGame.TeamColor.BLACK){
-                    gameDAO.getGame(gameId).setBlackUsername(authDAO.getByAuthToken(authToken));
-                }
-                else{
-                    gameDAO.getGame(gameId).setWatcherUsername(authDAO.getByAuthToken(authToken));
-                }
-                gameDAO.updateGame(gameDAO.getGame(gameId), authDAO.getByAuthToken(authToken));
-                return new JoinResponse("");//success
-            }
-
-
-        } catch (Exception e) {
+                gameDAO.updateGame(gameData, authDAO.getByAuthToken(authToken));
+                return new JoinResponse(null); // Success
+            } catch (Exception e) {
             return new JoinResponse("Error: " + e.getMessage());
         }
-    }
+        }
+
+
+
 
     public CreateResponse create(String authToken, String gameName) {
         try {

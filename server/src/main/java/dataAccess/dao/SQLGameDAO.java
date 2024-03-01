@@ -230,6 +230,16 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
+    public boolean isWhiteTaken(int gameId) {
+        return false;//TODO
+    }
+
+    @Override
+    public boolean isBlackTaken(int gameId) {
+        return false;//TODO
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

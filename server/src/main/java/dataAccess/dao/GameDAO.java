@@ -18,4 +18,6 @@ public interface GameDAO {
     boolean isPlayerInGame(String authToken, int gameId);
     Set<String> getWatcherTokens(int gameId);
     int getSpectatorCount(int gameId);
+    boolean isWhiteTaken(int gameId);
+    boolean isBlackTaken(int gameId);
 }

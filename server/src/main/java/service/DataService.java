@@ -32,6 +32,7 @@ import requests.ListResponse;
 import server.StandardResponse;
 import spark.Response;
 
+import java.text.Format;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -68,6 +69,18 @@ try{
         Collection<GameData> gamesList = null;
         if(authDAO.isValidAuthToken(authToken)) {
                     gamesList = gameDAO.getAllGames();
+//             //Format the response as required
+//                        JsonArray formattedGamesList = new JsonArray();
+//                        for (JsonElement gameElement : gamesList) {
+//                            JsonObject gameObject = gameElement.getAsJsonObject();
+//                            JsonObject formattedGame = new JsonObject();
+//                            formattedGame.addProperty("gameID", gameObject.get("gameID").getAsInt());
+//                            formattedGame.addProperty("whiteUsername", gameObject.has("whiteUsername") ? gameObject.get("whiteUsername").getAsString() : null);
+//                            formattedGame.addProperty("blackUsername", gameObject.has("blackUsername") ? gameObject.get("blackUsername").getAsString() : null);
+//                            formattedGame.addProperty("gameName", gameObject.has("gameName") ? gameObject.get("gameName").getAsString() : "");
+//                            formattedGamesList.add(formattedGame);
+//                        }
+//                        return formattedGamesList;
                     return new ListResponse(gamesList, null);
                 }
                 else{
