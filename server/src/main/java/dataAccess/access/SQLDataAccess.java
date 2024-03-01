@@ -15,11 +15,6 @@ public class SQLDataAccess implements DataAccess {
     }
 
     @Override
-    public GameDAO getGameDAO() {
-        return gameDAO;
-    }
-
-    @Override
     public AuthDAO getAuthDAO() {
         return authDAO;
     }

@@ -7,14 +7,6 @@ public class UserData {
     private String password;
     private String email;
 
-    // Constructors
-//    public UserData() {
-//        username = null;
-//        password = null;
-//        email = null;
-//        // Default constructor
-//    }
-
     public UserData(String username, String password, String email) {
         this.username = username;
         this.password = password;

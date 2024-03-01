@@ -7,35 +7,13 @@ import java.util.Objects;
 import java.util.Set;
 
 public class GameData {
-    public static int gameID;
+    public int gameID;
     private String gameData;
     private String whiteUsername;
     private String blackUsername;
     private String gameName;
     private ChessGame game; // Change 'Object' to the actual type of your game
     private Set<String> watcherUsernames;
-
-    // Default constructor
-    // Default constructor
-    public GameData() {
-        whiteUsername = null;
-        blackUsername = null;
-        gameName = null;
-        game = null;
-        watcherUsernames = new HashSet<>();
-    }
-
-    // Constructor with parameters
-    public GameData(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {
-        this.gameID = gameID;
-        this.whiteUsername = whiteUsername;
-        this.blackUsername = blackUsername;
-
-        this.gameName = gameName;
-        this.game = game;
-        this.watcherUsernames = new HashSet<>();
-    }
-
     public GameData(String gameName){
         this.gameName = gameName;
     }
@@ -83,25 +61,6 @@ public class GameData {
     }
     public String getGameData(){
         return gameData;
-    }
-
-    public Set<String> getWatcherUsernames() {
-        return watcherUsernames;
-    }
-
-    public void setWatcherUsername(String watcherUsername) {
-        watcherUsernames.add(watcherUsername);
-    }
-
-    public String getCurrentPlayerAuthToken(String user) {
-        if (user.equals(whiteUsername)) {
-            return whiteUsername;
-        } else if (user.equals(blackUsername)) {
-            return blackUsername;
-        } else {
-            // The specified user is not the current player
-            return null;
-        }
     }
 
 

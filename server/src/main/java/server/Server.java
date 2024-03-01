@@ -2,11 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import java.util.Objects;
-import java.util.UUID;
 import handlers.*;
-import service.DataService;
-import service.GameService;
-import service.UserService;
 import spark.Spark;
 import dataAccess.dao.*;
 
@@ -17,11 +13,6 @@ public class Server {
     final GameDAO gameDAO = new MemoryGameDAO();
 
     final AuthDAO authDAO = new MemoryAuthDAO();
-
-
-//    protected final DataService dataService = new DataService(authDAO, userDAO, gameDAO);
-//    protected final UserService userService = new UserService(authDAO, userDAO);
-//    protected final GameService gameService = new GameService(authDAO, userDAO, gameDAO);
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -36,21 +27,9 @@ public class Server {
         Spark.awaitStop();
     }
 
-    protected String generateUniqueAuthToken() {
-        return UUID.randomUUID().toString();
-    }
-
     private void registerEndpoints() {
+        //clear
         Spark.delete("/db", new ClearHandler(authDAO, userDAO, gameDAO));
-//        Spark.delete("/db", (request, response) -> {
-////            try {
-////                gameDAO.clearChessData();
-////                return gson.toJson(new StandardResponse(200, "Chess data cleared successfully"));
-////            } catch (Exception e) {
-////                response.status(500);
-////                return gson.toJson(new StandardResponse(500, "Error: " + e.getMessage()));
-////            }
-//        });
 
         //logout
         Spark.delete("/session", new LogoutHandler(authDAO));
@@ -70,15 +49,6 @@ public class Server {
         //list game
         Spark.get("/game", new ListGamesHandler(authDAO, gameDAO, userDAO));
 
-    }
-
-    protected boolean isValidTeamColor(String teamColor) {
-        return "WHITE".equalsIgnoreCase(teamColor) || "BLACK".equalsIgnoreCase(teamColor);
-    }
-
-    // Helper method to check if a string is null or empty
-    protected boolean isNullOrEmpty(String str) {
-        return (str == null || str.trim().isEmpty());
     }
 
 
@@ -104,9 +74,4 @@ public class Server {
                 ", authDAO=" + authDAO +
                 '}';
     }
-
-//    public static void main(String[] args) {
-//        Server server = new Server();
-//        server.run(8080);
-//    }
 }
