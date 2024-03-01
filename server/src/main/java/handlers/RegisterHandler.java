@@ -83,7 +83,6 @@ public class RegisterHandler implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        try {
             UserData userData = gson.fromJson(request.body(), UserData.class);
             RegisterResponse registerResponse = userService.register(userData);
             // Check for bad request
@@ -103,11 +102,8 @@ public class RegisterHandler implements Route {
                 response.status(500);
             }
 
-            return registerResponse;
-        } catch (Exception e) {
-            response.status(500);
-            return gson.toJson(new StandardResponse(500, "Error: " + e.getMessage()));
-        }
+            return new Gson().toJson(registerResponse);
+
     }
 
     private int getStatusCode(String responseJson) {

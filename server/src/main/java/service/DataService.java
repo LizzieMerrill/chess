@@ -27,6 +27,7 @@ import dataAccess.dao.GameDAO;
 import dataAccess.dao.MemoryGameDAO;
 import dataAccess.dao.UserDAO;
 import dataAccess.data.GameData;
+import requests.ErrorObject;
 import server.StandardResponse;
 import spark.Response;
 
@@ -45,7 +46,7 @@ public class DataService {
     private final Gson gson = new Gson();
     //private final GameDAO gameDAO = new MemoryGameDAO();  // You can adjust this based on your actual implementation
 
-    public JsonObject clear() {
+    public ErrorObject clear() {
         JsonObject response = new JsonObject();
         try {
             // Your logic here

@@ -71,6 +71,7 @@ package handlers;
 
 import com.google.gson.Gson;
 import dataAccess.dao.AuthDAO;
+import requests.ErrorObject;
 import server.Server;
 import server.StandardResponse;
 import spark.Request;
@@ -88,20 +89,18 @@ public class LogoutHandler extends Server implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        try {
             String authToken = request.headers("Authorization");
+            ErrorObject returnValue = userService.logout(authToken);
 
-            if (userService.validate(authToken)) {
-                userService.logout(authToken);
+            if (returnValue.message().isEmpty()) {
                 response.status(200);
-                return new Gson().toJson(new StandardResponse(200, "Logout successful"));
-            } else {
-                response.status(401);
-                return new Gson().toJson(new StandardResponse(401, "Error: unauthorized"));
             }
-        } catch (Exception e) {
-            response.status(500);
-            return new Gson().toJson(new StandardResponse(500, "Error: " + e.getMessage()));
-        }
+            else if (returnValue.message().contains("Error: unauthorized")){
+                response.status(401);
+            }
+            else{
+                response.status(500);
+            }
+        return new Gson().toJson(returnValue);
     }
 }

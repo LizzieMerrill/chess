@@ -23,6 +23,7 @@ package handlers;
 
 import com.google.gson.Gson;
 import dataAccess.dao.*;
+import requests.ErrorObject;
 import server.Server;
 import server.StandardResponse;
 import service.DataService;
@@ -42,7 +43,7 @@ public class ClearHandler extends Server implements Route {
         try {
             // Call the service method to clear chess data
             //if(authDAO.isValidAuthToken(request.headers("Authorization"))){
-                dataService.clear();
+                ErrorObject returnValue = dataService.clear();
 
                 // Return success response
                 response.status(200);

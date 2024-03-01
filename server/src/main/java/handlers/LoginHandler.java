@@ -95,7 +95,7 @@ public class LoginHandler extends Server implements Route {
 
                     // Set the status code based on the response
                     //response.status(getStatusCode(loginResponse));
-                    return loginResponse;
+                    return new Gson().toJson(loginResponse);
 //                }
 //                else{
 //                    response.status(401);

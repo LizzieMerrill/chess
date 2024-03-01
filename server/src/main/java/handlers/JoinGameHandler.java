@@ -116,7 +116,7 @@ public class JoinGameHandler extends Server implements Route {
                 response.status(500);
             }
             //else if else if bla bla
-            return result;
+            return new Gson().toJson(result);
 
 
             // Return the result as JSON
