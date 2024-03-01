@@ -87,6 +87,7 @@ import dataAccess.dao.MemoryUserDAO;
 import dataAccess.dao.UserDAO;
 import dataAccess.data.AuthData;
 import dataAccess.data.UserData;
+import requests.RegisterResponse;
 import server.StandardResponse;
 import spark.Response;
 
@@ -125,26 +126,23 @@ public class UserService {
 //        }
 //    }
 
-    public String login(UserData user, Response response) {
+    public RegisterResponse login(UserData user) {
         try {
             UserData storedUserData = userDAO.getUser(user.getUsername());
 
             if (storedUserData != null && storedUserData.getPassword().equals(user.getPassword())) {
                 AuthData authData = new AuthData(storedUserData);
-                response.status(200);
                 authDAO.addAuthToken(authData);
-                return gson.toJson(authData);//return gson.toJson(new StandardResponse(200, storedUserData));
+                return new RegisterResponse(user.getUsername(), authData.getAuthToken(), null);//return authData;//return gson.toJson(new StandardResponse(200, storedUserData));
             } else {
-                response.status(401);
-                return gson.toJson(new StandardResponse(401, "Error: unauthorized"));
+                return new RegisterResponse(null, null, "Error: unauthorized");//return gson.toJson(new StandardResponse(401, "Error: unauthorized"));//(null, null, message unauthorize, 401)
             }
         } catch (Exception e) {
-            response.status(500);
-            return gson.toJson(new StandardResponse(500, "Error: " + e.getMessage()));
+            return new RegisterResponse(null, null, "Error: " + e.getMessage());
         }
     }
 
-    public String register(UserData user, Response response) {
+    public String register(UserData user) {
         try {
             UserData existingUser = userDAO.getUser(user.getUsername());
 

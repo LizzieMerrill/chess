@@ -15,8 +15,7 @@ public interface GameDAO {
     int createGame(String gameData) throws DataAccessException;
     void updateGame(GameData gameData, String currentPlayersUsername);
     Collection<GameData> getAllGames();
-    boolean isPlayerInGame(String authToken, String gameId);
-    Set<String> getWatcherTokens(String gameId);
-    int getSpectatorCount(String gameId);
-    boolean isGameCreated(String gameId);
+    boolean isPlayerInGame(String authToken, int gameId);
+    Set<String> getWatcherTokens(int gameId);
+    int getSpectatorCount(int gameId);
 }

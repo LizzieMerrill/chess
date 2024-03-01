@@ -52,6 +52,7 @@ import dataAccess.dao.AuthDAO;
 import dataAccess.dao.UserDAO;
 import dataAccess.data.AuthData;
 import dataAccess.data.UserData;
+import requests.RegisterResponse;
 import server.Server;
 import server.StandardResponse;
 import service.UserService;
@@ -79,7 +80,18 @@ public class LoginHandler extends Server implements Route {
 
 
                     // Authenticate the user using the UserService
-                    String loginResponse = userService.login(userData, response);
+                    RegisterResponse loginResponse = userService.login(userData);
+
+                    if(loginResponse.message().isEmpty()){
+                        response.status(200);
+                    }
+                    else if(loginResponse.message().contains("unauthorized")){
+                        response.status(401);
+                    }
+                    else{
+                        response.status(500);
+                    }
+
 
                     // Set the status code based on the response
                     //response.status(getStatusCode(loginResponse));

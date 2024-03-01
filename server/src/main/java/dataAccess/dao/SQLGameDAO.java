@@ -185,14 +185,14 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public boolean isPlayerInGame(String authToken, String gameId) {
+    public boolean isPlayerInGame(String authToken, int gameId) {
         // Implement the logic to check if the player with authToken is in the game with gameId
         // You'll need to query your database to get the relevant information
         // Update the SQL query and logic based on your database schema
         String sql = "SELECT COUNT(*) FROM game_players WHERE game_id = ? AND player_token = ?";
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, gameId);
+            statement.setInt(1, gameId);
             statement.setString(2, authToken);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -206,13 +206,13 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public Set<String> getWatcherTokens(String gameId) {
+    public Set<String> getWatcherTokens(int gameId) {
         Set<String> watcherTokens = new HashSet<>();
         try {
             // Implement SQL SELECT to retrieve watcher tokens for the given game
             String sql = "SELECT watcher_token FROM watchers WHERE game_id = ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setInt(1, Integer.parseInt(gameId));
+                statement.setInt(1, gameId);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     watcherTokens.add(resultSet.getString("watcher_token"));
@@ -223,13 +223,9 @@ public class SQLGameDAO implements GameDAO {
         }
         return watcherTokens;
     }
-    @Override
-    public boolean isGameCreated(String gameId) {
-        return true;//TODO
-    }
 
     @Override
-    public int getSpectatorCount(String gameId) {
+    public int getSpectatorCount(int gameId) {
         return 0;//TODO
     }
 

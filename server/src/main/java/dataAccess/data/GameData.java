@@ -7,13 +7,13 @@ import java.util.Objects;
 import java.util.Set;
 
 public class GameData {
-    private int gameID;
+    public static int gameID;
     private String gameData;
     private String whiteUsername;
     private String blackUsername;
     private String gameName;
     private ChessGame game; // Change 'Object' to the actual type of your game
-    private Set<String> watcherTokens;
+    private Set<String> watcherUsernames;
 
     // Default constructor
     // Default constructor
@@ -22,7 +22,7 @@ public class GameData {
         blackUsername = null;
         gameName = null;
         game = null;
-        watcherTokens = new HashSet<>();
+        watcherUsernames = new HashSet<>();
     }
 
     // Constructor with parameters
@@ -30,9 +30,10 @@ public class GameData {
         this.gameID = gameID;
         this.whiteUsername = whiteUsername;
         this.blackUsername = blackUsername;
+
         this.gameName = gameName;
         this.game = game;
-        this.watcherTokens = new HashSet<>();
+        this.watcherUsernames = new HashSet<>();
     }
 
     public GameData(String gameData){
@@ -84,12 +85,12 @@ public class GameData {
         return gameData;
     }
 
-    public Set<String> getWatcherTokens() {
-        return watcherTokens;
+    public Set<String> getWatcherUsernames() {
+        return watcherUsernames;
     }
 
-    public void addWatcherToken(String watcherToken) {
-        watcherTokens.add(watcherToken);
+    public void addWatcherUsername(String watcherUsername) {
+        watcherUsernames.add(watcherUsername);
     }
 
     public String getCurrentPlayerAuthToken(String user) {

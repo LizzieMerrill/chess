@@ -58,11 +58,16 @@
 //}
 package handlers;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataAccess.dao.AuthDAO;
 import dataAccess.dao.GameDAO;
 import dataAccess.dao.UserDAO;
+import dataAccess.data.GameData;
+import dataAccess.data.UserData;
+import requests.JoinObject;
+import requests.JoinResponse;
 import server.Server;
 import server.StandardResponse;
 import service.GameService;
@@ -74,6 +79,7 @@ import spark.Route;
 public class JoinGameHandler extends Server implements Route {
     UserService userService;
     GameService gameService;
+    private final Gson gson = new Gson();
 
     public JoinGameHandler(AuthDAO authDAO, GameDAO gameDAO, UserDAO userDAO){
 //        this.authDAO = authDAO;
@@ -85,27 +91,41 @@ public class JoinGameHandler extends Server implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        try {
+        //try {
+            JoinObject joinObject = gson.fromJson(request.body(), JoinObject.class);
+            int gameId = joinObject.gameID();
+            ChessGame.TeamColor teamColorParam = joinObject.playerColor();
+
             // Check if the request contains a valid Authorization header
             String authToken = request.headers("Authorization");
-            if (authToken == null || !gameService.validate(authToken)) {
-                response.status(401); // Unauthorized
-                return new Gson().toJson(new StandardResponse(401, "Error: Unauthorized"));
+            JoinResponse result = gameService.join(authToken, gameId, teamColorParam);
+
+            if(result.message().isEmpty()){
+                response.status(200);
             }
+            else if (result.message().contains("Error: bad request")) {
+                response.status(400); //bad request
+            }
+            else if (result.message().contains("Error: unauthorized")) {
+                response.status(401); // Unauthorized
+            }
+            else if (result.message().contains("Error: already taken")) {
+                response.status(403); // Unauthorized
+            }
+            else{
+                response.status(500);
+            }
+            //else if else if bla bla
+            return result;
 
-            // Extract necessary parameters from the request
-            String gameId = request.queryParams("gameId");
-            String teamColorParam = request.queryParams("teamColor");
-
-            // Call the GameService to handle the logic
-            JsonObject result = gameService.join(authToken, gameId, teamColorParam);
 
             // Return the result as JSON
-            response.type("application/json");
-            return new Gson().toJson(result);
-        } catch (Exception e) {
-            response.status(500);
-            return new Gson().toJson(new StandardResponse(500, "Error: " + e.getMessage()));
-        }
+            //response.status(200);
+//            response.type("application/json");
+//            return new Gson().toJson(result);
+//        } catch (Exception e) {
+//
+//            return new Gson().toJson(new StandardResponse(500, "Error: " + e.getMessage()));
+//        }
     }
 }

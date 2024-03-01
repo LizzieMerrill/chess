@@ -108,28 +108,24 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public boolean isPlayerInGame(String authToken, String gameId) {
+    public boolean isPlayerInGame(String authToken, int gameId) {
         // Assuming a player is considered in the game if they are a watcher
         return getWatcherTokens(gameId).contains(authToken);
     }
 
     @Override
-    public Set<String> getWatcherTokens(String gameId) {
-        return watchers.getOrDefault(Integer.parseInt(gameId), Collections.emptySet());
+    public Set<String> getWatcherTokens(int gameId) {
+        return watchers.getOrDefault((gameId), Collections.emptySet());
     }
 
-    @Override
-    public boolean isGameCreated(String gameId) {
-        return listOfGames.contains(gameId);
-    }
 
     @Override
-    public int getSpectatorCount(String gameId) {
-        if (!isGameCreated(gameId)) {
+    public int getSpectatorCount(int gameId) {
+        if (getGame(gameId) == null) {
             return -1; // or throw an exception, depending on your design
         }
 
-        int index = Integer.parseInt(gameId) - 1;
+        int index = gameId - 1;
         if (index >= 0 && index < watchers.size()) {
             Set<String> spectatorSet = watchers.get(index);
             return spectatorSet.size();
@@ -137,6 +133,7 @@ public class MemoryGameDAO implements GameDAO {
 
         return -1; // Return -1 if gameId is out of bounds
     }
+
 
 
 

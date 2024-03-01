@@ -1,5 +1,5 @@
 package requests;
 
-record UserPassObject(String username, String password) {
+public record UserPassObject(String username, String password) {
 
 }
