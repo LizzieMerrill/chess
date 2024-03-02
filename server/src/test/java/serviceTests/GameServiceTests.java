@@ -45,6 +45,14 @@ public class GameServiceTests {
         RegisterResponse registration = userService.register(testUser6);
         userService.login(testUser6);
 
-        assertEquals(new CreateResponse(gameDAO.createGame("awesome game"), null), gameService.create(registration.authToken(), "awesomegame"));
+        CreateResponse expected = new CreateResponse(gameDAO.createGame("awesome game"), null);
+
+        dataService.clear();
+
+        UserData testUser7 = new UserData("user7", "pass7", "eail7@email.com");
+        RegisterResponse registration2 = userService.register(testUser7);
+        userService.login(testUser7);
+
+        assertEquals(expected, gameService.create(registration2.authToken(), "awesome game"));
     }
 }

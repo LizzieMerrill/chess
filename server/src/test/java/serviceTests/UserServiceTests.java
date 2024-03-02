@@ -42,8 +42,10 @@ public class UserServiceTests {
         @Test
         void logoutTest() throws Exception {
             UserData testUser5 = new UserData("user5", "pass5", "eail5@email.com");
-            RegisterResponse registration = userService.register(testUser5);
-            userService.login(testUser5);
+            userService.register(testUser5);
+            RegisterResponse registration = userService.login(testUser5);
+
+            userService.logout(registration.authToken());
 
         assertFalse(authDAO.isValidAuthToken(registration.authToken()));
         }

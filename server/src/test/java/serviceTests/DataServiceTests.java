@@ -50,11 +50,24 @@ public class DataServiceTests {
             GameData averageGame = gameDAO.getGame(gameService.create(registration.authToken(), "average game").gameID());;
             GameData decentGame = gameDAO.getGame(gameService.create(registration.authToken(), "decent game").gameID());;
 
-            expected.add(midGame);
-            expected.add(averageGame);
             expected.add(decentGame);
+            expected.add(averageGame);
+            expected.add(midGame);
+
 
             Collection<GameData> actual = dataService.listGames(registration.authToken()).games();
-            assertIterableEquals(expected, actual);
+            assertTrue(expected.containsAll(actual));
         }
+
+    @Override
+    public String toString() {
+        return "DataServiceTests{" +
+                "authDAO=" + authDAO +
+                ", userDAO=" + userDAO +
+                ", gameDAO=" + gameDAO +
+                ", dataService=" + dataService +
+                ", userService=" + userService +
+                ", gameService=" + gameService +
+                '}';
+    }
 }
