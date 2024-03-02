@@ -35,7 +35,7 @@ public class DataService {
         try{
         Collection<GameData> gamesList = null;
         if(authDAO.isValidAuthToken(authToken)) {
-            gamesList = gameDAO.getAllGames();
+            gamesList = gameDAO.getAllGameData();
             return new ListResponse(gamesList, null);
         }
         else{

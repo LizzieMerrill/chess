@@ -5,7 +5,7 @@ import java.util.*;
 
 public class MemoryGameDAO implements GameDAO {
 
-    private final Map<Integer, GameData> gameDataMap;
+    public Map<Integer, GameData> gameDataMap;
     private int nextGameId = 1;
 
     public MemoryGameDAO() {
@@ -41,7 +41,13 @@ public class MemoryGameDAO implements GameDAO {
 
 
     @Override
-    public Collection<GameData> getAllGames() {
+    public Collection<GameData> getAllGameData() {
         return gameDataMap.values();
     }
+
+    @Override
+    public Map<Integer, GameData> getGameList() {
+        return gameDataMap;
+    }
+
 }

@@ -3,6 +3,7 @@ package dataAccess.dao;
 import model.AuthData;
 
 import java.sql.*;
+import java.util.Map;
 import java.util.Objects;
 
 public class SQLAuthDAO implements AuthDAO {
@@ -97,6 +98,11 @@ public class SQLAuthDAO implements AuthDAO {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public Map<String, AuthData> getAuthList() {
+        return null;
     }
 
 

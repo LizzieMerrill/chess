@@ -97,7 +97,7 @@ public class SQLGameDAO implements GameDAO {
 
 
     @Override
-    public Collection<GameData> getAllGames() {
+    public Collection<GameData> getAllGameData() {
         List<GameData> games = new ArrayList<>();
 
         try (Connection connection = getConnection(jdbcUrl, username, password)) {
@@ -122,6 +122,11 @@ public class SQLGameDAO implements GameDAO {
 
         //return the JSON array as a string, or an empty JSON object if the array is empty
         return null;//TODO
+    }
+
+    @Override
+    public Map<Integer, GameData> getGameList() {
+        return null;
     }
 
     @Override

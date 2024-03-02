@@ -3,12 +3,14 @@ package dataAccess.dao;
 import dataAccess.access.DataAccessException;
 import model.GameData;
 import java.util.Collection;
+import java.util.Map;
 
 
 public interface GameDAO {
     GameData getGame(int gameID);
     void clearChessData();
-    int createGame(String gameData) throws DataAccessException;
+    int createGame(String gameName) throws DataAccessException;
     void updateGame(GameData gameData);
-    Collection<GameData> getAllGames();
+    Collection<GameData> getAllGameData();
+    Map<Integer, GameData> getGameList();
 }

@@ -1,9 +1,7 @@
 package model;
 
 import chess.ChessGame;
-
 import java.util.Objects;
-import java.util.Set;
 
 public class GameData {
     public int gameID;
@@ -12,7 +10,6 @@ public class GameData {
     private String blackUsername;
     private String gameName;
     private ChessGame game; // Change 'Object' to the actual type of your game
-    private Set<String> watcherUsernames;
     public GameData(String gameName){
         this.gameName = gameName;
     }
@@ -41,14 +38,6 @@ public class GameData {
 
     public void setBlackUsername(String blackUsername) {
         this.blackUsername = blackUsername;
-    }
-
-    public String getGameName() {
-        return gameName;
-    }
-
-    public void setGameName(String gameName) {
-        this.gameName = gameName;
     }
 
     public Object getGame() {

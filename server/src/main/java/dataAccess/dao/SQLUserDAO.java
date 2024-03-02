@@ -8,6 +8,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 
 public class SQLUserDAO implements UserDAO {
@@ -63,6 +65,9 @@ public class SQLUserDAO implements UserDAO {
     @Override
     public void clearUserData() {
         //TODO
+    }
+    public Collection<UserData> getUserList(){
+        return new HashSet<UserData>();
     }
 
     @Override

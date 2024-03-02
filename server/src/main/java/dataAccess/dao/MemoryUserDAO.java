@@ -8,7 +8,7 @@ import java.util.HashSet;
 
 public class MemoryUserDAO implements UserDAO {
 
-    private static final Collection<UserData> users = new HashSet<>();
+    public final Collection<UserData> users = new HashSet<>();
     @Override
     public void addUser(UserData userData) {
         users.add(userData);
@@ -22,6 +22,9 @@ public class MemoryUserDAO implements UserDAO {
             }
         }
         return null;
+    }
+    public Collection<UserData> getUserList(){
+        return users;
     }
 
     @Override
