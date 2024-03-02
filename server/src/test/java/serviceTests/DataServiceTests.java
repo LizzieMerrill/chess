@@ -14,9 +14,9 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 public class DataServiceTests {
 
-    AuthDAO authDAO = new MemoryAuthDAO();
-    UserDAO userDAO = new MemoryUserDAO();
-    GameDAO gameDAO = new MemoryGameDAO();
+    AuthDAO authDAO = new SQLAuthDAO();
+    UserDAO userDAO = new SQLUserDAO();
+    GameDAO gameDAO = new SQLGameDAO();
         final DataService dataService = new DataService(authDAO, userDAO, gameDAO);
         final UserService userService = new UserService(authDAO, userDAO);
         final GameService gameService = new GameService(authDAO, userDAO, gameDAO);
