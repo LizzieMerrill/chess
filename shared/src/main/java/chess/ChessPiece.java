@@ -235,11 +235,6 @@ public class ChessPiece {
             }
         }
     }
-    private void addValidMovesFromFunction(Collection<ChessMove> newMoves, Collection<ChessMove> existingMoves){
-        for (ChessMove move : newMoves){
-            existingMoves.add(move);
-        }
-    }
 
 
 
