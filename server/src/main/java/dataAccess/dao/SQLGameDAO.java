@@ -34,7 +34,7 @@ public class SQLGameDAO implements GameDAO {
             preparedStatement.setInt(1, gameID);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    //TODO
+
                 }
             }
         } catch (SQLException e) {
@@ -121,7 +121,7 @@ public class SQLGameDAO implements GameDAO {
         }
 
         //return the JSON array as a string, or an empty JSON object if the array is empty
-        return null;//TODO
+        return null;
     }
 
     @Override

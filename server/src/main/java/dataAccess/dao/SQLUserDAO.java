@@ -64,7 +64,7 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public void clearUserData() {
-        //TODO
+
     }
     public Collection<UserData> getUserList(){
         return new HashSet<UserData>();

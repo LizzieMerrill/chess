@@ -82,9 +82,6 @@ public class ChessPiece {
                 validMoves.addAll(getPawnMoves(board, myPosition));
                 break;
         }
-
-
-     //   System.out.println("Valid moves for piece at " + myPosition + ": " + validMoves);
         return validMoves;
     }
 
@@ -95,12 +92,8 @@ public class ChessPiece {
 
 
     public void setFirstMove(boolean firstMove) {
-      //  System.out.println("setFirstMove called for piece: " + this);
-       // System.out.println("Before setFirstMove - firstMove: " + this.firstMove);
 
         this.firstMove = firstMove;
-
-      //  System.out.println("After setFirstMove - firstMove: " + this.firstMove);
     }
 
 
@@ -149,22 +142,7 @@ public class ChessPiece {
 
             ChessPosition to = new ChessPosition(myPosition.getRow() + rowChange, myPosition.getColumn() + colChange);
 
-            while (board.isValidPosition(to)) {
-                ChessPiece pieceAtNewPosition = board.getPiece(to);
-
-                if (pieceAtNewPosition == null) {
-                    addValidMove(validMoves, board, myPosition, to.getRow()- myPosition.getRow(), to.getColumn() - myPosition.getColumn(), null);
-                } else {//opponent check
-                    if (pieceAtNewPosition.getTeamColor() != colorOfPiece) {
-                        addValidMove(validMoves, board, myPosition, to.getRow()- myPosition.getRow(), to.getColumn() - myPosition.getColumn(), null);
-                    }
-                    break;  // stop at any piece
-                }
-
-//                //next diagonal position
-                to = new ChessPosition(to.getRow() + rowChange, to.getColumn() + colChange);
-              //lollllllllllllllllll  System.out.println(board.isValidPosition(to));
-            }
+            addValidMove(whileLooping(validMoves, board, myPosition, to, rowChange, colChange), board, myPosition, rowChange, colChange, null);
         }
 
         return validMoves;
@@ -183,23 +161,7 @@ public class ChessPiece {
 
             ChessPosition to = new ChessPosition(myPosition.getRow() + rowChange, myPosition.getColumn() + colChange);
 
-            while (board.isValidPosition(to)) {
-                ChessPiece pieceAtNewPosition = board.getPiece(to);
-
-                if (pieceAtNewPosition == null) {
-                    // If the position is empty, add the move
-                    addValidMove(validMoves, board, myPosition, to.getRow() - myPosition.getRow(), to.getColumn() - myPosition.getColumn(), null);
-                } else {
-                    // If the position contains a piece, check if it's an opponent's piece and then add the move
-                    if (pieceAtNewPosition.getTeamColor() != colorOfPiece) {
-                        addValidMove(validMoves, board, myPosition, to.getRow() - myPosition.getRow(), to.getColumn() - myPosition.getColumn(), null);
-                    }
-                    break;  //stop at piece
-                }
-
-                // next position
-                to = new ChessPosition(to.getRow() + rowChange, to.getColumn() + colChange);
-            }
+            addValidMove(whileLooping(validMoves, board, myPosition, to, rowChange, colChange), board, myPosition, rowChange, colChange, null);
         }
 
         return validMoves;
@@ -296,6 +258,25 @@ public class ChessPiece {
         moves.add(new ChessMove(myPosition, moveForward, ChessPiece.PieceType.ROOK));
         moves.add(new ChessMove(myPosition, moveForward, ChessPiece.PieceType.BISHOP));
         moves.add(new ChessMove(myPosition, moveForward, ChessPiece.PieceType.KNIGHT));
+    }
+
+    private Collection<ChessMove> whileLooping(Collection<ChessMove> validMoves, ChessBoard board, ChessPosition myPosition, ChessPosition to, int rowChange, int colChange){
+        while (board.isValidPosition(to)) {
+            ChessPiece pieceAtNewPosition = board.getPiece(to);
+
+            if (pieceAtNewPosition == null) {
+                addValidMove(validMoves, board, myPosition, to.getRow()- myPosition.getRow(), to.getColumn() - myPosition.getColumn(), null);
+            } else {//opponent check
+                if (pieceAtNewPosition.getTeamColor() != colorOfPiece) {
+                    addValidMove(validMoves, board, myPosition, to.getRow()- myPosition.getRow(), to.getColumn() - myPosition.getColumn(), null);
+                }
+                break;  // stop at any piece
+            }
+
+            //next diagonal position
+            to = new ChessPosition(to.getRow() + rowChange, to.getColumn() + colChange);
+        }
+        return validMoves;
     }
 
     @Override

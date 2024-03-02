@@ -9,10 +9,6 @@ public class SQLDataAccess implements DataAccess {
     private final GameDAO gameDAO = new SQLGameDAO();
     private final AuthDAO authDAO = new SQLAuthDAO();
 
-    @Override
-    public AuthDAO getAuthDAO() {
-        return authDAO;
-    }
 
     @Override
     public boolean equals(Object o) {

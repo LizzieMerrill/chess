@@ -24,7 +24,7 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public void clearAuthData() {
-        //TODO
+
     }
 
 
