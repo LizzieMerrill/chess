@@ -9,10 +9,10 @@ import dataAccess.dao.*;
 public class Server {
 
     final Gson gson = new Gson();
-    final UserDAO userDAO = new MemoryUserDAO();
-    final GameDAO gameDAO = new MemoryGameDAO();
+    final UserDAO userDAO = new SQLUserDAO();
+    final GameDAO gameDAO = new SQLGameDAO();
 
-    final AuthDAO authDAO = new MemoryAuthDAO();
+    final AuthDAO authDAO = new SQLAuthDAO();
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);

@@ -13,7 +13,6 @@ public class UserService {
     AuthDAO authDAO;
     UserDAO userDAO;
 
-    UserDAO userDAO2 = new SQLUserDAO();
     public UserService(AuthDAO authDAO, UserDAO userDAO){
         this.authDAO = authDAO;
         this.userDAO = userDAO;
@@ -29,8 +28,6 @@ public class UserService {
                 authDAO.addAuthToken(authData);
                 return new RegisterResponse(user.getUsername(), authData.getAuthToken(), null);//return authData;//return gson.toJson(new StandardResponse(200, storedUserData));
             } else {
-                authDAO.getAuthList();
-                userDAO2.getUserList();
                 return new RegisterResponse(null, null, "Error: unauthorized");//return gson.toJson(new StandardResponse(401, "Error: unauthorized"));//(null, null, message unauthorize, 401)
             }
         } catch (Exception e) {
