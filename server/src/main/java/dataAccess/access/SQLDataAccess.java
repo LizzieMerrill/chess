@@ -10,11 +10,6 @@ public class SQLDataAccess implements DataAccess {
     private final AuthDAO authDAO = new SQLAuthDAO();
 
     @Override
-    public UserDAO getUserDAO() {
-        return userDAO;
-    }
-
-    @Override
     public AuthDAO getAuthDAO() {
         return authDAO;
     }

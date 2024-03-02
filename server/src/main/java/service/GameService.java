@@ -1,9 +1,7 @@
 package service;
 
 import chess.ChessGame;
-import dataAccess.dao.AuthDAO;
-import dataAccess.dao.GameDAO;
-import dataAccess.dao.UserDAO;
+import dataAccess.dao.*;
 import model.AuthData;
 import model.GameData;
 import requests.CreateResponse;
@@ -14,6 +12,7 @@ public class GameService {
     private GameDAO gameDAO;
     private AuthDAO authDAO;
     private UserDAO userDAO;
+    GameDAO gameDAO2 = new SQLGameDAO();
 
     public GameService(AuthDAO authDAO, UserDAO userDAO, GameDAO gameDAO){
         this.gameDAO = gameDAO;
@@ -65,6 +64,9 @@ public class GameService {
     public CreateResponse create(String authToken, String gameName) {
         try {
             // Check if the request contains a valid Authorization header
+            gameDAO.getGameList();
+            gameDAO2.getGameList();
+
             if (authToken == null || !authDAO.isValidAuthToken(authToken)) {
                 return new CreateResponse(null, "Error: unauthorized");
             }
