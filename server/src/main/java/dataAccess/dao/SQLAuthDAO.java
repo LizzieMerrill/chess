@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.Objects;
 
 public class SQLAuthDAO implements AuthDAO {
-    private final String jdbcUrl = "jdbc:mysql://your-database-host:3306/your-database-name";
-    private final String username = "your-username";
-    private final String password = "your-password";
+    private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
+    private final String username = "root";
+    private final String password = "JavaRulez2!";
     private final String authenticateUserQuery = "SELECT * FROM user_table WHERE username = ? AND password = ?";
     private final String addAuthTokenQuery = "INSERT INTO auth_table(authToken, username) VALUES (?, ?)";
     private final String getAuthTokenQuery = "SELECT * FROM auth_table WHERE authToken = ?";

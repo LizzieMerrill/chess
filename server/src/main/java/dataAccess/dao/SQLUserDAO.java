@@ -13,9 +13,9 @@ import java.util.HashSet;
 import java.util.Objects;
 
 public class SQLUserDAO implements UserDAO {
-    private final String jdbcUrl = "jdbc:mysql://your-database-host:3306/your-database-name";
-    private final String username = "your-username";
-    private final String password = "your-password";
+    private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
+    private final String username = "root";
+    private final String password = "JavaRulez2!";
     private final String addUserQuery = "INSERT INTO user_table(username, password, email) VALUES (?, ?, ?)";
     private final String authenticateUserQuery = "SELECT * FROM user_table WHERE username = ? AND password = ?";
 

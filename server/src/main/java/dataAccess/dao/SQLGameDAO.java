@@ -15,9 +15,9 @@ import java.sql.ResultSet;
 
 
 public class SQLGameDAO implements GameDAO {
-    private final String jdbcUrl = "jdbc:mysql://your-database-host:3306/your-database-name";
-    private final String username = "your-username";
-    private final String password = "your-password";
+    private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
+    private final String username = "root";
+    private final String password = "JavaRulez2!";
     private Connection connection = null;
     private DataSource dataSource = null;
     private final String addGameQuery = "INSERT INTO game_table(gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
