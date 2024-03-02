@@ -27,7 +27,7 @@ public class DataServiceTests {
         }
 
     @Test
-    void clearTest() throws Exception {
+    void clearTest() throws Exception {//only needs positive, so just this one
             UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         gameService.create(registration.authToken(), "best game ever");
@@ -40,7 +40,7 @@ public class DataServiceTests {
     }
 
         @Test
-        void listGamesTest() throws Exception {
+        void listGamesTestPositive() throws Exception {
             Collection<GameData> expected = new HashSet<>();
 
             UserData testUser2 = new UserData("user2", "pass2", "eail2@email.com");
@@ -59,15 +59,23 @@ public class DataServiceTests {
             assertTrue(expected.containsAll(actual));
         }
 
-    @Override
-    public String toString() {
-        return "DataServiceTests{" +
-                "authDAO=" + authDAO +
-                ", userDAO=" + userDAO +
-                ", gameDAO=" + gameDAO +
-                ", dataService=" + dataService +
-                ", userService=" + userService +
-                ", gameService=" + gameService +
-                '}';
+    @Test
+    void listGamesTestNegative() throws Exception {
+        Collection<GameData> expected = new HashSet<>();
+
+        UserData testUser8 = new UserData("user8", "pass8", "eail8@email.com");
+        RegisterResponse registration = userService.register(testUser8);
+
+        GameData midGame = gameDAO.getGame(gameService.create(registration.authToken(), "most mid game ever").gameID());
+        GameData averageGame = gameDAO.getGame(gameService.create(registration.authToken(), "average game").gameID());;
+        GameData decentGame = gameDAO.getGame(gameService.create(registration.authToken(), "decent game").gameID());;
+
+        expected.add(decentGame);
+        expected.add(averageGame);
+        expected.add(midGame);
+
+
+        Collection<GameData> actual = dataService.listGames(null).games();
+        assertNull(actual);
     }
 }

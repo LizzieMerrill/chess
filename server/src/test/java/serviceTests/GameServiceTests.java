@@ -14,6 +14,7 @@ import service.GameService;
 import service.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class GameServiceTests {
 
@@ -31,7 +32,7 @@ public class GameServiceTests {
     }
 
         @Test
-        void joinGameTest() throws Exception {
+        void joinGameTestPositive() throws Exception {
             UserData testUser5 = new UserData("user5", "pass5", "eail5@email.com");
             RegisterResponse registration = userService.register(testUser5);
             userService.login(testUser5);
@@ -39,10 +40,20 @@ public class GameServiceTests {
 
             assertEquals(new JoinResponse(null), gameService.join(registration.authToken(), gameID, ChessGame.TeamColor.WHITE));
         }
+
     @Test
-    void createGameTest() throws Exception {
+    void joinGameTestNegative() throws Exception {
+        UserData testUser12 = new UserData("user12", "pass12", "eail12@email.com");
+        RegisterResponse registration = userService.register(testUser12);
+        userService.login(testUser12);
+        int gameID = gameService.create(registration.authToken(), "cool game").gameID();
+
+        assertNotNull(gameService.join(null, gameID, ChessGame.TeamColor.WHITE).message());
+    }
+    @Test
+    void createGameTestPositive() throws Exception {
         UserData testUser6 = new UserData("user6", "pass6", "eail6@email.com");
-        RegisterResponse registration = userService.register(testUser6);
+        userService.register(testUser6);
         userService.login(testUser6);
 
         CreateResponse expected = new CreateResponse(gameDAO.createGame("awesome game"), null);
@@ -54,5 +65,20 @@ public class GameServiceTests {
         userService.login(testUser7);
 
         assertEquals(expected, gameService.create(registration2.authToken(), "awesome game"));
+    }
+
+    @Test
+    void createGameTestNegative() throws Exception {
+        UserData testUser6 = new UserData("user6", "pass6", "eail6@email.com");
+        userService.register(testUser6);
+        userService.login(testUser6);
+
+        dataService.clear();
+
+        UserData testUser7 = new UserData("user7", "pass7", "eail7@email.com");
+        userService.register(testUser7);
+        userService.login(testUser7);
+
+        assertNotNull(gameService.create(null, "awesome game").message());
     }
 }

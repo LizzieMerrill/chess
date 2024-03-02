@@ -18,7 +18,6 @@ public class UserServiceTests {
     GameDAO gameDAO = new MemoryGameDAO();
     final DataService dataService = new DataService(authDAO, userDAO, gameDAO);
     final UserService userService = new UserService(authDAO, userDAO);
-    final GameService gameService = new GameService(authDAO, userDAO, gameDAO);
 
     @BeforeEach
     void clear() throws Exception {
@@ -26,21 +25,34 @@ public class UserServiceTests {
     }
 
         @Test
-        void registerTest() throws Exception {
+        void registerTestPositive() throws Exception {
             UserData testUser3 = new UserData("user3", "pass3", "eail3@email.com");
-            RegisterResponse registration = userService.register(testUser3);
+            userService.register(testUser3);
             assertTrue(userDAO.getUserList().contains(testUser3));
         }
+    @Test
+    void registerTestNegative() throws Exception {
+        new UserData("user9", "pass9", "eail9@email.com");
+        RegisterResponse registration = userService.register(null);
+        assertNotNull(registration.message());
+    }
 
     @Test
-    void loginTest() throws Exception {
+    void loginTestPositive() throws Exception {
         UserData testUser4 = new UserData("user4", "pass4", "eail4@email.com");
         userService.register(testUser4);
         assertEquals(testUser4.getUsername(), userService.login(testUser4).username());
     }
+    @Test
+    void loginTestNegative() throws Exception {
+        UserData testUser10 = new UserData(null, null, null);
+        RegisterResponse response = userService.register(testUser10);
+        assertNotNull(response.message());
+        assertNotNull(userService.login(testUser10).message());
+    }
 
         @Test
-        void logoutTest() throws Exception {
+        void logoutTestPositive() throws Exception {
             UserData testUser5 = new UserData("user5", "pass5", "eail5@email.com");
             userService.register(testUser5);
             RegisterResponse registration = userService.login(testUser5);
@@ -49,5 +61,13 @@ public class UserServiceTests {
 
         assertFalse(authDAO.isValidAuthToken(registration.authToken()));
         }
+    @Test
+    void logoutTestNegative() throws Exception {
+        UserData testUser11 = new UserData("user11", "pass11", "eail11@email.com");
+        userService.register(testUser11);
+        userService.login(testUser11);
+
+        assertNotNull(userService.logout(null).message());
+    }
 
     }
