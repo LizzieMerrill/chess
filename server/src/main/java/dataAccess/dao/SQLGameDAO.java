@@ -2,6 +2,7 @@ package dataAccess.dao;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import dataAccess.DatabaseManager;
 import dataAccess.access.DataAccessException;
 import model.GameData;
 import javax.sql.DataSource;
@@ -10,6 +11,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.*;
 import java.util.*;
+
+import static dataAccess.dao.SQLAuthDAO.checkDatabaseExists;
 import static java.sql.DriverManager.getConnection;
 import java.sql.ResultSet;
 
@@ -20,6 +23,9 @@ public class SQLGameDAO implements GameDAO {
     private final String password = "JavaRulez2!";
     private Connection connection = null;
     private DataSource dataSource = null;
+
+    private final DatabaseManager manager = new DatabaseManager();
+    boolean databaseExists = checkDatabaseExists(jdbcUrl, username, password);
     private final String addGameQuery = "INSERT INTO game_table(gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
     private final String getGameQuery = "SELECT * FROM game_table WHERE gameID = ?";
     private final String clearGameDataQuery = "DELETE FROM game_table"; // Adjust based on your database schema
@@ -28,7 +34,11 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public GameData getGame(int gameID) {
+    public GameData getGame(int gameID) throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
+
         try (Connection connection = getConnection(jdbcUrl, username, password);
              PreparedStatement preparedStatement = connection.prepareStatement(getGameQuery)) {
             preparedStatement.setInt(1, gameID);
@@ -44,7 +54,10 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public void clearChessData() {
+    public void clearChessData() throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
         try (Connection connection = getConnection(jdbcUrl, username, password);
              PreparedStatement preparedStatement = connection.prepareStatement(clearGameDataQuery)) {
 
@@ -57,6 +70,9 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public int createGame(String gameData) throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
         try (Connection connection = getConnection(gameData)) {//NOT RIGHT???
             String query = "INSERT INTO games (game_data) VALUES (?)";
             try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -81,7 +97,10 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(GameData gameData) {
+    public void updateGame(GameData gameData) throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
         String sql = "UPDATE games SET game_data = ?, current_player_username = ? WHERE game_id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -97,7 +116,10 @@ public class SQLGameDAO implements GameDAO {
 
 
     @Override
-    public Collection<GameData> getAllGameData() {
+    public Collection<GameData> getAllGameData() throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
         List<GameData> games = new ArrayList<>();
 
         try (Connection connection = getConnection(jdbcUrl, username, password)) {
@@ -125,7 +147,10 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public Map<Integer, GameData> getGameList() {
+    public Map<Integer, GameData> getGameList() throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
         return null;
     }
 

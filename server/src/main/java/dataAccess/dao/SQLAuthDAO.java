@@ -1,7 +1,8 @@
 package dataAccess.dao;
 
+import dataAccess.access.DataAccessException;
 import model.AuthData;
-
+import dataAccess.DatabaseManager;
 import java.sql.*;
 import java.util.Map;
 import java.util.Objects;
@@ -10,6 +11,8 @@ public class SQLAuthDAO implements AuthDAO {
     private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
     private final String username = "root";
     private final String password = "JavaRulez2!";
+    private final DatabaseManager manager = new DatabaseManager();
+    boolean databaseExists = checkDatabaseExists(jdbcUrl, username, password);
     private final String authenticateUserQuery = "SELECT * FROM user_table WHERE username = ? AND password = ?";
     private final String addAuthTokenQuery = "INSERT INTO auth_table(authToken, username) VALUES (?, ?)";
     private final String getAuthTokenQuery = "SELECT * FROM auth_table WHERE authToken = ?";
@@ -19,17 +22,29 @@ public class SQLAuthDAO implements AuthDAO {
     private final String removeAuthDataQuery = "DELETE FROM auth_table WHERE authToken = ?";
 
     public SQLAuthDAO() {
-        //initialize Class.forName("com.mysql.cj.jdbc.Driver");
+        //manager.createDatabase();
+    }
+    @Override
+    public Map<String, AuthData> getAuthList() throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
+        return null;
     }
 
     @Override
-    public void clearAuthData() {
-
+    public void clearAuthData() throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
     }
 
 
     @Override
-    public void addAuthToken(AuthData authData) {
+    public void addAuthToken(AuthData authData) throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
         try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
              PreparedStatement preparedStatement = connection.prepareStatement(addAuthTokenQuery)) {
             preparedStatement.setString(1, authData.getAuthToken());
@@ -41,12 +56,18 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
     @Override
-    public AuthData getAuthToken(String authToken) {
+    public AuthData getAuthToken(String authToken) throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
         return fetchDataByQuery(getAuthTokenQuery, authToken);
     }
 
     @Override
-    public void removeAuthData(String authToken) {
+    public void removeAuthData(String authToken) throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
         try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
              PreparedStatement preparedStatement = connection.prepareStatement(removeAuthDataQuery)) {
             preparedStatement.setString(1, authToken);
@@ -56,7 +77,10 @@ public class SQLAuthDAO implements AuthDAO {
         }
     }
 
-    private AuthData fetchDataByQuery(String query, String parameter) {
+    private AuthData fetchDataByQuery(String query, String parameter) throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
         try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, parameter);
@@ -71,7 +95,10 @@ public class SQLAuthDAO implements AuthDAO {
         return null;
     }
 
-    public boolean isValidAuthToken(String authToken) {
+    public boolean isValidAuthToken(String authToken) throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
@@ -100,9 +127,14 @@ public class SQLAuthDAO implements AuthDAO {
         }
     }
 
-    @Override
-    public Map<String, AuthData> getAuthList() {
-        return null;
+    static boolean checkDatabaseExists(String databaseUrl, String username, String password) {
+        try {
+            Connection connection = DriverManager.getConnection(databaseUrl, username, password);
+            connection.close();
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
 

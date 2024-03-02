@@ -1,5 +1,6 @@
 package dataAccess.dao;
 
+import dataAccess.DatabaseManager;
 import dataAccess.access.DataAccessException;
 import model.UserData;
 
@@ -12,10 +13,14 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 
+import static dataAccess.dao.SQLAuthDAO.checkDatabaseExists;
+
 public class SQLUserDAO implements UserDAO {
     private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
     private final String username = "root";
     private final String password = "JavaRulez2!";
+    private final DatabaseManager manager = new DatabaseManager();
+    boolean databaseExists = checkDatabaseExists(jdbcUrl, username, password);
     private final String addUserQuery = "INSERT INTO user_table(username, password, email) VALUES (?, ?, ?)";
     private final String authenticateUserQuery = "SELECT * FROM user_table WHERE username = ? AND password = ?";
 
@@ -24,7 +29,10 @@ public class SQLUserDAO implements UserDAO {
     }
 
     @Override
-    public void addUser(UserData userData) {
+    public void addUser(UserData userData) throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
         try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
              PreparedStatement preparedStatement = connection.prepareStatement(addUserQuery)) {
             preparedStatement.setString(1, userData.getUsername());
@@ -38,6 +46,9 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
         try (Connection connection = DriverManager.getConnection(jdbcUrl, this.username, this.password)) {
             String query = "SELECT * FROM user_table WHERE username = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -63,10 +74,16 @@ public class SQLUserDAO implements UserDAO {
     }
 
     @Override
-    public void clearUserData() {
+    public void clearUserData() throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
 
     }
-    public Collection<UserData> getUserList(){
+    public Collection<UserData> getUserList() throws DataAccessException {
+        if (!databaseExists) {
+            manager.createDatabase();
+        }
         return new HashSet<UserData>();
     }
 
