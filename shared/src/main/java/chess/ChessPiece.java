@@ -159,9 +159,9 @@ public class ChessPiece {
             int rowChange = direction[0];
             int colChange = direction[1];
 
-            ChessPosition to = new ChessPosition(myPosition.getRow() + rowChange, myPosition.getColumn() + colChange);
+            ChessPosition destination = new ChessPosition(myPosition.getRow() + rowChange, myPosition.getColumn() + colChange);
 
-            addValidMove(whileLooping(validMoves, board, myPosition, to, rowChange, colChange), board, myPosition, rowChange, colChange, null);
+            addValidMove(whileLooping(validMoves, board, myPosition, destination, rowChange, colChange), board, myPosition, rowChange, colChange, null);
         }
 
         return validMoves;
@@ -235,6 +235,11 @@ public class ChessPiece {
             }
         }
     }
+    private void addValidMovesFromFunction(Collection<ChessMove> newMoves, Collection<ChessMove> existingMoves){
+        for (ChessMove move : newMoves){
+            existingMoves.add(move);
+        }
+    }
 
 
 
@@ -278,6 +283,7 @@ public class ChessPiece {
         }
         return validMoves;
     }
+
 
     @Override
     public String toString() {
