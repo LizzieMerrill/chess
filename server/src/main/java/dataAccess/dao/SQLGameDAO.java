@@ -1,18 +1,18 @@
 package dataAccess.dao;
 
+import chess.ChessGame;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dataAccess.DatabaseManager;
 import dataAccess.access.DataAccessException;
 import model.GameData;
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.*;
 import java.util.*;
 
-import static dataAccess.dao.SQLAuthDAO.checkDatabaseExists;
+import static dataAccess.dao.SQLAuthDAO.dbCreationCheck;
 import static java.sql.DriverManager.getConnection;
 import java.sql.ResultSet;
 
@@ -21,23 +21,19 @@ public class SQLGameDAO implements GameDAO {
     private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
     private final String username = "root";
     private final String password = "JavaRulez2!";
-    private Connection connection = null;
-    private DataSource dataSource = null;
+    Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
 
     private final DatabaseManager manager = new DatabaseManager();
-    boolean databaseExists = checkDatabaseExists(jdbcUrl, username, password);
     private final String addGameQuery = "INSERT INTO game_table(gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
     private final String getGameQuery = "SELECT * FROM game_table WHERE gameID = ?";
-    private final String clearGameDataQuery = "DELETE FROM game_table"; // Adjust based on your database schema
-    public SQLGameDAO(){
-        this.connection = null;
+    private final String clearGameDataQuery = "DELETE FROM game_table";
+    public SQLGameDAO() throws DataAccessException, SQLException {
+        dbCreationCheck(jdbcUrl, username, password);
     }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
-        if (!databaseExists) {
-            manager.createDatabase();
-        }
+        dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
 
         try (Connection connection = getConnection(jdbcUrl, username, password);
              PreparedStatement preparedStatement = connection.prepareStatement(getGameQuery)) {
@@ -55,9 +51,7 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public void clearChessData() throws DataAccessException {
-        if (!databaseExists) {
-            manager.createDatabase();
-        }
+        dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
         try (Connection connection = getConnection(jdbcUrl, username, password);
              PreparedStatement preparedStatement = connection.prepareStatement(clearGameDataQuery)) {
 
@@ -70,9 +64,7 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public int createGame(String gameData) throws DataAccessException {
-        if (!databaseExists) {
-            manager.createDatabase();
-        }
+        dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
         try (Connection connection = getConnection(gameData)) {//NOT RIGHT???
             String query = "INSERT INTO games (game_data) VALUES (?)";
             try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -96,30 +88,86 @@ public class SQLGameDAO implements GameDAO {
         }
     }
 
+//    @Override
+//    public void updateGame(GameData gameData) throws DataAccessException {
+//        dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
+//        String sql = "UPDATE games SET game_data = ?, current_player_username = ? WHERE game_id = ?";
+//
+//        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+//            preparedStatement.setString(1, gameData.getGameData());
+//            preparedStatement.setString(2, Integer.toString(gameData.getGameID()));
+//
+//            //execute the update query
+//            preparedStatement.executeUpdate();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+//    @Override
+//    public void updateGame(GameData gameData, String username) throws DataAccessException {
+//        dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
+//        String sql = "UPDATE games SET game_data = ?, current_player_username = ? WHERE game_id = ?";
+//
+//        try (Connection connection = getConnection("jdbc:mysql://localhost:3306/chess"); // Open a new connection
+//             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+//
+//            preparedStatement.setString(1, gameData.getGameData());
+//            preparedStatement.setString(2, username); // Assuming this is the correct method to get the current player's username
+//            preparedStatement.setInt(3, gameData.getGameID());
+//
+//            // Execute the update query
+//            preparedStatement.executeUpdate();
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            throw new DataAccessException("Error updating game: " + e.getMessage());
+//        }
+//    }
+
     @Override
-    public void updateGame(GameData gameData) throws DataAccessException {
-        if (!databaseExists) {
-            manager.createDatabase();
-        }
-        String sql = "UPDATE games SET game_data = ?, current_player_username = ? WHERE game_id = ?";
+    public void updateGame(GameData gameData, String username) throws DataAccessException {
+        dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, gameData.getGameData());
-            preparedStatement.setString(3, Integer.toString(gameData.getGameID()));
+        try (Connection connection = getConnection("jdbc:mysql://localhost:3306/chess");
+             PreparedStatement insertPlayerStatement = connection.prepareStatement("INSERT INTO players (game_id, username) VALUES (?, ?)");
+             PreparedStatement updateGameStatement = connection.prepareStatement("UPDATE games SET game_data = ?, current_player_username = ? WHERE game_id = ?")) {
 
-            //execute the update query
-            preparedStatement.executeUpdate();
+            connection.setAutoCommit(false); // Start a transaction
+
+            try {
+                // Insert a new player into the 'players' table
+                insertPlayerStatement.setInt(1, gameData.getGameID());
+                insertPlayerStatement.setString(2, username);
+                insertPlayerStatement.executeUpdate();
+
+                // Update the 'games' table
+                updateGameStatement.setString(1, gameData.getGameData());
+                updateGameStatement.setString(2, username);
+                updateGameStatement.setInt(3, gameData.getGameID());
+                updateGameStatement.executeUpdate();
+
+                connection.commit(); // Commit the transaction
+
+            } catch (SQLException e) {
+                connection.rollback(); // Rollback the transaction if an error occurs
+                throw new DataAccessException("Error updating game: " + e.getMessage());
+            } finally {
+                connection.setAutoCommit(true); // Set back to auto-commit mode
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new DataAccessException("Error updating game: " + e.getMessage());
         }
     }
 
 
+
+
     @Override
     public Collection<GameData> getAllGameData() throws DataAccessException {
-        if (!databaseExists) {
-            manager.createDatabase();
-        }
+        dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
         List<GameData> games = new ArrayList<>();
 
         try (Connection connection = getConnection(jdbcUrl, username, password)) {
@@ -148,9 +196,7 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public Map<Integer, GameData> getGameList() throws DataAccessException {
-        if (!databaseExists) {
-            manager.createDatabase();
-        }
+        dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
         return null;
     }
 

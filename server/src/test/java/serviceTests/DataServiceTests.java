@@ -1,6 +1,7 @@
 package serviceTests;
 //clear only needs positive
 
+import dataAccess.access.DataAccessException;
 import dataAccess.dao.*;
 import model.GameData;
 import model.UserData;
@@ -9,6 +10,7 @@ import service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +23,10 @@ public class DataServiceTests {
         final UserService userService = new UserService(authDAO, userDAO);
         final GameService gameService = new GameService(authDAO, userDAO, gameDAO);
 
-        @BeforeEach
+    public DataServiceTests() throws DataAccessException, SQLException {
+    }
+
+    @BeforeEach
         void clear() throws Exception {
             dataService.clear();
         }

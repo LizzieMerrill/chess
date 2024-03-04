@@ -2,9 +2,20 @@ package dataAccess.access;
 
 import dataAccess.dao.*;
 
+import java.sql.SQLException;
 import java.util.Objects;
+import static dataAccess.dao.SQLAuthDAO.dbCreationCheck;
 
 public class SQLDataAccess implements DataAccess {
+
+
+    private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
+    private final String username = "root";
+    private final String password = "JavaRulez2!";
+
+    public SQLDataAccess() throws DataAccessException, SQLException {
+        dbCreationCheck(jdbcUrl, username, password);
+    }
     private final UserDAO userDAO = new SQLUserDAO();
     private final GameDAO gameDAO = new SQLGameDAO();
     private final AuthDAO authDAO = new SQLAuthDAO();

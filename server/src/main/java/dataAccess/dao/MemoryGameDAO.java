@@ -1,5 +1,6 @@
 package dataAccess.dao;
 
+import chess.ChessGame;
 import model.GameData;
 import java.util.*;
 
@@ -34,7 +35,7 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(GameData gameData) {
+    public void updateGame(GameData gameData, String username) {
 //        int gameId = gameData.getGameID();
 //        gameDataMap.put(gameId, gameData);
     }

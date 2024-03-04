@@ -1,5 +1,6 @@
 package serviceTests;
 
+import dataAccess.access.DataAccessException;
 import dataAccess.dao.*;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,15 +10,20 @@ import service.DataService;
 import service.GameService;
 import service.UserService;
 
+import java.sql.SQLException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTests {
 
-    AuthDAO authDAO = new MemoryAuthDAO();
-    UserDAO userDAO = new MemoryUserDAO();
-    GameDAO gameDAO = new MemoryGameDAO();
+    AuthDAO authDAO = new SQLAuthDAO();
+    UserDAO userDAO = new SQLUserDAO();
+    GameDAO gameDAO = new SQLGameDAO();
     final DataService dataService = new DataService(authDAO, userDAO, gameDAO);
     final UserService userService = new UserService(authDAO, userDAO);
+
+    public UserServiceTests() throws DataAccessException, SQLException {
+    }
 
     @BeforeEach
     void clear() throws Exception {

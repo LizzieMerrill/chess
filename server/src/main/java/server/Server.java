@@ -1,18 +1,107 @@
 package server;
 
 import com.google.gson.Gson;
+
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Objects;
+import java.util.logging.Logger;
+
+import dataAccess.access.DataAccessException;
 import handlers.*;
 import spark.Spark;
 import dataAccess.dao.*;
+import javax.sql.DataSource;
+
+import static java.sql.DriverManager.getConnection;
 
 public class Server {
 
     final Gson gson = new Gson();
-    final UserDAO userDAO = new SQLUserDAO();
-    final GameDAO gameDAO = new SQLGameDAO();
+    private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
+    private final String username = "root";
+    private final String password = "JavaRulez2!";
+//    private DataSource dataSource = new DataSource() {
+//        @Override
+//        public Connection getConnection() throws SQLException {
+//            // Implement logic to obtain and return a database connection
+//            try (Connection connection = getConnection(jdbcUrl, username, password);{
+//            return connection;
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        }
+//
+//        @Override
+//        public Connection getConnection(String username, String password) throws SQLException {
+//            // Implement logic to obtain and return a database connection with the provided username and password
+//            return YourDatabaseConnectionProvider.getConnection(username, password);
+//        }
+//
+//        @Override
+//        public PrintWriter getLogWriter() throws SQLException {
+//            // Implement logic to return the log writer
+//            return null; // You can customize this as needed
+//        }
+//
+//        @Override
+//        public void setLogWriter(PrintWriter out) throws SQLException {
+//            // Implement logic to set the log writer
+//        }
+//
+//        @Override
+//        public void setLoginTimeout(int seconds) throws SQLException {
+//            // Implement logic to set the login timeout
+//        }
+//
+//        @Override
+//        public int getLoginTimeout() throws SQLException {
+//            // Implement logic to get the login timeout
+//            return 0; // You can customize this as needed
+//        }
+//
+//        @Override
+//        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+//            // Implement logic to get the parent logger
+//            return null; // You can customize this as needed
+//        }
+//    };
+    final UserDAO userDAO;
 
-    final AuthDAO authDAO = new SQLAuthDAO();
+    {
+        try {
+            userDAO = new SQLUserDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    final GameDAO gameDAO;
+
+    {
+        try {
+            gameDAO = new SQLGameDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    final AuthDAO authDAO;
+
+    {
+        try {
+            authDAO = new SQLAuthDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Server() {
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -50,6 +139,7 @@ public class Server {
         Spark.get("/game", new ListGamesHandler(authDAO, gameDAO, userDAO));
 
     }
+
 
 
     @Override

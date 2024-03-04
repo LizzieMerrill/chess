@@ -1,10 +1,13 @@
 package dataAccessTests;
 
+import dataAccess.access.DataAccessException;
 import dataAccess.dao.*;
 import org.junit.jupiter.api.Test;
 import service.*;
 
 import org.junit.jupiter.api.BeforeEach;
+
+import java.sql.SQLException;
 
 public class SQLAuthDAOTests {
     AuthDAO authDAO = new SQLAuthDAO();
@@ -13,6 +16,10 @@ public class SQLAuthDAOTests {
     final DataService dataService = new DataService(authDAO, userDAO, gameDAO);
     final UserService userService = new UserService(authDAO, userDAO);
     final GameService gameService = new GameService(authDAO, userDAO, gameDAO);
+
+    public SQLAuthDAOTests() throws DataAccessException, SQLException {
+    }
+
     @BeforeEach
     void clear() throws Exception {
         dataService.clear();

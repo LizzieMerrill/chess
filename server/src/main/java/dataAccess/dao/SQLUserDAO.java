@@ -3,7 +3,6 @@ package dataAccess.dao;
 import dataAccess.DatabaseManager;
 import dataAccess.access.DataAccessException;
 import model.UserData;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,26 +12,25 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 
-import static dataAccess.dao.SQLAuthDAO.checkDatabaseExists;
+import static dataAccess.dao.SQLAuthDAO.dbCreationCheck;
 
 public class SQLUserDAO implements UserDAO {
     private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
     private final String username = "root";
     private final String password = "JavaRulez2!";
     private final DatabaseManager manager = new DatabaseManager();
-    boolean databaseExists = checkDatabaseExists(jdbcUrl, username, password);
     private final String addUserQuery = "INSERT INTO user_table(username, password, email) VALUES (?, ?, ?)";
     private final String authenticateUserQuery = "SELECT * FROM user_table WHERE username = ? AND password = ?";
 
-    public SQLUserDAO() {
-        //Class.forName("com.mysql.cj.jdbc.Driver");
+
+    public SQLUserDAO() throws DataAccessException {
+
+        dbCreationCheck(jdbcUrl, username, password);
     }
 
     @Override
     public void addUser(UserData userData) throws DataAccessException {
-        if (!databaseExists) {
-            manager.createDatabase();
-        }
+        dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
         try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
              PreparedStatement preparedStatement = connection.prepareStatement(addUserQuery)) {
             preparedStatement.setString(1, userData.getUsername());
@@ -46,9 +44,7 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
-        if (!databaseExists) {
-            manager.createDatabase();
-        }
+        dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
         try (Connection connection = DriverManager.getConnection(jdbcUrl, this.username, this.password)) {
             String query = "SELECT * FROM user_table WHERE username = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -75,15 +71,11 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public void clearUserData() throws DataAccessException {
-        if (!databaseExists) {
-            manager.createDatabase();
-        }
+        dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
 
     }
     public Collection<UserData> getUserList() throws DataAccessException {
-        if (!databaseExists) {
-            manager.createDatabase();
-        }
+        dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
         return new HashSet<UserData>();
     }
 

@@ -44,12 +44,15 @@ public class GameService {
 
             if(teamColor == ChessGame.TeamColor.WHITE){
                 gameData.setWhiteUsername(authorization.getUsername());
+                gameDAO.updateGame(gameData, authorization.getUsername());
             }
             else if(teamColor == ChessGame.TeamColor.BLACK){
                 gameData.setBlackUsername(authorization.getUsername());
+                gameDAO.updateGame(gameData, authorization.getUsername());
             }
-
-            gameDAO.updateGame(gameData);
+            else{
+                gameDAO.updateGame(gameData, authorization.getUsername());
+            }
             return new JoinResponse(null); // Success
 
             } catch (Exception e) {
