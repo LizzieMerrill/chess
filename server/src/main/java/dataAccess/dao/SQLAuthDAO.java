@@ -212,12 +212,12 @@ public class SQLAuthDAO implements AuthDAO {
     private final String password = "JavaRulez2!";
     private static final DatabaseManager manager = new DatabaseManager();
     private final String authenticateUserQuery = "SELECT * FROM user_table WHERE username = ? AND password = ?";
-    private final String addAuthTokenQuery = "INSERT INTO auth_table(authToken, username) VALUES (?, ?)";
-    private final String getAuthTokenQuery = "SELECT * FROM auth_table WHERE authToken = ?";
-    private final String getByAuthTokenQuery = "SELECT * FROM auth_table WHERE authToken = ?";
+    private final String addAuthTokenQuery = "INSERT INTO auth_table(username, auth_token) VALUES (?, ?)";
+    private final String getAuthTokenQuery = "SELECT * FROM auth_table WHERE auth_token = ?";
+    private final String getByAuthTokenQuery = "SELECT * FROM auth_table WHERE auth_token = ?";
     private final String getByUsernameQuery = "SELECT * FROM auth_table WHERE username = ?";
-    private final String addAuthDataQuery = "INSERT INTO auth_table(authToken, username) VALUES (?, ?)";
-    private final String removeAuthDataQuery = "DELETE FROM auth_table WHERE authToken = ?";
+    private final String addAuthDataQuery = "INSERT INTO auth_table(username, auth_token) VALUES (?, ?)";
+    private final String removeAuthDataQuery = "DELETE FROM auth_table WHERE auth_token = ?";
 
     public SQLAuthDAO() throws DataAccessException {
         dbCreationCheck(jdbcUrl, username, password);
@@ -359,7 +359,6 @@ public class SQLAuthDAO implements AuthDAO {
             createTableIfNotExists("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!", "game_table");
             createTableIfNotExists("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!", "auth_table");
             createTableIfNotExists("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!", "user_table");
-            createTableIfNotExists("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!", "players");
         }
         else{
             manager.createDatabase();
@@ -367,7 +366,6 @@ public class SQLAuthDAO implements AuthDAO {
             createTableIfNotExists("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!", "game_table");
             createTableIfNotExists("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!", "auth_table");
             createTableIfNotExists("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!", "user_table");
-            createTableIfNotExists("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!", "players");
         }
     }
     private static void createTableIfNotExists(String jdbcUrl, String username, String password, String tableName) {
@@ -376,14 +374,31 @@ public class SQLAuthDAO implements AuthDAO {
 
             // Check if the table exists in the database
             if (!tableExists(statement, tableName)) {
-                // If the table doesn't exist, create it
+
                 String createTableQuery = "CREATE TABLE " + tableName + " ("
                         + "id INT PRIMARY KEY AUTO_INCREMENT,"
                         + "column1 VARCHAR(255),"
                         + "column2 INT)";
-
+                // If the table doesn't exist, create it
+                if(tableName.equals("game_table")){
+                    createTableQuery = "CREATE TABLE " + tableName + " ("
+                            + "white_username VARCHAR(255),"
+                            + "black_username VARCHAR(255),"
+                            + "game_name VARCHAR(255),"
+                            + "game_id INT PRIMARY KEY AUTO_INCREMENT)";
+                }
+                if(tableName.equals("user_table")){
+                    createTableQuery = "CREATE TABLE " + tableName + " ("
+                            + "username VARCHAR(255),"
+                            + "password VARCHAR(255),"
+                            + "email VARCHAR(255))";
+                }
+                if(tableName.equals("auth_table")){
+                    createTableQuery = "CREATE TABLE " + tableName + " ("
+                            + "username VARCHAR(255),"
+                            + "auth_token VARCHAR(255))";
+                }
                 statement.executeUpdate(createTableQuery);
-
             }
 
         } catch (SQLException e) {

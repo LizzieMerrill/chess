@@ -14,6 +14,8 @@ import java.util.*;
 
 import static dataAccess.dao.SQLAuthDAO.dbCreationCheck;
 import static java.sql.DriverManager.getConnection;
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
+
 import java.sql.ResultSet;
 
 
@@ -24,9 +26,10 @@ public class SQLGameDAO implements GameDAO {
     Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
 
     private final DatabaseManager manager = new DatabaseManager();
-    private final String addGameQuery = "INSERT INTO game_table(gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
-    private final String getGameQuery = "SELECT * FROM game_table WHERE gameID = ?";
+    private final String addGameQuery = "INSERT INTO game_table(white_username, black_username, game_name, game_id) VALUES (?, ?, ?, ?)";
+    private final String getGameQuery = "SELECT * FROM game_table WHERE game_id = ?";
     private final String clearGameDataQuery = "DELETE FROM game_table";
+    public int nextGameId = 1;
     public SQLGameDAO() throws DataAccessException, SQLException {
         dbCreationCheck(jdbcUrl, username, password);
     }
@@ -56,6 +59,7 @@ public class SQLGameDAO implements GameDAO {
              PreparedStatement preparedStatement = connection.prepareStatement(clearGameDataQuery)) {
 
             preparedStatement.executeUpdate();
+            nextGameId = 1;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -63,14 +67,16 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public int createGame(String gameData) throws DataAccessException {
+    public int createGame(String gameName) throws DataAccessException {
         dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
-        try (Connection connection = getConnection(gameData)) {//NOT RIGHT???
-            String query = "INSERT INTO games (game_data) VALUES (?)";
-            try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-                statement.setString(1, gameData);
+        try (Connection connection = getConnection("jdbc:mysql://localhost:3306/chess")) {
+            String query = "INSERT INTO game_table (white_username, black_username, game_name, game_id) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement statement = connection.prepareStatement(query, RETURN_GENERATED_KEYS)) {
+                statement.setString(3, gameName);
+                int gameId = nextGameId++;
+                statement.setInt(4, gameId);
 
-                int affectedRows = statement.executeUpdate();
+                int affectedRows = statement.executeUpdate(statement.toString());
                 if (affectedRows == 0) {
                     throw new DataAccessException("Creating game failed, no rows affected.");
                 }
@@ -126,26 +132,27 @@ public class SQLGameDAO implements GameDAO {
 //    }
 
     @Override
-    public void updateGame(GameData gameData, String username) throws DataAccessException {
+    public void updateGame(GameData gameData) throws DataAccessException {
         dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
 
         try (Connection connection = getConnection("jdbc:mysql://localhost:3306/chess");
-             PreparedStatement insertPlayerStatement = connection.prepareStatement("INSERT INTO players (game_id, username) VALUES (?, ?)");
-             PreparedStatement updateGameStatement = connection.prepareStatement("UPDATE games SET game_data = ?, current_player_username = ? WHERE game_id = ?")) {
+             //PreparedStatement insertPlayerStatement = connection.prepareStatement("INSERT INTO players (game_id, username) VALUES (?, ?)", RETURN_GENERATED_KEYS);
+             PreparedStatement updateGameStatement = connection.prepareStatement("UPDATE game_table SET white_username = ?, black_username = ?, game_name = ? WHERE game_id = ?", RETURN_GENERATED_KEYS)) {
 
             connection.setAutoCommit(false); // Start a transaction
 
             try {
                 // Insert a new player into the 'players' table
-                insertPlayerStatement.setInt(1, gameData.getGameID());
-                insertPlayerStatement.setString(2, username);
-                insertPlayerStatement.executeUpdate();
+//                insertPlayerStatement.setInt(1, gameData.getGameID());
+//                insertPlayerStatement.setString(2, username);
+//                insertPlayerStatement.executeUpdate(insertPlayerStatement.toString());
 
                 // Update the 'games' table
-                updateGameStatement.setString(1, gameData.getGameData());
-                updateGameStatement.setString(2, username);
-                updateGameStatement.setInt(3, gameData.getGameID());
-                updateGameStatement.executeUpdate();
+                updateGameStatement.setString(1, gameData.getWhiteUsername());
+                updateGameStatement.setString(2, gameData.getBlackUsername());
+                updateGameStatement.setString(3, gameData.getGameName());
+                updateGameStatement.setInt(4, gameData.getGameID());
+                updateGameStatement.executeUpdate(updateGameStatement.toString());
 
                 connection.commit(); // Commit the transaction
 

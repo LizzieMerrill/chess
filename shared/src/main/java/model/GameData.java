@@ -42,6 +42,12 @@ public class GameData {
     public String getGameData(){
         return gameData;
     }
+    public void setGameName(String gameName){
+        this.gameName = gameName;
+    }
+    public String getGameName(){
+        return gameName;
+    }
 
 
     @Override

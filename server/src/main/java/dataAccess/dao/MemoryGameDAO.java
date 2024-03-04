@@ -35,7 +35,7 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(GameData gameData, String username) {
+    public void updateGame(GameData gameData) {
 //        int gameId = gameData.getGameID();
 //        gameDataMap.put(gameId, gameData);
     }
