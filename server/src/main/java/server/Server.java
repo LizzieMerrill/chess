@@ -20,61 +20,17 @@ import static java.sql.DriverManager.getConnection;
 public class Server {
 
     final Gson gson = new Gson();
-    private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
-    private final String username = "root";
-    private final String password = "JavaRulez2!";
-//    private DataSource dataSource = new DataSource() {
-//        @Override
-//        public Connection getConnection() throws SQLException {
-//            // Implement logic to obtain and return a database connection
-//            try (Connection connection = getConnection(jdbcUrl, username, password);{
-//            return connection;
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        }
-//
-//        @Override
-//        public Connection getConnection(String username, String password) throws SQLException {
-//            // Implement logic to obtain and return a database connection with the provided username and password
-//            return YourDatabaseConnectionProvider.getConnection(username, password);
-//        }
-//
-//        @Override
-//        public PrintWriter getLogWriter() throws SQLException {
-//            // Implement logic to return the log writer
-//            return null; // You can customize this as needed
-//        }
-//
-//        @Override
-//        public void setLogWriter(PrintWriter out) throws SQLException {
-//            // Implement logic to set the log writer
-//        }
-//
-//        @Override
-//        public void setLoginTimeout(int seconds) throws SQLException {
-//            // Implement logic to set the login timeout
-//        }
-//
-//        @Override
-//        public int getLoginTimeout() throws SQLException {
-//            // Implement logic to get the login timeout
-//            return 0; // You can customize this as needed
-//        }
-//
-//        @Override
-//        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-//            // Implement logic to get the parent logger
-//            return null; // You can customize this as needed
-//        }
-//    };
     final UserDAO userDAO;
 
     {
         try {
             userDAO = new SQLUserDAO();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            try {
+                throw new Exception(e);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 

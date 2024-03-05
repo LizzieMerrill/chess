@@ -155,11 +155,13 @@ public class SQLAuthDAO implements AuthDAO {
         }
 
         if(dbExists){
+            Connection connection = manager.getConnection();
             createTableIfNotExists("game_table");
             createTableIfNotExists("auth_table");
             createTableIfNotExists("user_table");
         }
         else{
+            Connection connection = manager.getConnection();
             manager.createDatabase();
 
             createTableIfNotExists("game_table");
