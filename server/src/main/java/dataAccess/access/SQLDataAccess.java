@@ -8,13 +8,8 @@ import static dataAccess.dao.SQLAuthDAO.dbCreationCheck;
 
 public class SQLDataAccess implements DataAccess {
 
-
-    private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
-    private final String username = "root";
-    private final String password = "JavaRulez2!";
-
     public SQLDataAccess() throws DataAccessException, SQLException {
-        dbCreationCheck(jdbcUrl, username, password);
+        dbCreationCheck();
     }
     private final UserDAO userDAO = new SQLUserDAO();
     private final GameDAO gameDAO = new SQLGameDAO();
