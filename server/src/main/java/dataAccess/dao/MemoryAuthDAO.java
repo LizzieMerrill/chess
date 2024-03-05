@@ -11,8 +11,9 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void addAuthToken(AuthData authData) {
+    public boolean addAuthToken(AuthData authData) {
         authTokenMap.put(authData.getAuthToken(), authData);
+        return false;
     }
 
     @Override
@@ -22,15 +23,17 @@ public class MemoryAuthDAO implements AuthDAO {
 
 
     @Override
-    public void removeAuthData(String authToken) {
+    public boolean removeAuthData(String authToken) {
         AuthData authData = authTokenMap.get(authToken);
         if (authData != null) {
             authTokenMap.remove(authToken);
         }
+        return false;
     }
     @Override
-    public void clearAuthData() {
+    public boolean clearAuthData() {
         authTokenMap.clear();
+        return false;
     }
     public boolean isValidAuthToken(String authToken) {
         return authTokenMap.containsKey(authToken);

@@ -5,6 +5,7 @@ import dataAccess.dao.AuthDAO;
 import dataAccess.dao.GameDAO;
 import dataAccess.dao.UserDAO;
 import requests.CreateResponse;
+import requests.GameNameObject;
 import server.Server;
 import service.GameService;
 import service.UserService;
@@ -26,7 +27,7 @@ public class CreateGameHandler extends Server implements Route {
     public Object handle(Request request, Response response) throws Exception {
             // Check if the request contains a valid Authorization header
             String authToken = request.headers("Authorization");
-            CreateResponse result = gameService.create(authToken, request.body());//authtoken and game name input
+            CreateResponse result = gameService.create(authToken, new Gson().fromJson(request.body(), GameNameObject.class).gameName());//authtoken and game name input
             if(result.message() == null){
                 response.status(200);
             }

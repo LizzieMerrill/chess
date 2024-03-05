@@ -39,7 +39,8 @@ public class DataServiceTests {
 
         dataService.clear();
 
-        assertEquals(true, gameDAO.getGameList().isEmpty());
+        //assertEquals(true, gameDAO.getGameList().isEmpty());
+        assertEquals(true, gameDAO.getAllGameData().isEmpty());
         assertEquals(true, authDAO.getAuthList().isEmpty());
         assertEquals(true, userDAO.getUserList().isEmpty());
     }

@@ -2,12 +2,16 @@ package dataAccessTests;
 
 import dataAccess.access.DataAccessException;
 import dataAccess.dao.*;
+import model.UserData;
 import org.junit.jupiter.api.Test;
+import requests.RegisterResponse;
 import service.*;
 
 import org.junit.jupiter.api.BeforeEach;
 
 import java.sql.SQLException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLAuthDAOTests {
     AuthDAO authDAO = new SQLAuthDAO();
@@ -27,28 +31,56 @@ public class SQLAuthDAOTests {
 
     @Test
     void clearAuthDataTest() throws Exception{//only need one
-
+        UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
+        RegisterResponse registration = userService.register(testUser1);
+        userService.login(testUser1);
+        assertTrue(authDAO.clearAuthData());
     }
     @Test
     void addAuthTokenTestPositive() throws Exception{
-
+        UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
+        RegisterResponse registration = userService.register(testUser1);
+        userService.login(testUser1);
+        assertTrue(authDAO.isValidAuthToken(registration.authToken()));
     }
     @Test
-    void addAuthTokenTestNegative() throws Exception{}
+    void addAuthTokenTestNegative() throws Exception{
+        UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
+        RegisterResponse registration = userService.register(testUser1);
+        assertTrue(authDAO.isValidAuthToken(registration.authToken()));
+    }
     @Test
-    void getAuthTokenTestPositive() throws Exception{}
+    void getAuthTokenTestPositive() throws Exception{
+        UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
+        RegisterResponse registration = userService.register(testUser1);
+        userService.login(testUser1);
+        assertNotNull(authDAO.getAuthToken(registration.authToken()));
+    }
     @Test
-    void getAuthTokenTestNegative() throws Exception{}
+    void getAuthTokenTestNegative() throws Exception{
+        UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
+        RegisterResponse registration = userService.register(testUser1);
+        //userService.login(testUser1);
+        assertNull(authDAO.getAuthToken(registration.authToken()));
+    }
     @Test
     void removeAuthDataTestPositive() throws Exception{//do i need both?
-
+        UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
+        RegisterResponse registration = userService.register(testUser1);
+        userService.login(testUser1);
+        assertTrue(authDAO.removeAuthData(registration.authToken()));
     }
     @Test
     void removeAuthDataTestNegative() throws Exception{//do i need both?
-
+        UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
+        RegisterResponse registration = userService.register(testUser1);
+        //userService.login(testUser1);
+        assertFalse(authDAO.removeAuthData(registration.authToken()));
     }
     @Test
-    void fetchDataByQueryTestPositive() throws Exception{}
+    void fetchDataByQueryTestPositive() throws Exception{
+
+    }
     @Test
     void fetchDataByQueryTestNegative() throws Exception{}
     @Test

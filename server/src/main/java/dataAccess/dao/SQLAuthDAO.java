@@ -245,31 +245,34 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void clearAuthData() throws DataAccessException {
+    public boolean clearAuthData() throws DataAccessException {
         dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
         try (Connection connection = getConnection(jdbcUrl, username, password);
              PreparedStatement preparedStatement = connection.prepareStatement(clearAuthDataQuery)) {
 
             preparedStatement.executeUpdate();
+            return true;
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
 
     @Override
-    public void addAuthToken(AuthData authData) throws DataAccessException {
+    public boolean addAuthToken(AuthData authData) throws DataAccessException {
         try (Connection connection = getConnection(jdbcUrl, username, password);
              PreparedStatement preparedStatement = connection.prepareStatement(addAuthTokenQuery)) {
 
             preparedStatement.setString(1, authData.getUsername());
             preparedStatement.setString(2, authData.getAuthToken());
             preparedStatement.executeUpdate();
-
+            return true;
         } catch (SQLException e) {
             handleSQLException(e);
         }
+        return false;
     }
 
     @Override
@@ -278,16 +281,17 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void removeAuthData(String authToken) throws DataAccessException {
+    public boolean removeAuthData(String authToken) throws DataAccessException {
         try (Connection connection = getConnection(jdbcUrl, username, password);
              PreparedStatement preparedStatement = connection.prepareStatement(removeAuthDataQuery)) {
 
             preparedStatement.setString(1, authToken);
             preparedStatement.executeUpdate();
-
+            return true;
         } catch (SQLException e) {
             handleSQLException(e);
         }
+        return false;
     }
 
     private AuthData fetchDataByQuery(String query, String parameter) throws DataAccessException {
