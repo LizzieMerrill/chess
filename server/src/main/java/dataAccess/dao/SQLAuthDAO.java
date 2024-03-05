@@ -218,6 +218,7 @@ public class SQLAuthDAO implements AuthDAO {
     private final String getByUsernameQuery = "SELECT * FROM auth_table WHERE username = ?";
     private final String addAuthDataQuery = "INSERT INTO auth_table(username, auth_token) VALUES (?, ?)";
     private final String removeAuthDataQuery = "DELETE FROM auth_table WHERE auth_token = ?";
+    private final String clearAuthDataQuery = "DELETE FROM auth_table";
 
     public SQLAuthDAO() throws DataAccessException {
         dbCreationCheck(jdbcUrl, username, password);
@@ -231,7 +232,7 @@ public class SQLAuthDAO implements AuthDAO {
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
             while (resultSet.next()) {
-                String authToken = resultSet.getString("authToken");
+                String authToken = resultSet.getString("auth_token");
                 String username = resultSet.getString("username");
                 authMap.put(authToken, new AuthData(authToken, username));
             }
@@ -245,13 +246,14 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public void clearAuthData() throws DataAccessException {
+        dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
         try (Connection connection = getConnection(jdbcUrl, username, password);
-             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM auth_table")) {
+             PreparedStatement preparedStatement = connection.prepareStatement(clearAuthDataQuery)) {
 
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            handleSQLException(e);
+            e.printStackTrace();
         }
     }
 
@@ -261,8 +263,8 @@ public class SQLAuthDAO implements AuthDAO {
         try (Connection connection = getConnection(jdbcUrl, username, password);
              PreparedStatement preparedStatement = connection.prepareStatement(addAuthTokenQuery)) {
 
-            preparedStatement.setString(1, authData.getAuthToken());
-            preparedStatement.setString(2, authData.getUsername());
+            preparedStatement.setString(1, authData.getUsername());
+            preparedStatement.setString(2, authData.getAuthToken());
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
@@ -295,7 +297,7 @@ public class SQLAuthDAO implements AuthDAO {
             preparedStatement.setString(1, parameter);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new AuthData(resultSet.getString("authToken"), resultSet.getString("username"));
+                    return new AuthData(resultSet.getString("auth_token"), resultSet.getString("username"));
                 }
             }
 
@@ -306,17 +308,16 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
     public boolean isValidAuthToken(String authToken) throws DataAccessException {
-        dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
 
         try {
-            connection = connection;//obtain database connection
+            connection = getConnection(jdbcUrl, username, password);
 
             statement = connection.createStatement();
 
-            String query = "SELECT * FROM auth_data WHERE auth_token = '" + authToken + "'";
+            String query = "SELECT * FROM auth_table WHERE auth_token = '" + authToken + "'";
             resultSet = statement.executeQuery(query);
 
             return resultSet.next();
@@ -327,7 +328,7 @@ public class SQLAuthDAO implements AuthDAO {
         } finally {
             try {
                 if (resultSet != null) resultSet.close();
-                if (statement != null) ((Statement) statement).close();
+                if (statement != null) statement.close();
                 if (connection != null) connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();

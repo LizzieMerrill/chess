@@ -2,17 +2,17 @@ package dataAccess.dao;
 
 import dataAccess.DatabaseManager;
 import dataAccess.access.DataAccessException;
+import model.AuthData;
 import model.UserData;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
+import java.util.*;
 
 import static dataAccess.dao.SQLAuthDAO.dbCreationCheck;
+import static java.sql.DriverManager.getConnection;
 
 public class SQLUserDAO implements UserDAO {
     private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
@@ -21,6 +21,8 @@ public class SQLUserDAO implements UserDAO {
     private final DatabaseManager manager = new DatabaseManager();
     private final String addUserQuery = "INSERT INTO user_table(username, password, email) VALUES (?, ?, ?)";
     private final String authenticateUserQuery = "SELECT * FROM user_table WHERE username = ? AND password = ?";
+    private final String clearUserDataQuery = "DELETE FROM user_table";
+    private final String getByUsernameQuery = "SELECT * FROM user_table WHERE username = ?";
 
 
     public SQLUserDAO() throws DataAccessException {
@@ -72,11 +74,37 @@ public class SQLUserDAO implements UserDAO {
     @Override
     public void clearUserData() throws DataAccessException {
         dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
+        try (Connection connection = getConnection(jdbcUrl, username, password);
+             PreparedStatement preparedStatement = connection.prepareStatement(clearUserDataQuery)) {
 
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
     public Collection<UserData> getUserList() throws DataAccessException {
-        dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
-        return new HashSet<UserData>();
+        Collection<UserData> userMap = new HashSet<>();
+
+        try (Connection connection = getConnection(jdbcUrl, username, password);
+             PreparedStatement preparedStatement = connection.prepareStatement(getByUsernameQuery);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                String username = resultSet.getString("username");
+                userMap.add(getUser(username));
+            }
+
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+
+        return userMap;
+    }
+
+    private void handleSQLException(SQLException e) throws DataAccessException {
+        e.printStackTrace();
+        throw new DataAccessException("SQL Exception: " + e.getMessage(), e);
     }
 
     @Override
