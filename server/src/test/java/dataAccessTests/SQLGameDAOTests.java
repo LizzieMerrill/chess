@@ -1,5 +1,6 @@
 package dataAccessTests;
 
+import chess.ChessGame;
 import dataAccess.access.DataAccessException;
 import dataAccess.dao.*;
 import model.UserData;
@@ -59,10 +60,21 @@ public class SQLGameDAOTests {
     }
     @Test
     void updateGameTestPositive() throws Exception{
+        UserData testUser6 = new UserData("user6", "pass6", "eail6@email.com");
+        RegisterResponse registration = userService.register(testUser6);
+        userService.login(testUser6);
+
+        CreateResponse expected = new CreateResponse(gameDAO.createGame("awesome game"), null);
+        assertNull(gameService.join(registration.authToken(), expected.gameID(), ChessGame.TeamColor.WHITE).message());
     }
     @Test
     void updateGameTestNegative() throws Exception{
+        UserData testUser6 = new UserData("user6", "pass6", "eail6@email.com");
+        RegisterResponse registration = userService.register(testUser6);
+        userService.login(testUser6);
 
+        CreateResponse expected = new CreateResponse(gameDAO.createGame("awesome game"), null);
+        assertNotNull(gameService.join(registration.authToken(), expected.gameID(), ChessGame.TeamColor.WHITE).message());
     }
     @Test
     void getAllGameDataTestPositive() throws Exception{}
