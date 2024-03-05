@@ -59,7 +59,7 @@ public class SQLAuthDAO implements AuthDAO {
 
         } catch (SQLException e) {
             //e.printStackTrace();
-        }
+        }//boop
         return false;
     }
 
