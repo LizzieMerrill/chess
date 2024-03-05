@@ -1,8 +1,6 @@
 package dataAccess.dao;
 
-import dataAccess.DatabaseManager;
 import dataAccess.access.DataAccessException;
-import model.AuthData;
 import model.UserData;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,7 +16,6 @@ public class SQLUserDAO implements UserDAO {
     private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
     private final String username = "root";
     private final String password = "JavaRulez2!";
-    private final DatabaseManager manager = new DatabaseManager();
     private final String addUserQuery = "INSERT INTO user_table(username, password, email) VALUES (?, ?, ?)";
     private final String authenticateUserQuery = "SELECT * FROM user_table WHERE username = ? AND password = ?";
     private final String clearUserDataQuery = "DELETE FROM user_table";
@@ -54,12 +51,11 @@ public class SQLUserDAO implements UserDAO {
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
-                        // Assuming the structure of your 'user_table'
                         String retrievedUsername = resultSet.getString("username");
                         String retrievedPassword = resultSet.getString("password");
                         String retrievedEmail = resultSet.getString("email");
 
-                        // Create a UserData object
+                        //create a UserData object
                         return new UserData(retrievedUsername, retrievedPassword, retrievedEmail);
                     }
                 }
@@ -68,7 +64,7 @@ public class SQLUserDAO implements UserDAO {
             throw new DataAccessException("Error while retrieving user from database", e);
         }
 
-        return null; // Return null if the user is not found
+        return null;
     }
 
     @Override
@@ -80,7 +76,7 @@ public class SQLUserDAO implements UserDAO {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
     public Collection<UserData> getUserList() throws DataAccessException {
@@ -103,7 +99,7 @@ public class SQLUserDAO implements UserDAO {
     }
 
     private void handleSQLException(SQLException e) throws DataAccessException {
-        e.printStackTrace();
+        //e.printStackTrace();
         throw new DataAccessException("SQL Exception: " + e.getMessage(), e);
     }
 

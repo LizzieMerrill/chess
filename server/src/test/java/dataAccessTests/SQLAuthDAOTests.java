@@ -84,12 +84,25 @@ public class SQLAuthDAOTests {
     @Test
     void fetchDataByQueryTestNegative() throws Exception{}
     @Test
-    void isValidAuthTokenTestPositive() throws Exception{}
+    void isValidAuthTokenTestPositive() throws Exception{
+        UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
+        RegisterResponse registration = userService.register(testUser1);
+        userService.login(testUser1);
+        assertTrue(authDAO.isValidAuthToken(registration.authToken()));
+    }
     @Test
-    void isValidAuthTokenTestNegative() throws Exception{}
+    void isValidAuthTokenTestNegative() throws Exception{
+        UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
+        RegisterResponse registration = userService.register(testUser1);
+        assertFalse(authDAO.isValidAuthToken(registration.authToken()));
+    }
     @Test
-    void getAuthListTestPositive() throws Exception{}
+    void getAuthListTestPositive() throws Exception{
+        assertFalse(authDAO.getAuthList().isEmpty());
+    }
     @Test
-    void getAuthListTestNegative() throws Exception{}
+    void getAuthListTestNegative() throws Exception{
+        assertTrue(authDAO.getAuthList().isEmpty());
+    }
 
 }

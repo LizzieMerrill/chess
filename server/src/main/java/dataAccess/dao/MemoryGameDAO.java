@@ -1,6 +1,5 @@
 package dataAccess.dao;
 
-import chess.ChessGame;
 import model.GameData;
 import java.util.*;
 
@@ -19,9 +18,10 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void clearChessData() {
+    public boolean clearChessData() {
         gameDataMap.clear();
         nextGameId = 1;
+        return false;
     }
 
     @Override

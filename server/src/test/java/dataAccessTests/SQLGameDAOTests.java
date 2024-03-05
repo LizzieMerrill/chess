@@ -2,11 +2,16 @@ package dataAccessTests;
 
 import dataAccess.access.DataAccessException;
 import dataAccess.dao.*;
+import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import requests.CreateResponse;
+import requests.RegisterResponse;
 import service.*;
 
 import java.sql.SQLException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLGameDAOTests {
     AuthDAO authDAO = new SQLAuthDAO();
@@ -26,14 +31,28 @@ public class SQLGameDAOTests {
 
     @Test
     void clearChessDataTest() throws Exception{//only needs one because its a clear function
-
+        UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
+        RegisterResponse registration = userService.register(testUser1);
+        userService.login(testUser1);
+        assertTrue(gameDAO.clearChessData());
     }
     @Test
-    void getGameTestPositive() throws Exception{}
+    void getGameTestPositive() throws Exception{
+        UserData testUser6 = new UserData("user6", "pass6", "eail6@email.com");
+        userService.register(testUser6);
+        userService.login(testUser6);
+
+        CreateResponse expected = new CreateResponse(gameDAO.createGame("awesome game"), null);
+        assertNotNull(gameDAO.getGame(expected.gameID()));
+    }
     @Test
-    void getGameTestNegative() throws Exception{}
+    void getGameTestNegative() throws Exception{
+        assertNull(gameDAO.getGame(100));
+    }
     @Test
-    void createGameTestPositive() throws Exception{}
+    void createGameTestPositive() throws Exception{
+
+    }
     @Test
     void createGameTestNegative() throws Exception{}
     @Test
