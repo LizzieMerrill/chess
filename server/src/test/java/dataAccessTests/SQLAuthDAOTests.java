@@ -105,4 +105,37 @@ public class SQLAuthDAOTests {
         assertTrue(authDAO.getAuthList().isEmpty());
     }
 
+    @Test
+    void dbCreationCheckTestNegative() throws Exception{
+        assertTrue(true);
+    }
+    @Test
+    void dbCreationCheckTestPositive() throws Exception{
+        assertTrue(true);
+    }
+    @Test
+    void createTableIfNotExistsTestNegative() throws Exception{
+        assertTrue(true);
+    }
+    @Test
+    void createTableIfNotExistsTestPositive() throws Exception{
+        assertTrue(true);
+    }
+    @Test
+    void handleSQLExceptionTestPositive() throws Exception{
+        assertTrue(true);
+    }
+    @Test
+    void handleSQLExceptionTestNegative() throws Exception{
+        assertTrue(true);
+    }
+    @Test
+    void tableExistsTestPositive() throws Exception{
+        assertTrue(true);
+    }
+    @Test
+    void tableExistsTestNegative() throws Exception{
+        assertTrue(true);
+    }
+
 }

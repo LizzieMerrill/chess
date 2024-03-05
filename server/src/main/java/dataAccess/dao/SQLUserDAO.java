@@ -28,7 +28,7 @@ public class SQLUserDAO implements UserDAO {
     }
 
     @Override
-    public void addUser(UserData userData) throws DataAccessException {
+    public boolean addUser(UserData userData) throws DataAccessException {
         dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
         try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
              PreparedStatement preparedStatement = connection.prepareStatement(addUserQuery)) {
@@ -36,9 +36,11 @@ public class SQLUserDAO implements UserDAO {
             preparedStatement.setString(2, userData.getPassword());
             preparedStatement.setString(3, userData.getEmail());
             preparedStatement.executeUpdate();
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     @Override
@@ -68,16 +70,17 @@ public class SQLUserDAO implements UserDAO {
     }
 
     @Override
-    public void clearUserData() throws DataAccessException {
+    public boolean clearUserData() throws DataAccessException {
         dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
         try (Connection connection = getConnection(jdbcUrl, username, password);
              PreparedStatement preparedStatement = connection.prepareStatement(clearUserDataQuery)) {
 
             preparedStatement.executeUpdate();
-
+            return true;
         } catch (SQLException e) {
             //e.printStackTrace();
         }
+        return false;
     }
     public Collection<UserData> getUserList() throws DataAccessException {
         Collection<UserData> userMap = new HashSet<>();

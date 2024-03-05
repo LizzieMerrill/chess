@@ -10,8 +10,9 @@ public class MemoryUserDAO implements UserDAO {
 
     public final Collection<UserData> users = new HashSet<>();
     @Override
-    public void addUser(UserData userData) {
+    public boolean addUser(UserData userData) {
         users.add(userData);
+        return false;
     }
 
     @Override
@@ -28,7 +29,8 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     @Override
-    public void clearUserData() {
+    public boolean clearUserData() {
         users.clear();
+        return false;
     }
 }

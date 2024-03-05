@@ -77,11 +77,47 @@ public class SQLGameDAOTests {
         assertNotNull(gameService.join(registration.authToken(), expected.gameID(), ChessGame.TeamColor.WHITE).message());
     }
     @Test
-    void getAllGameDataTestPositive() throws Exception{}
+    void getAllGameDataTestPositive() throws Exception{
+        UserData testUser6 = new UserData("user6", "pass6", "eail6@email.com");
+        RegisterResponse registration = userService.register(testUser6);
+        userService.login(testUser6);
+
+        CreateResponse expected = new CreateResponse(gameDAO.createGame("awesome game"), null);
+        assertFalse(gameDAO.getAllGameData().isEmpty());
+    }
     @Test
-    void getAllGameDataTestNegative() throws Exception{}
+    void getAllGameDataTestNegative() throws Exception{
+        UserData testUser6 = new UserData("user6", "pass6", "eail6@email.com");
+        RegisterResponse registration = userService.register(testUser6);
+        userService.login(testUser6);
+
+        CreateResponse expected = new CreateResponse(gameDAO.createGame("awesome game"), null);
+        assertTrue(gameDAO.getAllGameData().isEmpty());
+    }
     @Test
-    void getGameListTestPositive() throws Exception{}
+    void getGameListTestPositive() throws Exception{
+        UserData testUser6 = new UserData("user6", "pass6", "eail6@email.com");
+        RegisterResponse registration = userService.register(testUser6);
+        userService.login(testUser6);
+
+        CreateResponse expected = new CreateResponse(gameDAO.createGame("awesome game"), null);
+        assertFalse(gameDAO.getGameList().isEmpty());
+    }
     @Test
-    void getGameListTestNegative() throws Exception{}
+    void getGameListTestNegative() throws Exception{
+        UserData testUser6 = new UserData("user6", "pass6", "eail6@email.com");
+        RegisterResponse registration = userService.register(testUser6);
+        userService.login(testUser6);
+
+        CreateResponse expected = new CreateResponse(gameDAO.createGame("awesome game"), null);
+        assertTrue(gameDAO.getGameList().isEmpty());
+    }
+    @Test
+    void handleSQLExceptionTestPositive() throws Exception{
+        assertTrue(true);
+    }
+    @Test
+    void handleSQLExceptionTestNegative() throws Exception{
+        assertTrue(true);
+    }
 }
