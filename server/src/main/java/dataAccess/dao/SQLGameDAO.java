@@ -86,7 +86,7 @@ public class SQLGameDAO implements GameDAO {
 
                 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
-                        return generatedKeys.getInt(1); // Assuming game_id is the first column
+                        return generatedKeys.getInt(1);
                     } else {
                         throw new DataAccessException("Creating game failed, no ID obtained.");
                     }
@@ -100,17 +100,23 @@ public class SQLGameDAO implements GameDAO {
 
 
     @Override
-    public void updateGame(GameData gameData) throws DataAccessException, SQLException {
+    public boolean updateGame(GameData gameData) throws DataAccessException, SQLException {
+try {
+    connection = getConnection(jdbcUrl, username, password);
+    PreparedStatement updateGameStatement = connection.prepareStatement("UPDATE game_table SET white_username = ?, black_username = ?, game_name = ? WHERE game_id = ?");
 
-        connection = getConnection(jdbcUrl, username, password);
-        PreparedStatement updateGameStatement = connection.prepareStatement("UPDATE game_table SET white_username = ?, black_username = ?, game_name = ? WHERE game_id = ?");
+    // Update the 'games' table
+    updateGameStatement.setString(1, gameData.getWhiteUsername());
+    updateGameStatement.setString(2, gameData.getBlackUsername());
+    updateGameStatement.setString(3, gameData.getGameName());
+    updateGameStatement.setInt(4, gameData.getGameID());
+    updateGameStatement.executeUpdate();
+    return true;
+}catch (Exception e) {
+    return false;
+        //throw new RuntimeException("Error retrieving games from the database", e);
+    }
 
-                // Update the 'games' table
-                updateGameStatement.setString(1, gameData.getWhiteUsername());
-                updateGameStatement.setString(2, gameData.getBlackUsername());
-                updateGameStatement.setString(3, gameData.getGameName());
-                updateGameStatement.setInt(4, gameData.getGameID());
-                updateGameStatement.executeUpdate();
     }
 
 

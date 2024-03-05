@@ -51,14 +51,19 @@ public class SQLGameDAOTests {
     }
     @Test
     void createGameTestPositive() throws Exception{
-
+        assertTrue((gameDAO.createGame("dis game") >= 1));
     }
     @Test
-    void createGameTestNegative() throws Exception{}
+    void createGameTestNegative() throws Exception{
+        assertTrue((gameDAO.createGame("dis game") < 1));
+    }
     @Test
-    void updateGameTestPositive() throws Exception{}
+    void updateGameTestPositive() throws Exception{
+    }
     @Test
-    void updateGameTestNegative() throws Exception{}
+    void updateGameTestNegative() throws Exception{
+
+    }
     @Test
     void getAllGameDataTestPositive() throws Exception{}
     @Test
