@@ -118,6 +118,6 @@ public class SQLGameDAOTests {
     }
     @Test
     void handleSQLExceptionTestNegative() throws Exception{
-        assertTrue(true);
+        assertTrue(true);//lol
     }
 }
