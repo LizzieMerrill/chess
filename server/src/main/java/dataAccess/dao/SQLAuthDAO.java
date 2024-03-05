@@ -11,9 +11,9 @@ import java.util.Objects;
 import static java.sql.DriverManager.getConnection;
 
 public class SQLAuthDAO implements AuthDAO {
-    private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
-    private final String username = "root";
-    private final String password = "JavaRulez2!";
+//    private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
+//    private final String username = "root";
+//    private final String password = "JavaRulez2!";
     private static final DatabaseManager manager = new DatabaseManager();
     private final String authenticateUserQuery = "SELECT * FROM user_table WHERE username = ? AND password = ?";
     private final String addAuthTokenQuery = "INSERT INTO auth_table(username, auth_token) VALUES (?, ?)";
@@ -25,13 +25,13 @@ public class SQLAuthDAO implements AuthDAO {
     private final String clearAuthDataQuery = "DELETE FROM auth_table";
 
     public SQLAuthDAO() throws DataAccessException {
-        dbCreationCheck(jdbcUrl, username, password);
+        dbCreationCheck();
     }
     @Override
     public Map<String, AuthData> getAuthList() throws DataAccessException {
         Map<String, AuthData> authMap = new HashMap<>();
 
-        try (Connection connection = getConnection(jdbcUrl, username, password);
+        try (Connection connection = manager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(getByAuthTokenQuery);
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
@@ -50,8 +50,7 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public boolean clearAuthData() throws DataAccessException {
-        dbCreationCheck("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!");
-        try (Connection connection = getConnection(jdbcUrl, username, password);
+        try (Connection connection = manager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(clearAuthDataQuery)) {
 
             preparedStatement.executeUpdate();
@@ -66,7 +65,7 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public boolean addAuthToken(AuthData authData) throws DataAccessException {
-        try (Connection connection = getConnection(jdbcUrl, username, password);
+        try (Connection connection = manager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(addAuthTokenQuery)) {
 
             preparedStatement.setString(1, authData.getUsername());
@@ -86,7 +85,7 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public boolean removeAuthData(String authToken) throws DataAccessException {
-        try (Connection connection = getConnection(jdbcUrl, username, password);
+        try (Connection connection = manager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(removeAuthDataQuery)) {
 
             preparedStatement.setString(1, authToken);
@@ -99,7 +98,7 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
     private AuthData fetchDataByQuery(String query, String parameter) throws DataAccessException {
-        try (Connection connection = getConnection(jdbcUrl, username, password);
+        try (Connection connection = manager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             preparedStatement.setString(1, parameter);
@@ -121,7 +120,7 @@ public class SQLAuthDAO implements AuthDAO {
         ResultSet resultSet = null;
 
         try {
-            connection = getConnection(jdbcUrl, username, password);
+            connection = manager.getConnection();
 
             statement = connection.createStatement();
 
@@ -145,10 +144,10 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
 
-    public static void dbCreationCheck(String databaseUrl, String username, String password) throws DataAccessException {
+    public static void dbCreationCheck() throws DataAccessException {
         boolean dbExists;
         try {
-            Connection connection = getConnection(databaseUrl, username, password);
+            Connection connection = manager.getConnection();
             connection.close();
             dbExists = true;
         } catch (SQLException e) {
@@ -156,20 +155,20 @@ public class SQLAuthDAO implements AuthDAO {
         }
 
         if(dbExists){
-            createTableIfNotExists("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!", "game_table");
-            createTableIfNotExists("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!", "auth_table");
-            createTableIfNotExists("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!", "user_table");
+            createTableIfNotExists("game_table");
+            createTableIfNotExists("auth_table");
+            createTableIfNotExists("user_table");
         }
         else{
             manager.createDatabase();
 
-            createTableIfNotExists("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!", "game_table");
-            createTableIfNotExists("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!", "auth_table");
-            createTableIfNotExists("jdbc:mysql://localhost:3306/chess", "root", "JavaRulez2!", "user_table");
+            createTableIfNotExists("game_table");
+            createTableIfNotExists("auth_table");
+            createTableIfNotExists("user_table");
         }
     }
-    private static void createTableIfNotExists(String jdbcUrl, String username, String password, String tableName) {
-        try (Connection connection = getConnection(jdbcUrl, username, password);
+    private static void createTableIfNotExists(String tableName) throws DataAccessException {
+        try (Connection connection = manager.getConnection();
              Statement statement = connection.createStatement()) {
 
             if (!tableExists(statement, tableName)) {
@@ -213,20 +212,5 @@ public class SQLAuthDAO implements AuthDAO {
     private void handleSQLException(SQLException e) throws DataAccessException {
         //e.printStackTrace();
         throw new DataAccessException("SQL Exception: " + e.getMessage(), e);
-    }
-
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SQLAuthDAO that = (SQLAuthDAO) o;
-        return Objects.equals(jdbcUrl, that.jdbcUrl) && Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(authenticateUserQuery, that.authenticateUserQuery) && Objects.equals(addAuthTokenQuery, that.addAuthTokenQuery) && Objects.equals(getAuthTokenQuery, that.getAuthTokenQuery) && Objects.equals(getByAuthTokenQuery, that.getByAuthTokenQuery) && Objects.equals(getByUsernameQuery, that.getByUsernameQuery) && Objects.equals(addAuthDataQuery, that.addAuthDataQuery) && Objects.equals(removeAuthDataQuery, that.removeAuthDataQuery);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(jdbcUrl, username, password, authenticateUserQuery, addAuthTokenQuery, getAuthTokenQuery, getByAuthTokenQuery, getByUsernameQuery, addAuthDataQuery, removeAuthDataQuery);
     }
 }

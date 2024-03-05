@@ -1,5 +1,6 @@
 package dataAccess.dao;
 
+import dataAccess.DatabaseManager;
 import dataAccess.access.DataAccessException;
 import model.GameData;
 import java.sql.Connection;
@@ -15,10 +16,10 @@ import java.sql.ResultSet;
 
 
 public class SQLGameDAO implements GameDAO {
-    private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
-    private final String username = "root";
-    private final String password = "JavaRulez2!";
-    Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
+//    private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
+//    private final String username = "root";
+//    private final String password = "JavaRulez2!";
+private static final DatabaseManager manager = new DatabaseManager();
 
     private final String addGameQuery = "INSERT INTO game_table(white_username, black_username, game_name, game_id) VALUES (?, ?, ?, ?)";
     private final String getGameQuery = "SELECT * FROM game_table WHERE game_id = ?";
@@ -26,13 +27,13 @@ public class SQLGameDAO implements GameDAO {
 
     public int nextGameId = 1;
     public SQLGameDAO() throws DataAccessException, SQLException {
-        dbCreationCheck(jdbcUrl, username, password);
+        dbCreationCheck();
     }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
 
-        try (Connection connection = getConnection(jdbcUrl, username, password);
+        try (Connection connection = manager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(getGameQuery)) {
             preparedStatement.setInt(1, gameID);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -56,7 +57,7 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public boolean clearChessData() throws DataAccessException {
-        try (Connection connection = getConnection(jdbcUrl, username, password);
+        try (Connection connection = manager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(clearGameDataQuery)) {
 
             preparedStatement.executeUpdate();
@@ -72,7 +73,7 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public int createGame(String gameName) throws DataAccessException {
-        try (Connection connection = getConnection(jdbcUrl, username, password)) {
+        try (Connection connection = manager.getConnection()) {
             String query = "INSERT INTO game_table (white_username, black_username, game_name) VALUES (?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 statement.setString(1, null);
@@ -102,7 +103,7 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public boolean updateGame(GameData gameData) throws DataAccessException, SQLException {
 try {
-    connection = getConnection(jdbcUrl, username, password);
+    Connection connection = manager.getConnection();
     PreparedStatement updateGameStatement = connection.prepareStatement("UPDATE game_table SET white_username = ?, black_username = ?, game_name = ? WHERE game_id = ?");
 
     // Update the 'games' table
@@ -125,7 +126,7 @@ try {
     public Collection<GameData> getAllGameData() throws DataAccessException {
         Collection<GameData> games = new ArrayList<>();
 
-        try (Connection connection = getConnection(jdbcUrl, username, password)) {
+        try (Connection connection = manager.getConnection()) {
             String query = "SELECT * FROM game_table";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 try (ResultSet resultSet = statement.executeQuery()) {
@@ -142,7 +143,6 @@ try {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new RuntimeException("Error retrieving games from the database", e);
         }
         return games;
@@ -153,7 +153,7 @@ try {
     public Map<Integer, GameData> getGameList() throws DataAccessException {
         Map<Integer, GameData> authMap = new HashMap<>();
 
-        try (Connection connection = getConnection(jdbcUrl, username, password);
+        try (Connection connection = manager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(getGameQuery);
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
@@ -171,19 +171,5 @@ try {
     private void handleSQLException(SQLException e) throws DataAccessException {
         //e.printStackTrace();
         throw new DataAccessException("SQL Exception: " + e.getMessage(), e);
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SQLGameDAO that = (SQLGameDAO) o;
-        return Objects.equals(jdbcUrl, that.jdbcUrl) && Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(connection, that.connection) && Objects.equals(addGameQuery, that.addGameQuery) && Objects.equals(getGameQuery, that.getGameQuery) && Objects.equals(clearGameDataQuery, that.clearGameDataQuery);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(jdbcUrl, username, password, connection, addGameQuery, getGameQuery, clearGameDataQuery);
     }
 }
