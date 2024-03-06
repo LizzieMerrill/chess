@@ -2,59 +2,20 @@ package server;
 
 import com.google.gson.Gson;
 
-import java.io.PrintWriter;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.Objects;
-import java.util.logging.Logger;
-
 import dataAccess.access.DataAccessException;
 import handlers.*;
 import spark.Spark;
 import dataAccess.dao.*;
-import javax.sql.DataSource;
-
-import static java.sql.DriverManager.getConnection;
 
 public class Server {
 
     final Gson gson = new Gson();
-    final UserDAO userDAO;
+    final UserDAO userDAO = new SQLUserDAO();
+    final GameDAO gameDAO = new SQLGameDAO();
+    final AuthDAO authDAO = new SQLAuthDAO();
 
-    {
-        try {
-            userDAO = new SQLUserDAO();
-        } catch (Exception e) {
-            try {
-                throw new Exception(e);
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-    }
-
-    final GameDAO gameDAO;
-
-    {
-        try {
-            gameDAO = new SQLGameDAO();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    final AuthDAO authDAO;
-
-    {
-        try {
-            authDAO = new SQLAuthDAO();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public Server() {
     }

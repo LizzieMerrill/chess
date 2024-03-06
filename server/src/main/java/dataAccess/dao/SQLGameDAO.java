@@ -26,13 +26,13 @@ private static final DatabaseManager manager = new DatabaseManager();
     private final String clearGameDataQuery = "DELETE FROM game_table";
 
     public int nextGameId = 1;
-    public SQLGameDAO() throws DataAccessException, SQLException {
-        dbCreationCheck();
+    public SQLGameDAO() {
+        //dbCreationCheck();
     }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
-
+        dbCreationCheck();
         try (Connection connection = manager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(getGameQuery)) {
             preparedStatement.setInt(1, gameID);
@@ -57,6 +57,7 @@ private static final DatabaseManager manager = new DatabaseManager();
 
     @Override
     public boolean clearChessData() throws DataAccessException {
+        dbCreationCheck();
         try (Connection connection = manager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(clearGameDataQuery)) {
 
@@ -73,6 +74,7 @@ private static final DatabaseManager manager = new DatabaseManager();
 
     @Override
     public int createGame(String gameName) throws DataAccessException {
+        dbCreationCheck();
         try (Connection connection = manager.getConnection()) {
             String query = "INSERT INTO game_table (white_username, black_username, game_name) VALUES (?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -102,6 +104,7 @@ private static final DatabaseManager manager = new DatabaseManager();
 
     @Override
     public boolean updateGame(GameData gameData) throws DataAccessException, SQLException {
+        dbCreationCheck();
 try {
     Connection connection = manager.getConnection();
     PreparedStatement updateGameStatement = connection.prepareStatement("UPDATE game_table SET white_username = ?, black_username = ?, game_name = ? WHERE game_id = ?");
@@ -124,6 +127,7 @@ try {
 
     @Override
     public Collection<GameData> getAllGameData() throws DataAccessException {
+        dbCreationCheck();
         Collection<GameData> games = new ArrayList<>();
 
         try (Connection connection = manager.getConnection()) {
@@ -151,6 +155,7 @@ try {
 
     @Override
     public Map<Integer, GameData> getGameList() throws DataAccessException {
+        dbCreationCheck();
         Map<Integer, GameData> authMap = new HashMap<>();
 
         try (Connection connection = manager.getConnection();
@@ -169,6 +174,7 @@ try {
         return authMap;
     }
     private void handleSQLException(SQLException e) throws DataAccessException {
+        dbCreationCheck();
         //e.printStackTrace();
         throw new DataAccessException("SQL Exception: " + e.getMessage(), e);
     }

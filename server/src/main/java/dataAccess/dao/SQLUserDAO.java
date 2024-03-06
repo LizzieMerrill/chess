@@ -24,12 +24,13 @@ private static final DatabaseManager manager = new DatabaseManager();
     private final String getByUsernameQuery = "SELECT * FROM user_table WHERE username = ?";
 
 
-    public SQLUserDAO() throws DataAccessException {
-        dbCreationCheck();
+    public SQLUserDAO(){
+
     }
 
     @Override
     public boolean addUser(UserData userData) throws DataAccessException {
+        dbCreationCheck();
         try (Connection connection = manager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(addUserQuery)) {
             preparedStatement.setString(1, userData.getUsername());
@@ -45,6 +46,7 @@ private static final DatabaseManager manager = new DatabaseManager();
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
+        dbCreationCheck();
         try (Connection connection = manager.getConnection()) {
             String query = "SELECT * FROM user_table WHERE username = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -70,6 +72,7 @@ private static final DatabaseManager manager = new DatabaseManager();
 
     @Override
     public boolean clearUserData() throws DataAccessException {
+        dbCreationCheck();
         try (Connection connection = manager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(clearUserDataQuery)) {
 
@@ -81,6 +84,7 @@ private static final DatabaseManager manager = new DatabaseManager();
         return false;
     }
     public Collection<UserData> getUserList() throws DataAccessException {
+        dbCreationCheck();
         Collection<UserData> userMap = new HashSet<>();
 
         try (Connection connection = manager.getConnection();
@@ -100,6 +104,7 @@ private static final DatabaseManager manager = new DatabaseManager();
     }
 
     private void handleSQLException(SQLException e) throws DataAccessException {
+        dbCreationCheck();
         //e.printStackTrace();
         throw new DataAccessException("SQL Exception: " + e.getMessage(), e);
     }

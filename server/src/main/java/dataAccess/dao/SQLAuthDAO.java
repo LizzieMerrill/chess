@@ -24,11 +24,12 @@ public class SQLAuthDAO implements AuthDAO {
     private final String removeAuthDataQuery = "DELETE FROM auth_table WHERE auth_token = ?";
     private final String clearAuthDataQuery = "DELETE FROM auth_table";
 
-    public SQLAuthDAO() throws DataAccessException {
-        dbCreationCheck();
+    public SQLAuthDAO() {
+        //dbCreationCheck();
     }
     @Override
     public Map<String, AuthData> getAuthList() throws DataAccessException {
+        dbCreationCheck();
         Map<String, AuthData> authMap = new HashMap<>();
 
         try (Connection connection = manager.getConnection();
@@ -50,6 +51,7 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public boolean clearAuthData() throws DataAccessException {
+        dbCreationCheck();
         try (Connection connection = manager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(clearAuthDataQuery)) {
 
@@ -65,6 +67,7 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public boolean addAuthToken(AuthData authData) throws DataAccessException {
+        dbCreationCheck();
         try (Connection connection = manager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(addAuthTokenQuery)) {
 
@@ -80,11 +83,13 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public AuthData getAuthToken(String authToken) throws DataAccessException {
+        dbCreationCheck();
         return fetchDataByQuery(getAuthTokenQuery, authToken);
     }
 
     @Override
     public boolean removeAuthData(String authToken) throws DataAccessException {
+        dbCreationCheck();
         try (Connection connection = manager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(removeAuthDataQuery)) {
 
@@ -98,6 +103,7 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
     private AuthData fetchDataByQuery(String query, String parameter) throws DataAccessException {
+        dbCreationCheck();
         try (Connection connection = manager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
@@ -115,6 +121,7 @@ public class SQLAuthDAO implements AuthDAO {
     }
     @Override
     public boolean isValidAuthToken(String authToken) throws DataAccessException {
+        dbCreationCheck();
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
@@ -213,6 +220,7 @@ public class SQLAuthDAO implements AuthDAO {
 
     private void handleSQLException(SQLException e) throws DataAccessException {
         //e.printStackTrace();
+        dbCreationCheck();
         throw new DataAccessException("SQL Exception: " + e.getMessage(), e);
     }
 }
