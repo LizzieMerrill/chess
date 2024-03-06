@@ -12,6 +12,7 @@ import service.*;
 
 import java.sql.SQLException;
 
+import static dataAccess.dao.SQLAuthDAO.dbCreationCheck;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLGameDAOTests {
@@ -27,6 +28,7 @@ public class SQLGameDAOTests {
 
     @BeforeEach
     void clear() throws Exception {
+        dbCreationCheck();
         dataService.clear();
     }
 

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.sql.SQLException;
 
+import static dataAccess.dao.SQLAuthDAO.dbCreationCheck;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLAuthDAOTests {
@@ -26,6 +27,7 @@ public class SQLAuthDAOTests {
 
     @BeforeEach
     void clear() throws Exception {
+        dbCreationCheck();
         dataService.clear();
     }
 
