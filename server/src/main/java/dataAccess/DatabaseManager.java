@@ -24,9 +24,9 @@ public class DatabaseManager {
                 user = props.getProperty("db.user");
                 password = props.getProperty("db.password");
 
-                var host = props.getProperty("db.host");
-                var port = Integer.parseInt(props.getProperty("db.port"));
-                connectionUrl = String.format("jdbc:mysql://%s:%d", host, port);
+                String host = props.getProperty("db.host");
+                int port = Integer.parseInt(props.getProperty("db.port"));
+                connectionUrl = String.format("jdbc:mysql://%s:%d/%s", host, port, databaseName);//    private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
             }
         } catch (Exception ex) {
             throw new RuntimeException("unable to process db.properties. " + ex.getMessage());
