@@ -6,10 +6,10 @@ import java.sql.*;
 import java.util.Properties;
 
 public class DatabaseManager {
-    private static final String databaseName;
-    private static final String user;
-    private static final String password;
-    private static final String connectionUrl;
+    public static final String databaseName;
+    public static final String user;
+    public static final String password;
+    public static final String connectionUrl;
 
     /*
      * Load the database information for the db.properties file.
@@ -24,9 +24,9 @@ public class DatabaseManager {
                 user = props.getProperty("db.user");
                 password = props.getProperty("db.password");
 
-                String host = props.getProperty("db.host");
-                int port = Integer.parseInt(props.getProperty("db.port"));
-                connectionUrl = String.format("jdbc:mysql://%s:%d", host, port);//    private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
+                var host = props.getProperty("db.host");
+                var port = Integer.parseInt(props.getProperty("db.port"));
+                connectionUrl = String.format("jdbc:mysql://%s:%d", host, port);
             }
         } catch (Exception ex) {
             throw new RuntimeException("unable to process db.properties. " + ex.getMessage());
@@ -38,9 +38,9 @@ public class DatabaseManager {
      */
     public static void createDatabase() throws DataAccessException {
         try {
-            String statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
-            Connection conn = DriverManager.getConnection(connectionUrl, user, password);
-            try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
+            var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
+            var conn = DriverManager.getConnection(connectionUrl, user, password);
+            try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -62,7 +62,7 @@ public class DatabaseManager {
      */
     public static Connection getConnection() throws DataAccessException {
         try {
-            Connection conn = DriverManager.getConnection(connectionUrl, user, password);
+            var conn = DriverManager.getConnection(connectionUrl, user, password);
             conn.setCatalog(databaseName);
             return conn;
         } catch (SQLException e) {
