@@ -34,6 +34,7 @@ public class SQLGameDAOTests {
 
     @Test
     void clearChessDataTest() throws Exception{//only needs one because its a clear function
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         userService.login(testUser1);
@@ -41,6 +42,7 @@ public class SQLGameDAOTests {
     }
     @Test
     void getGameTestPositive() throws Exception{
+        dbCreationCheck();
         UserData testUser6 = new UserData("user6", "pass6", "eail6@email.com");
         userService.register(testUser6);
         userService.login(testUser6);
@@ -50,18 +52,22 @@ public class SQLGameDAOTests {
     }
     @Test
     void getGameTestNegative() throws Exception{
+        dbCreationCheck();
         assertNull(gameDAO.getGame(100));
     }
     @Test
     void createGameTestPositive() throws Exception{
+        dbCreationCheck();
         assertTrue((gameDAO.createGame("dis game") >= 1));
     }
     @Test
     void createGameTestNegative() throws Exception{
+        dbCreationCheck();
         assertTrue((gameDAO.createGame("dis game") < 1));
     }
     @Test
     void updateGameTestPositive() throws Exception{
+        dbCreationCheck();
         UserData testUser6 = new UserData("user6", "pass6", "eail6@email.com");
         RegisterResponse registration = userService.register(testUser6);
         userService.login(testUser6);
@@ -71,6 +77,7 @@ public class SQLGameDAOTests {
     }
     @Test
     void updateGameTestNegative() throws Exception{
+        dbCreationCheck();
         UserData testUser6 = new UserData("user6", "pass6", "eail6@email.com");
         RegisterResponse registration = userService.register(testUser6);
         userService.login(testUser6);
@@ -80,6 +87,7 @@ public class SQLGameDAOTests {
     }
     @Test
     void getAllGameDataTestPositive() throws Exception{
+        dbCreationCheck();
         UserData testUser6 = new UserData("user6", "pass6", "eail6@email.com");
         RegisterResponse registration = userService.register(testUser6);
         userService.login(testUser6);
@@ -89,6 +97,7 @@ public class SQLGameDAOTests {
     }
     @Test
     void getAllGameDataTestNegative() throws Exception{
+        dbCreationCheck();
         UserData testUser6 = new UserData("user6", "pass6", "eail6@email.com");
         RegisterResponse registration = userService.register(testUser6);
         userService.login(testUser6);
@@ -98,6 +107,7 @@ public class SQLGameDAOTests {
     }
     @Test
     void getGameListTestPositive() throws Exception{
+        dbCreationCheck();
         UserData testUser6 = new UserData("user6", "pass6", "eail6@email.com");
         RegisterResponse registration = userService.register(testUser6);
         userService.login(testUser6);
@@ -107,6 +117,7 @@ public class SQLGameDAOTests {
     }
     @Test
     void getGameListTestNegative() throws Exception{
+        dbCreationCheck();
         UserData testUser6 = new UserData("user6", "pass6", "eail6@email.com");
         RegisterResponse registration = userService.register(testUser6);
         userService.login(testUser6);
@@ -116,10 +127,12 @@ public class SQLGameDAOTests {
     }
     @Test
     void handleSQLExceptionTestPositive() throws Exception{
+        dbCreationCheck();
         assertTrue(true);
     }
     @Test
     void handleSQLExceptionTestNegative() throws Exception{
+        dbCreationCheck();
         assertTrue(true);//lol
     }
 }

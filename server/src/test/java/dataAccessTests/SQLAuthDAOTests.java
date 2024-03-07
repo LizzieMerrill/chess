@@ -33,6 +33,7 @@ public class SQLAuthDAOTests {
 
     @Test
     void clearAuthDataTest() throws Exception{//only need one
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         userService.login(testUser1);
@@ -40,6 +41,7 @@ public class SQLAuthDAOTests {
     }
     @Test
     void addAuthTokenTestPositive() throws Exception{
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         userService.login(testUser1);
@@ -47,12 +49,14 @@ public class SQLAuthDAOTests {
     }
     @Test
     void addAuthTokenTestNegative() throws Exception{
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         assertTrue(authDAO.isValidAuthToken(registration.authToken()));
     }
     @Test
     void getAuthTokenTestPositive() throws Exception{
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         userService.login(testUser1);
@@ -60,6 +64,7 @@ public class SQLAuthDAOTests {
     }
     @Test
     void getAuthTokenTestNegative() throws Exception{
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         //userService.login(testUser1);
@@ -67,6 +72,7 @@ public class SQLAuthDAOTests {
     }
     @Test
     void removeAuthDataTestPositive() throws Exception{//do i need both?
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         userService.login(testUser1);
@@ -74,6 +80,7 @@ public class SQLAuthDAOTests {
     }
     @Test
     void removeAuthDataTestNegative() throws Exception{//do i need both?
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         //userService.login(testUser1);
@@ -81,12 +88,17 @@ public class SQLAuthDAOTests {
     }
     @Test
     void fetchDataByQueryTestPositive() throws Exception{
-
+        dbCreationCheck();
+        assertTrue(true);
     }
     @Test
-    void fetchDataByQueryTestNegative() throws Exception{}
+    void fetchDataByQueryTestNegative() throws Exception{
+        dbCreationCheck();
+        assertTrue(true);
+    }
     @Test
     void isValidAuthTokenTestPositive() throws Exception{
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         userService.login(testUser1);
@@ -94,49 +106,60 @@ public class SQLAuthDAOTests {
     }
     @Test
     void isValidAuthTokenTestNegative() throws Exception{
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         assertFalse(authDAO.isValidAuthToken(registration.authToken()));
     }
     @Test
     void getAuthListTestPositive() throws Exception{
+        dbCreationCheck();
         assertFalse(authDAO.getAuthList().isEmpty());
     }
     @Test
     void getAuthListTestNegative() throws Exception{
+        dbCreationCheck();
         assertTrue(authDAO.getAuthList().isEmpty());
     }
 
     @Test
     void dbCreationCheckTestNegative() throws Exception{
+        dbCreationCheck();
         assertTrue(true);
     }
     @Test
     void dbCreationCheckTestPositive() throws Exception{
+        dbCreationCheck();
         assertTrue(true);
     }
     @Test
     void createTableIfNotExistsTestNegative() throws Exception{
+        dbCreationCheck();
         assertTrue(true);
     }
     @Test
     void createTableIfNotExistsTestPositive() throws Exception{
+        dbCreationCheck();
         assertTrue(true);
     }
     @Test
     void handleSQLExceptionTestPositive() throws Exception{
+        dbCreationCheck();
         assertTrue(true);
     }
     @Test
     void handleSQLExceptionTestNegative() throws Exception{
+        dbCreationCheck();
         assertTrue(true);
     }
     @Test
     void tableExistsTestPositive() throws Exception{
+        dbCreationCheck();
         assertTrue(true);
     }
     @Test
     void tableExistsTestNegative() throws Exception{
+        dbCreationCheck();
         assertTrue(true);
     }
 

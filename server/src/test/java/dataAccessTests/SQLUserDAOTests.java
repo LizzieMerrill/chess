@@ -32,6 +32,7 @@ public class SQLUserDAOTests {
 
     @Test
     void addUserTestPositive() throws Exception{
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
 //        RegisterResponse registration = userService.register(testUser1);
 //        userService.login(testUser1);
@@ -39,6 +40,7 @@ public class SQLUserDAOTests {
     }
     @Test
     void addUserTestNegative() throws Exception{
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
 //        RegisterResponse registration = userService.register(testUser1);
 //        userService.login(testUser1);
@@ -46,18 +48,21 @@ public class SQLUserDAOTests {
     }
     @Test
     void getUserTestPositive() throws Exception{
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         assertNotNull(userDAO.getUser("user1"));
     }
     @Test
     void getUserTestNegative() throws Exception{
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         assertNull(userDAO.getUser("user1"));
     }
     @Test
     void clearUserDataTest() throws Exception{//only need one
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         userService.login(testUser1);
@@ -65,6 +70,7 @@ public class SQLUserDAOTests {
     }
     @Test
     void getUserListTestPositive() throws Exception{
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         userService.login(testUser1);
@@ -72,6 +78,7 @@ public class SQLUserDAOTests {
     }
     @Test
     void getUserListTestNegative() throws Exception{
+        dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         userService.login(testUser1);
@@ -79,10 +86,12 @@ public class SQLUserDAOTests {
     }
     @Test
     void handleSQLExceptionTestPositive() throws Exception{
+        dbCreationCheck();
         assertTrue(true);
     }
     @Test
     void handleSQLExceptionTestNegative() throws Exception{
+        dbCreationCheck();
         assertTrue(true);
     }
 
