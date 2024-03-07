@@ -25,7 +25,11 @@ private static final DatabaseManager manager = new DatabaseManager();
 
 
     public SQLUserDAO(){
-
+        try {
+            manager.createDatabase();
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

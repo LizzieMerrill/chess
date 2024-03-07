@@ -26,6 +26,11 @@ public class SQLAuthDAO implements AuthDAO {
 
     public SQLAuthDAO() {
         //dbCreationCheck();
+        try {
+            manager.createDatabase();
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+        }
     }
     @Override
     public Map<String, AuthData> getAuthList() throws DataAccessException {

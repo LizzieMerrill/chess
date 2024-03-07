@@ -6,10 +6,10 @@ import java.sql.*;
 import java.util.Properties;
 
 public class DatabaseManager {
-    public static final String databaseName;
-    public static final String user;
-    public static final String password;
-    public static final String connectionUrl;
+    private static final String databaseName;
+    private static final String user;
+    private static final String password;
+    private static final String connectionUrl;
 
     /*
      * Load the database information for the db.properties file.
@@ -26,7 +26,7 @@ public class DatabaseManager {
 
                 var host = props.getProperty("db.host");
                 var port = Integer.parseInt(props.getProperty("db.port"));
-                connectionUrl = String.format("jdbc:mysql://%s:%d/%s", host, port, databaseName);
+                connectionUrl = String.format("jdbc:mysql://%s:%d", host, port);
             }
         } catch (Exception ex) {
             throw new RuntimeException("unable to process db.properties. " + ex.getMessage());

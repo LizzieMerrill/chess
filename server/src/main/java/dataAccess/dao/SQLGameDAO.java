@@ -28,6 +28,11 @@ private static final DatabaseManager manager = new DatabaseManager();
     public int nextGameId = 1;
     public SQLGameDAO() {
         //dbCreationCheck();
+        try {
+            manager.createDatabase();
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
