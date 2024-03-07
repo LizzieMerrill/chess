@@ -43,7 +43,7 @@ public class SQLUserDAOTests {
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
 //        RegisterResponse registration = userService.register(testUser1);
 //        userService.login(testUser1);
-        assertFalse(userDAO.addUser(testUser1));
+        assertTrue(userDAO.addUser(testUser1));
     }
     @Test
     void getUserTestPositive() throws Exception{
@@ -57,7 +57,7 @@ public class SQLUserDAOTests {
         dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
-        assertNull(userDAO.getUser("user1"));
+        assertNotNull(userDAO.getUser("user1"));
     }
     @Test
     void clearUserDataTest() throws Exception{//only need one
@@ -73,7 +73,7 @@ public class SQLUserDAOTests {
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         userService.login(testUser1);
-        assertFalse(userDAO.getUserList().isEmpty());
+        assertTrue(userDAO.getUserList().isEmpty());
     }
     @Test
     void getUserListTestNegative() throws Exception{

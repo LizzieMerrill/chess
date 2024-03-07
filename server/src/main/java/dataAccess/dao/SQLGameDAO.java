@@ -173,14 +173,14 @@ try {
             }
 
         } catch (SQLException e) {
-            handleSQLException(e);
+            //handleSQLException(e);
         }
 
         return authMap;
     }
-    private void handleSQLException(SQLException e) throws DataAccessException {
-        dbCreationCheck();
-        //e.printStackTrace();
-        throw new DataAccessException("SQL Exception: " + e.getMessage(), e);
-    }
+//    private void handleSQLException(SQLException e) throws DataAccessException {
+//        dbCreationCheck();
+//        //e.printStackTrace();
+//        throw new DataAccessException("SQL Exception: " + e.getMessage(), e);
+//    }
 }

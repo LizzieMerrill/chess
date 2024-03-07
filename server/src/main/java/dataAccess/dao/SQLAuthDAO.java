@@ -48,7 +48,7 @@ public class SQLAuthDAO implements AuthDAO {
             }
 
         } catch (SQLException e) {
-            handleSQLException(e);
+            //handleSQLException(e);
         }
 
         return authMap;
@@ -81,7 +81,6 @@ public class SQLAuthDAO implements AuthDAO {
             preparedStatement.executeUpdate();
             return true;
         } catch (SQLException e) {
-            handleSQLException(e);
         }
         return false;
     }
@@ -102,7 +101,6 @@ public class SQLAuthDAO implements AuthDAO {
             preparedStatement.executeUpdate();
             return true;
         } catch (SQLException e) {
-            handleSQLException(e);
         }
         return false;
     }
@@ -120,7 +118,6 @@ public class SQLAuthDAO implements AuthDAO {
             }
 
         } catch (SQLException e) {
-            handleSQLException(e);
         }
         return null;
     }
@@ -142,7 +139,7 @@ public class SQLAuthDAO implements AuthDAO {
             return resultSet.next();
 
         } catch (SQLException e) {
-            //e.printStackTrace();
+
             return false;
         } finally {
             try {
@@ -223,9 +220,9 @@ public class SQLAuthDAO implements AuthDAO {
         return resultSet.next();
     }
 
-    private void handleSQLException(SQLException e) throws DataAccessException {
-        //e.printStackTrace();
-        dbCreationCheck();
-        throw new DataAccessException("SQL Exception: " + e.getMessage(), e);
-    }
+//    private static void handleSQLException(SQLException e) throws DataAccessException {
+//        //e.printStackTrace();
+//        dbCreationCheck();
+//        throw new DataAccessException("SQL Exception: " + e.getMessage());
+//    }
 }

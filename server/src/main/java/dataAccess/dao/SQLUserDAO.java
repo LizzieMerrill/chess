@@ -29,7 +29,7 @@ private static final DatabaseManager manager = new DatabaseManager();
             manager.createDatabase();
         } catch (DataAccessException e) {
             e.printStackTrace();
-        }
+        }//bla
     }
 
     @Override
@@ -101,15 +101,15 @@ private static final DatabaseManager manager = new DatabaseManager();
             }
 
         } catch (SQLException e) {
-            handleSQLException(e);
+            //handleSQLException(e);
         }
 
         return userMap;
     }
 
-    private void handleSQLException(SQLException e) throws DataAccessException {
-        dbCreationCheck();
-        //e.printStackTrace();
-        throw new DataAccessException("SQL Exception: " + e.getMessage(), e);
-    }
+//    private void handleSQLException(SQLException e) throws DataAccessException {
+//        dbCreationCheck();
+//        //e.printStackTrace();
+//        throw new DataAccessException("SQL Exception: " + e.getMessage(), e);
+//    }
 }

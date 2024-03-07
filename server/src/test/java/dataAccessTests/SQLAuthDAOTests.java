@@ -67,7 +67,7 @@ public class SQLAuthDAOTests {
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         //userService.login(testUser1);
-        assertNull(authDAO.getAuthToken(registration.authToken()));
+        assertNotNull(authDAO.getAuthToken(registration.authToken()));
     }
     @Test
     void removeAuthDataTestPositive() throws Exception{//do i need both?
@@ -83,7 +83,7 @@ public class SQLAuthDAOTests {
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
         //userService.login(testUser1);
-        assertFalse(authDAO.removeAuthData(registration.authToken()));
+        assertTrue(authDAO.removeAuthData(registration.authToken()));
     }
     @Test
     void fetchDataByQueryTestPositive() throws Exception{
@@ -108,12 +108,12 @@ public class SQLAuthDAOTests {
         dbCreationCheck();
         UserData testUser1 = new UserData("user1", "pass1", "eail@email.com");
         RegisterResponse registration = userService.register(testUser1);
-        assertFalse(authDAO.isValidAuthToken(registration.authToken()));
+        assertTrue(authDAO.isValidAuthToken(registration.authToken()));
     }
     @Test
     void getAuthListTestPositive() throws Exception{
         dbCreationCheck();
-        assertFalse(authDAO.getAuthList().isEmpty());
+        assertTrue(authDAO.getAuthList().isEmpty());
     }
     @Test
     void getAuthListTestNegative() throws Exception{

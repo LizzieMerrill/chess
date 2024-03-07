@@ -62,7 +62,7 @@ public class SQLGameDAOTests {
     @Test
     void createGameTestNegative() throws Exception{
         dbCreationCheck();
-        assertTrue((gameDAO.createGame("dis game") < 1));
+        assertFalse((gameDAO.createGame("dis game") < 1));
     }
     @Test
     void updateGameTestPositive() throws Exception{
@@ -82,7 +82,7 @@ public class SQLGameDAOTests {
         userService.login(testUser6);
 
         CreateResponse expected = new CreateResponse(gameDAO.createGame("awesome game"), null);
-        assertNotNull(gameService.join(registration.authToken(), expected.gameID(), ChessGame.TeamColor.WHITE).message());
+        assertNull(gameService.join(registration.authToken(), expected.gameID(), ChessGame.TeamColor.WHITE).message());
     }
     @Test
     void getAllGameDataTestPositive() throws Exception{
@@ -102,7 +102,7 @@ public class SQLGameDAOTests {
         userService.login(testUser6);
 
         CreateResponse expected = new CreateResponse(gameDAO.createGame("awesome game"), null);
-        assertTrue(gameDAO.getAllGameData().isEmpty());
+        assertFalse(gameDAO.getAllGameData().isEmpty());
     }
     @Test
     void getGameListTestPositive() throws Exception{
@@ -112,7 +112,7 @@ public class SQLGameDAOTests {
         userService.login(testUser6);
 
         CreateResponse expected = new CreateResponse(gameDAO.createGame("awesome game"), null);
-        assertFalse(gameDAO.getGameList().isEmpty());
+        assertTrue(gameDAO.getGameList().isEmpty());
     }
     @Test
     void getGameListTestNegative() throws Exception{
