@@ -26,7 +26,6 @@ public class SQLUserDAOTests {
 
     @BeforeEach
     void clear() throws Exception {
-        dbCreationCheck();
         dataService.clear();
     }
 

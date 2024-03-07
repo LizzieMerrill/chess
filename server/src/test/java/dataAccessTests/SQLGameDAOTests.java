@@ -28,7 +28,6 @@ public class SQLGameDAOTests {
 
     @BeforeEach
     void clear() throws Exception {
-        dbCreationCheck();
         dataService.clear();
     }
 
