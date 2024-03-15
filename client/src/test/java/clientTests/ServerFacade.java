@@ -6,4 +6,10 @@ public class ServerFacade {
     public ServerFacade(int port){
         this.port = port;
     }
+
+    //create http requests
+    private void register(){
+
+    }
+
 }
