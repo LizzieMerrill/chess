@@ -5,9 +5,7 @@ import com.google.gson.Gson;
 import dataAccess.DatabaseManager;
 import dataAccess.dao.*;
 import model.UserData;
-import requests.JoinObject;
-import requests.JoinResponse;
-import requests.RegisterResponse;
+import requests.*;
 import server.*;
 
 import java.io.BufferedReader;
@@ -246,15 +244,29 @@ public class ChessClient {
             connection.setDoOutput(true);
 
             // Prepare game data for creation if needed
-            // String gameData = ...;
+            // For now, let's assume we only need to send the game name
+
+            // Get game name from user input
+            System.out.print("Enter game name: ");
+            Scanner scanner = new Scanner(System.in);
+            String gameName = scanner.nextLine().trim();
+
+            // Prepare the game name object
+            GameNameObject gameNameObject = new GameNameObject(gameName);
+
+            // Convert game name object to JSON string
+            String requestBody = new Gson().toJson(gameNameObject);
 
             // Write game data to the request body
-            // connection.getOutputStream().write(gameData.getBytes());
+            connection.getOutputStream().write(requestBody.getBytes());
 
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 // Game created successfully
-                System.out.println("Game created successfully.");
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String jsonResponse = in.readLine();
+                CreateResponse createResponse = new Gson().fromJson(jsonResponse, CreateResponse.class);
+                System.out.println("Game created successfully. Game ID: " + createResponse.gameID());
             } else {
                 // Game creation failed, handle accordingly
                 System.out.println("Failed to create game.");
@@ -265,6 +277,7 @@ public class ChessClient {
             e.printStackTrace();
         }
     }
+
 
     private void listGames() {
         try {
