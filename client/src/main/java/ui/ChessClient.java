@@ -17,13 +17,7 @@ import java.util.Scanner;
 
 public class ChessClient {
     private boolean loggedIn;
-    final Gson gson = new Gson();
-    final UserDAO userDAO = new SQLUserDAO();
-    final GameDAO gameDAO = new SQLGameDAO();
-    final AuthDAO authDAO = new SQLAuthDAO();
-    Server server = new Server();
     String authToken;
-    DatabaseManager manager = new DatabaseManager();
 
     public ChessClient() {
         this.loggedIn = false;
@@ -128,7 +122,7 @@ public class ChessClient {
                 RegisterResponse loginResponse = gson.fromJson(jsonResponse, RegisterResponse.class);
                 // Process the login response further if needed
                 if (loginResponse.message() == null) {
-                    authToken = loginResponse.authToken(); // Set the authorization token
+                    authToken = loginResponse.authToken();
                     loggedIn = true;
                     System.out.println("Successfully logged in!");
                 }
@@ -179,7 +173,7 @@ public class ChessClient {
                 RegisterResponse registerResponse = gson.fromJson(jsonResponse, RegisterResponse.class);
                 // Process the registration response further if needed
                 if (registerResponse.message() == null) {
-                    authToken = registerResponse.authToken(); // Set the authorization token
+                    authToken = registerResponse.authToken();
                     loggedIn = true;
                     System.out.println("Successfully registered and logged in!");
                 }
@@ -240,7 +234,7 @@ public class ChessClient {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Authorization", "your_auth_token");
+            connection.setRequestProperty("Authorization", authToken);
             connection.setDoOutput(true);
 
             // Prepare game data for creation if needed
@@ -284,7 +278,7 @@ public class ChessClient {
             URL url = new URL("http://localhost:8080/game");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            connection.setRequestProperty("Authorization", "your_auth_token");
+            connection.setRequestProperty("Authorization", authToken);
 
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
