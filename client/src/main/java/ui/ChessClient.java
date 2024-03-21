@@ -24,6 +24,7 @@ public class ChessClient {
     final GameDAO gameDAO = new SQLGameDAO();
     final AuthDAO authDAO = new SQLAuthDAO();
     Server server = new Server();
+    String authToken;
     DatabaseManager manager = new DatabaseManager();
 
     public ChessClient() {
@@ -94,7 +95,7 @@ public class ChessClient {
                 "Register - Register a new account");
     }
 
-    private void login() {
+    private String login() {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             System.out.print("Enter username: ");
@@ -128,8 +129,11 @@ public class ChessClient {
                 String jsonResponse = in.readLine();
                 RegisterResponse loginResponse = gson.fromJson(jsonResponse, RegisterResponse.class);
                 // Process the login response further if needed
-                loggedIn = true;
-                System.out.println("Successfully logged in!");
+                if (loginResponse.message() == null) {
+                    authToken = loginResponse.authToken(); // Set the authorization token
+                    loggedIn = true;
+                    System.out.println("Successfully logged in!");
+                }
             } else {
                 // Login failed, handle accordingly
                 System.out.println("Login failed. Please check your credentials.");
@@ -139,9 +143,10 @@ public class ChessClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return authToken; // Return the authorization token
     }
 
-    private void register() {
+    private String register() {//return authtoken
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             System.out.print("Enter email: ");
@@ -175,8 +180,11 @@ public class ChessClient {
                 String jsonResponse = in.readLine();
                 RegisterResponse registerResponse = gson.fromJson(jsonResponse, RegisterResponse.class);
                 // Process the registration response further if needed
-                loggedIn = true;
-                System.out.println("Successfully registered and logged in!");
+                if (registerResponse.message() == null) {
+                    authToken = registerResponse.authToken(); // Set the authorization token
+                    loggedIn = true;
+                    System.out.println("Successfully registered and logged in!");
+                }
             } else {
                 // Registration failed, handle accordingly
                 System.out.println("Registration failed. Please try again later.");
@@ -186,7 +194,34 @@ public class ChessClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return authToken; // Return the authorization token
     }
+
+    private void logout() {
+        try {
+            URL url = new URL("http://localhost:8080/session");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("DELETE");
+            connection.setRequestProperty("Authorization", authToken); // Use the authorization token
+            connection.setDoOutput(true);
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // Logout successful
+                loggedIn = false;
+                authToken = null; // Clear the authorization token
+                System.out.println("Logged out successfully.");
+            } else {
+                // Logout failed, handle accordingly
+                System.out.println("Logout failed.");
+            }
+
+            connection.disconnect();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void displayPostloginOptions() {
         System.out.println("Postlogin commands: Help, Logout, Create Game, List Games, Join Game, Join Observer");
@@ -199,30 +234,6 @@ public class ChessClient {
                 "List Games - List existing games\n" +
                 "Join Game - Join a game\n" +
                 "Join Observer - Observe a game");
-    }
-
-    private void logout() {
-        try {
-            URL url = new URL("http://localhost:8080/session");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("DELETE");
-            connection.setRequestProperty("Authorization", "your_auth_token");
-            connection.setDoOutput(true);
-
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                // Logout successful
-                loggedIn = false;
-                System.out.println("Logged out successfully.");
-            } else {
-                // Logout failed, handle accordingly
-                System.out.println("Logout failed.");
-            }
-
-            connection.disconnect();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void createGame() {
