@@ -301,9 +301,7 @@ public class ChessClient {
             connection.setDoOutput(true);
 
             // Prepare the join object
-            JoinObject joinObject = new JoinObject();
-            joinObject.setGameID(gameId);
-            joinObject.setPlayerColor(teamColorParam);
+            JoinObject joinObject = new JoinObject(teamColorParam, gameId);
 
             Gson gson = new Gson();
             String requestBody = gson.toJson(joinObject);
@@ -342,8 +340,7 @@ public class ChessClient {
             connection.setDoOutput(true);
 
             // Prepare the join object
-            JoinObject joinObject = new JoinObject();
-            joinObject.setGameID(gameId);
+            JoinObject joinObject = new JoinObject(null, gameId); // Null for observer
 
             Gson gson = new Gson();
             String requestBody = gson.toJson(joinObject);
