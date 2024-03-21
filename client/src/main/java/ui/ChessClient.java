@@ -2,11 +2,8 @@ package ui;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import dataAccess.DatabaseManager;
-import dataAccess.dao.*;
 import model.UserData;
 import requests.*;
-import server.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -87,7 +84,7 @@ public class ChessClient {
                 "Register - Register a new account");
     }
 
-    private String login() {
+    private void login() {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             System.out.print("Enter username: ");
@@ -103,7 +100,6 @@ public class ChessClient {
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
 
-            // Prepare the user data for login
             UserData userData = new UserData(username, password, email);
             userData.setUsername(username);
             userData.setPassword(password);
@@ -116,18 +112,15 @@ public class ChessClient {
 
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                // Login successful, read the response
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String jsonResponse = in.readLine();
                 RegisterResponse loginResponse = gson.fromJson(jsonResponse, RegisterResponse.class);
-                // Process the login response further if needed
                 if (loginResponse.message() == null) {
                     authToken = loginResponse.authToken();
                     loggedIn = true;
                     System.out.println("Successfully logged in!");
                 }
             } else {
-                // Login failed, handle accordingly
                 System.out.println("Login failed. Please check your credentials.");
             }
 
@@ -135,10 +128,9 @@ public class ChessClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return authToken; // Return the authorization token
     }
 
-    private String register() {//return authtoken
+    private void register() {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             System.out.print("Enter email: ");
@@ -154,7 +146,6 @@ public class ChessClient {
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
 
-            // Prepare the user data for registration
             UserData userData = new UserData(username, password, email);
             userData.setEmail(email);
             userData.setUsername(username);
@@ -167,18 +158,15 @@ public class ChessClient {
 
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                // Registration successful, read the response
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String jsonResponse = in.readLine();
                 RegisterResponse registerResponse = gson.fromJson(jsonResponse, RegisterResponse.class);
-                // Process the registration response further if needed
                 if (registerResponse.message() == null) {
                     authToken = registerResponse.authToken();
                     loggedIn = true;
                     System.out.println("Successfully registered and logged in!");
                 }
             } else {
-                // Registration failed, handle accordingly
                 System.out.println("Registration failed. Please try again later.");
             }
 
@@ -186,7 +174,6 @@ public class ChessClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return authToken; // Return the authorization token
     }
 
     private void logout() {
@@ -194,17 +181,15 @@ public class ChessClient {
             URL url = new URL("http://localhost:8080/session");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("DELETE");
-            connection.setRequestProperty("Authorization", authToken); // Use the authorization token
+            connection.setRequestProperty("Authorization", authToken);
             connection.setDoOutput(true);
 
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                // Logout successful
                 loggedIn = false;
-                authToken = null; // Clear the authorization token
+                authToken = null;
                 System.out.println("Logged out successfully.");
             } else {
-                // Logout failed, handle accordingly
                 System.out.println("Logout failed.");
             }
 
@@ -237,32 +222,24 @@ public class ChessClient {
             connection.setRequestProperty("Authorization", authToken);
             connection.setDoOutput(true);
 
-            // Prepare game data for creation if needed
-            // For now, let's assume we only need to send the game name
 
-            // Get game name from user input
             System.out.print("Enter game name: ");
             Scanner scanner = new Scanner(System.in);
             String gameName = scanner.nextLine().trim();
 
-            // Prepare the game name object
             GameNameObject gameNameObject = new GameNameObject(gameName);
 
-            // Convert game name object to JSON string
             String requestBody = new Gson().toJson(gameNameObject);
 
-            // Write game data to the request body
             connection.getOutputStream().write(requestBody.getBytes());
 
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                // Game created successfully
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String jsonResponse = in.readLine();
                 CreateResponse createResponse = new Gson().fromJson(jsonResponse, CreateResponse.class);
                 System.out.println("Game created successfully. Game ID: " + createResponse.gameID());
             } else {
-                // Game creation failed, handle accordingly
                 System.out.println("Failed to create game.");
             }
 
@@ -282,7 +259,6 @@ public class ChessClient {
 
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                // Read and process the list of games if needed
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String inputLine;
                 StringBuilder response = new StringBuilder();
@@ -293,7 +269,6 @@ public class ChessClient {
                 // Process the response as needed
                 System.out.println("List of games: " + response.toString());
             } else {
-                // Failed to retrieve the list of games, handle accordingly
                 System.out.println("Failed to retrieve the list of games.");
             }
 
@@ -318,7 +293,6 @@ public class ChessClient {
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
 
-            // Prepare the join object
             JoinObject joinObject = new JoinObject(teamColorParam, gameId);
 
             Gson gson = new Gson();
@@ -328,14 +302,12 @@ public class ChessClient {
 
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                // Join successful, read the response
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String jsonResponse = in.readLine();
                 JoinResponse joinResponse = gson.fromJson(jsonResponse, JoinResponse.class);
-                // Process the join response further if needed
                 System.out.println("Joined the game successfully.");
+                drawStartBoards();
             } else {
-                // Join failed, handle accordingly
                 System.out.println("Failed to join the game. Please try again later.");
             }
 
@@ -356,8 +328,6 @@ public class ChessClient {
             connection.setRequestMethod("PUT");
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
-
-            // Prepare the join object
             JoinObject joinObject = new JoinObject(null, gameId); // Null for observer
 
             Gson gson = new Gson();
@@ -367,14 +337,12 @@ public class ChessClient {
 
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                // Join successful, read the response
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String jsonResponse = in.readLine();
                 JoinResponse joinResponse = gson.fromJson(jsonResponse, JoinResponse.class);
-                // Process the join response further if needed
                 System.out.println("Joined as an observer.");
+                drawStartBoards();
             } else {
-                // Join failed, handle accordingly
                 System.out.println("Failed to join as an observer. Please try again later.");
             }
 
@@ -382,6 +350,53 @@ public class ChessClient {
         } catch (IOException | IllegalArgumentException e) {
             e.printStackTrace();
         }
+    }
+
+    private void drawStartBoards(){
+            // Define the size of the chessboard
+            int size = 8;
+
+            // Define the characters for different pieces
+            char[][] pieces = {
+                    {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'}, // Black pieces
+                    {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'}, // Black pawns
+                    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, // Empty row
+                    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, // Empty row
+                    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, // Empty row
+                    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, // Empty row
+                    {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'}, // White pawns
+                    {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}  // White pieces
+            };
+
+            // Draw the chessboard twice, once with white pieces at the bottom and once with black pieces at the bottom
+            for (int orientation = 0; orientation < 2; orientation++) {
+                System.out.println("Chessboard (Orientation " + (orientation + 1) + "):");
+                for (int row = 0; row < size; row++) {
+                    for (int col = 0; col < size; col++) {
+                        // Calculate the color of the square
+                        boolean isWhiteSquare = (row + col) % 2 == 0;
+                        // Color variables for terminal printing
+                        String bgWhite = "\u001B[47m";
+                        String bgBlack = "\u001B[40m";
+                        String resetColor = "\u001B[0m";
+
+                        // Color the background based on the square color
+                        if ((orientation == 0 && isWhiteSquare) || (orientation == 1 && !isWhiteSquare)) {
+                            System.out.print(bgWhite);
+                        } else {
+                            System.out.print(bgBlack);
+                        }
+
+                        // Print the piece or empty square
+                        System.out.print(" " + pieces[(orientation == 0) ? row : size - row - 1][col] + " ");
+                        // Reset the color after printing each square
+                        System.out.print(resetColor);
+                    }
+                    System.out.println();
+                }
+                System.out.println();
+            }
+
     }
 
 //    public static void main(String[] args) {
