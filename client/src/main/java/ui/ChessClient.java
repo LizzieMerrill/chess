@@ -4,6 +4,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.UserData;
 import requests.*;
+import ui.GameUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.util.Scanner;
 public class ChessClient {
     private boolean loggedIn;
     String authToken;
+    GameUtils gameUtils = new GameUtils();
 
     public ChessClient() {
         this.loggedIn = false;
@@ -266,8 +268,8 @@ public class ChessClient {
                     response.append(inputLine);
                 }
                 in.close();
-                // Process the response as needed
-                System.out.println("List of games: " + response.toString());
+                String formattedGames = gameUtils.formatGameList(response.toString());
+                System.out.println("List of games:\n" + formattedGames);
             } else {
                 System.out.println("Failed to retrieve the list of games.");
             }
@@ -277,6 +279,10 @@ public class ChessClient {
             e.printStackTrace();
         }
     }
+
+//    private String toString(StringBuilder response){
+//
+//    }
 
     private void joinGame() {
         try {
@@ -354,52 +360,58 @@ public class ChessClient {
         }
     }
 
-    private void drawStartBoards(){
-            // Define the size of the chessboard
-            int size = 8;
+    private void drawStartBoards() {
+        // Define the size of the chessboard
+        int size = 8;
 
-            // Define the characters for different pieces
-            char[][] pieces = {
-                    {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'}, // Black pieces
-                    {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'}, // Black pawns
-                    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, // Empty row
-                    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, // Empty row
-                    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, // Empty row
-                    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, // Empty row
-                    {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'}, // White pawns
-                    {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}  // White pieces
-            };
+        // Define the characters for different pieces
+        char[][] pieces = {
+                {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}, // Black pieces
+                {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'}, // Black pawns
+                {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, // Empty row
+                {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, // Empty row
+                {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, // Empty row
+                {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, // Empty row
+                {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'}, // White pawns
+                {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'}  // White pieces
+        };
 
-            // Draw the chessboard twice, once with white pieces at the bottom and once with black pieces at the bottom
-            for (int orientation = 0; orientation < 2; orientation++) {
-                System.out.println("Chessboard (Orientation " + (orientation + 1) + "):");
-                for (int row = 0; row < size; row++) {
-                    for (int col = 0; col < size; col++) {
-                        // Calculate the color of the square
-                        boolean isWhiteSquare = (row + col) % 2 == 0;
-                        // Color variables for terminal printing
-                        String bgWhite = "\u001B[47m";
-                        String bgBlack = "\u001B[40m";
-                        String resetColor = "\u001B[0m";
+        // Draw the chessboard twice, once with white pieces at the bottom and once with black pieces at the bottom
+        for (int orientation = 0; orientation < 2; orientation++) {
+            System.out.println("Chessboard (Orientation " + (orientation + 1) + "):");
+            for (int row = 0; row < size; row++) {
+                for (int col = 0; col < size; col++) {
+                    // Calculate the color of the square
+                    boolean isWhiteSquare = (row + col) % 2 == 0;
+                    // Color variables for terminal printing
+                    String bgWhite = "\u001B[47m";
+                    String bgBlack = "\u001B[40m";
+                    String fgDarkRed = "\u001B[31;2m";
+                    String resetColor = "\u001B[0m";
 
-                        // Color the background based on the square color
-                        if ((orientation == 0 && isWhiteSquare) || (orientation == 1 && !isWhiteSquare)) {
-                            System.out.print(bgWhite);
-                        } else {
-                            System.out.print(bgBlack);
-                        }
-
-                        // Print the piece or empty square
-                        System.out.print(" " + pieces[(orientation == 0) ? row : size - row - 1][col] + " ");
-                        // Reset the color after printing each square
-                        System.out.print(resetColor);
+                    // Color the background based on the square color
+                    if ((orientation == 0 && isWhiteSquare) || (orientation == 1 && !isWhiteSquare)) {
+                        System.out.print(bgWhite);
+                    } else {
+                        System.out.print(bgBlack);
                     }
-                    System.out.println();
+
+                    // Print the piece or empty square
+                    char piece = pieces[(orientation == 0) ? row : size - row - 1][col];
+                    // Color black team letters red
+                    if (Character.isLowerCase(piece)) {
+                        System.out.print(fgDarkRed);
+                    }
+                    System.out.print(" " + Character.toUpperCase(piece) + " ");
+                    // Reset the color after printing each square
+                    System.out.print(resetColor);
                 }
                 System.out.println();
             }
-
+            System.out.println();
+        }
     }
+
 
 //    public static void main(String[] args) {
 //        ChessClient chessClient = new ChessClient();
