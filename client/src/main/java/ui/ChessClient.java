@@ -4,7 +4,6 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.UserData;
 import requests.*;
-import ui.GameUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -269,7 +268,7 @@ public class ChessClient {
                 }
                 in.close();
                 String formattedGames = gameUtils.formatGameList(response.toString());
-                System.out.println("List of games:\n" + formattedGames);
+                System.out.println(formattedGames);
             } else {
                 System.out.println("Failed to retrieve the list of games.");
             }
@@ -363,6 +362,7 @@ public class ChessClient {
     private void drawStartBoards() {
         // Define the size of the chessboard
         int size = 8;
+        String color;
 
         // Define the characters for different pieces
         char[][] pieces = {
@@ -378,7 +378,12 @@ public class ChessClient {
 
         // Draw the chessboard twice, once with white pieces at the bottom and once with black pieces at the bottom
         for (int orientation = 0; orientation < 2; orientation++) {
-            System.out.println("Chessboard (Orientation " + (orientation + 1) + "):");
+            if(orientation == 0){
+                System.out.println("Black POV:\n");
+            }
+            else{
+                System.out.println("White POV:\n");
+            }
             for (int row = 0; row < size; row++) {
                 for (int col = 0; col < size; col++) {
                     // Calculate the color of the square

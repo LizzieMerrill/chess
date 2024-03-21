@@ -1,7 +1,8 @@
+package ui;
 public class GameUtils {
     public GameUtils(){}
 
-    private void formatGameList(String gameListResponse) {
+    String formatGameList(String gameListResponse) {
         // Remove unnecessary characters from the response string
         String gameList = gameListResponse.replaceAll("[{}\"]", "");
 
@@ -11,8 +12,8 @@ public class GameUtils {
         // Counter for numbering the games
         int gameNumber = 1;
 
-        // Print the formatted list of games
-        System.out.println("List of games:");
+        // StringBuilder to build the formatted game list
+        StringBuilder formattedGameList = new StringBuilder("List of games:\n\n");
 
         for (String game : games) {
             // Remove leading and trailing whitespace
@@ -26,24 +27,58 @@ public class GameUtils {
             // Split each game entry into its attributes
             String[] attributes = game.split(",");
 
-            // Print the game number
-            System.out.print(gameNumber + ". ");
+            // Append game number
+            formattedGameList.append(gameNumber).append(". ");
 
-            // Print each attribute of the game
+            // Initialize variables to store game attributes
+            String gameName = null;
+            String whiteUser = null;
+            String blackUser = null;
+            String gameId = null;
+
+            // Extract attributes of the game
             for (String attribute : attributes) {
                 // Split each attribute into key-value pairs
                 String[] keyValue = attribute.trim().split(":");
 
-                // Print key-value pair
-                System.out.print(keyValue[0] + ": " + keyValue[1]);
+                // Store the attribute values based on the key
+                if (keyValue.length == 2) {
+                    if (keyValue[0].equals("gameName")) {
+                        gameName = keyValue[1].trim();
+                    } else if (keyValue[0].equals("whiteUsername")) {
+                        whiteUser = keyValue[1].trim();
+                    } else if (keyValue[0].equals("blackUsername")) {
+                        blackUser = keyValue[1].trim();
+                    } else if (keyValue[0].equals("gameID")) {
+                        gameId = keyValue[1].trim();
+                    }
+                }
             }
 
-            // Move to the next line for the next game
-            System.out.println();
+            // Append game attributes in the specified format
+            if (gameName != null) {
+                formattedGameList.append("Name: ").append(gameName).append("\n");
+            }
+            if (whiteUser != null) {
+                formattedGameList.append("White User: ").append(whiteUser).append("\n");
+            }
+            if (blackUser != null) {
+                formattedGameList.append("Black User: ").append(blackUser).append("\n");
+            }
+            if (gameId != null) {
+                formattedGameList.append("ID: ").append(gameId).append("\n");
+            }
 
             // Increment game number
             gameNumber++;
+
+            // Add a new line between games
+            formattedGameList.append("\n");
         }
+
+        // Return the formatted game list as a string
+        return formattedGameList.toString();
     }
+
 
 }
