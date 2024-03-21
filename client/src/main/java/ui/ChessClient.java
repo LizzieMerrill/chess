@@ -291,6 +291,7 @@ public class ChessClient {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("PUT");
             connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Authorization", authToken);
             connection.setDoOutput(true);
 
             JoinObject joinObject = new JoinObject(teamColorParam, gameId);
@@ -327,6 +328,7 @@ public class ChessClient {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("PUT");
             connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Authorization", authToken);
             connection.setDoOutput(true);
             JoinObject joinObject = new JoinObject(null, gameId); // Null for observer
 
