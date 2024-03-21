@@ -3,7 +3,6 @@ package ui;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import dataAccess.DatabaseManager;
-import dataAccess.access.DataAccessException;
 import dataAccess.dao.*;
 import model.UserData;
 import requests.JoinObject;
@@ -106,7 +105,7 @@ public class ChessClient {
             String email = reader.readLine().trim();
 
             URL url = new URL("http://localhost:8080/session");
-            HttpURLConnection connection = (HttpURLConnection) manager.getConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
@@ -139,8 +138,6 @@ public class ChessClient {
             connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -155,8 +152,7 @@ public class ChessClient {
             String password = reader.readLine().trim();
 
             URL url = new URL("http://localhost:8080/user");
-            //HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            HttpURLConnection connection = (HttpURLConnection) manager.getConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
@@ -189,8 +185,6 @@ public class ChessClient {
             connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -210,7 +204,7 @@ public class ChessClient {
     private void logout() {
         try {
             URL url = new URL("http://localhost:8080/session");
-            HttpURLConnection connection = (HttpURLConnection) manager.getConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("DELETE");
             connection.setRequestProperty("Authorization", "your_auth_token");
             connection.setDoOutput(true);
@@ -228,15 +222,13 @@ public class ChessClient {
             connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
     private void createGame() {
         try {
             URL url = new URL("http://localhost:8080/game");
-            HttpURLConnection connection = (HttpURLConnection) manager.getConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Authorization", "your_auth_token");
@@ -260,15 +252,13 @@ public class ChessClient {
             connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
     private void listGames() {
         try {
             URL url = new URL("http://localhost:8080/game");
-            HttpURLConnection connection = (HttpURLConnection) manager.getConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Authorization", "your_auth_token");
 
@@ -292,8 +282,6 @@ public class ChessClient {
             connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -307,7 +295,7 @@ public class ChessClient {
             ChessGame.TeamColor teamColorParam = ChessGame.TeamColor.valueOf(colorStr);
 
             URL url = new URL("http://localhost:8080/game");
-            HttpURLConnection connection = (HttpURLConnection) manager.getConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("PUT");
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
@@ -336,8 +324,6 @@ public class ChessClient {
             connection.disconnect();
         } catch (IOException | IllegalArgumentException e) {
             e.printStackTrace();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -348,7 +334,7 @@ public class ChessClient {
             int gameId = Integer.parseInt(reader.readLine().trim());
 
             URL url = new URL("http://localhost:8080/game");
-            HttpURLConnection connection = (HttpURLConnection) manager.getConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("PUT");
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
@@ -377,8 +363,6 @@ public class ChessClient {
             connection.disconnect();
         } catch (IOException | IllegalArgumentException e) {
             e.printStackTrace();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
