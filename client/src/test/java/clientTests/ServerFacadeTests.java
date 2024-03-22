@@ -25,116 +25,116 @@ public class ServerFacadeTests {
     }
 
 
+//    @Test
+//    public void sampleTest() {
+//        assertTrue(true);
+//    }
     @Test
-    public void sampleTest() {
+    public void a() throws Exception {
         assertTrue(true);
     }
     @Test
-    void a() throws Exception {
+    public void ListGamesPos() throws Exception {
         assertTrue(true);
     }
     @Test
-    void ListGamesPos() throws Exception {
+    public void ListGamesNeg() throws Exception {
         assertTrue(true);
     }
     @Test
-    void ListGamesNeg() throws Exception {
+    public void JoinGamePos() throws Exception {
         assertTrue(true);
     }
     @Test
-    void JoinGamePos() throws Exception {
+    public void JoinGameNeg() throws Exception {
         assertTrue(true);
     }
     @Test
-    void JoinGameNeg() throws Exception {
+    public void JoinObserverPos() throws Exception {
         assertTrue(true);
     }
     @Test
-    void JoinObserverPos() throws Exception {
+    public void JoinObserverNeg() throws Exception {
         assertTrue(true);
     }
     @Test
-    void JoinObserverNeg() throws Exception {
+    public void CreateGamePos() throws Exception {
         assertTrue(true);
     }
     @Test
-    void CreateGamePos() throws Exception {
+    public void CreateGameNeg() throws Exception {
         assertTrue(true);
     }
     @Test
-    void CreateGameNeg() throws Exception {
+    public void RegisterPos() throws Exception {
         assertTrue(true);
     }
     @Test
-    void RegisterPos() throws Exception {
+    public void RegisterNeg() throws Exception {
         assertTrue(true);
     }
     @Test
-    void RegisterNeg() throws Exception {
+    public void LoginPos() throws Exception {
         assertTrue(true);
     }
     @Test
-    void LoginPos() throws Exception {
+    public void LoginNeg() throws Exception {
         assertTrue(true);
     }
     @Test
-    void LoginNeg() throws Exception {
+    public void LogoutPos() throws Exception {
         assertTrue(true);
     }
     @Test
-    void LogoutPos() throws Exception {
+    public void LogoutNeg() throws Exception {
         assertTrue(true);
     }
     @Test
-    void LogoutNeg() throws Exception {
+    public void b() throws Exception {
         assertTrue(true);
     }
     @Test
-    void b() throws Exception {
+    public void c() throws Exception {
         assertTrue(true);
     }
     @Test
-    void c() throws Exception {
+    public void d() throws Exception {
         assertTrue(true);
     }
     @Test
-    void d() throws Exception {
+    public void e() throws Exception {
         assertTrue(true);
     }
     @Test
-    void e() throws Exception {
+    public void f() throws Exception {
         assertTrue(true);
     }
     @Test
-    void f() throws Exception {
+    public void g() throws Exception {
         assertTrue(true);
     }
     @Test
-    void g() throws Exception {
+    public void h() throws Exception {
         assertTrue(true);
     }
     @Test
-    void h() throws Exception {
+    public void i() throws Exception {
         assertTrue(true);
     }
     @Test
-    void i() throws Exception {
+    public void j() throws Exception {
         assertTrue(true);
     }
     @Test
-    void j() throws Exception {
+    public void k() throws Exception {
         assertTrue(true);
     }
     @Test
-    void k() throws Exception {
+    public void l() throws Exception {
         assertTrue(true);
     }
     @Test
-    void l() throws Exception {
-        assertTrue(true);
-    }
-    @Test
-    void m() throws Exception {
+    public void m() throws Exception {
         assertTrue(true);
     }
 
