@@ -1,7 +1,8 @@
 package ui;
 
 import chess.ChessGame;
-import com.google.gson.Gson;
+import com.google.gson.*;
+import model.GameData;
 import model.UserData;
 import requests.*;
 
@@ -175,10 +176,10 @@ public class ChessClient {
                 if (registerResponse.message() == null) {
                     authToken = registerResponse.authToken();
                     loggedIn = true;
-                    System.out.println("Successfully registered and logged in!");
+                    System.out.println("\u001B[36mSuccessfully registered and logged in!\u001B[0m");
                 }
             } else {
-                System.out.println("Registration failed. Please try again later.");
+                System.out.println("\u001B[31mRegistration failed. Please try again later.\u001B[0m");
             }
 
             connection.disconnect();
@@ -199,9 +200,9 @@ public class ChessClient {
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 loggedIn = false;
                 authToken = null;
-                System.out.println("Logged out successfully.");
+                System.out.println("\u001B[36mLogged out successfully.\u001B[0m");
             } else {
-                System.out.println("Logout failed.");
+                System.out.println("\u001B[31mLogout failed.\u001B[0m");
             }
 
             connection.disconnect();
@@ -216,13 +217,14 @@ public class ChessClient {
     }
 
     private void displayPostloginHelp() {
-        System.out.println("Help - Displays available commands\n" +
+        System.out.println("\u001B[33mHelp - Displays available commands\n" +
                 "Logout - Logs out the user\n" +
                 "Create Game - Create a new game\n" +
                 "List Games - List existing games\n" +
                 "Join Game - Join a game\n" +
-                "Join Observer - Observe a game");
+                "Join Observer - Observe a game\u001B[0m");
     }
+
 
     private void createGame() {
         try {
@@ -249,9 +251,9 @@ public class ChessClient {
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String jsonResponse = in.readLine();
                 CreateResponse createResponse = new Gson().fromJson(jsonResponse, CreateResponse.class);
-                System.out.println("Game created successfully. Game ID: " + createResponse.gameID());
+                System.out.println("\u001B[36mGame created successfully. Game ID: \u001B[0m" + createResponse.gameID());
             } else {
-                System.out.println("Failed to create game.");
+                System.out.println("\u001B[31mFailed to create game.\u001B[0m");
             }
 
             connection.disconnect();
@@ -259,6 +261,35 @@ public class ChessClient {
             e.printStackTrace();
         }
     }
+
+
+//    private void listGames() {
+//        try {
+//            URL url = new URL("http://localhost:8080/game");
+//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//            connection.setRequestMethod("GET");
+//            connection.setRequestProperty("Authorization", authToken);
+//
+//            int responseCode = connection.getResponseCode();
+//            if (responseCode == HttpURLConnection.HTTP_OK) {
+//                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+//                String inputLine;
+//                StringBuilder response = new StringBuilder();
+//                while ((inputLine = in.readLine()) != null) {
+//                    response.append(inputLine);
+//                }
+//                in.close();
+//                String formattedGames = gameUtils.formatGameList(response.toString());
+//                System.out.println(formattedGames);
+//            } else {
+//                System.out.println("\u001B[31mFailed to retrieve the list of games.\u001B[0m");
+//            }
+//
+//            connection.disconnect();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
     private void listGames() {
@@ -271,27 +302,80 @@ public class ChessClient {
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String inputLine;
                 StringBuilder response = new StringBuilder();
+                String inputLine;
                 while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
                 }
                 in.close();
-                String formattedGames = gameUtils.formatGameList(response.toString());
-                System.out.println(formattedGames);
+
+                // Parse the response JSON array of games
+                JsonArray gamesArray = null;
+
+                // Inside your method
+                try {
+                    // Your existing code to retrieve the JSON response
+                    // Parse the JSON string into a JsonElement
+                    JsonElement jsonElement = JsonParser.parseString(response.toString());
+
+                    // Check if the parsed element is a JsonArray
+                    if (jsonElement.isJsonArray()) {
+                        // Cast the JsonElement to JsonArray
+                        gamesArray = jsonElement.getAsJsonArray();
+
+                        // Now you can work with the JsonArray as needed
+                        // Iterate over the array, process each game entry, etc.
+                    } else {
+                        // Handle the case where the JSON response is not an array
+                        System.err.println("JSON response is not an array.");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+
+
+
+
+                // Iterate over each game in the array
+                for (int i = 0; i < gamesArray.size(); i++) {
+                    JsonObject gameObject = (JsonObject) gamesArray.get(i);
+                    String formattedGame = formatGame(gameObject);
+                    System.out.println(formattedGame);
+                }
             } else {
-                System.out.println("Failed to retrieve the list of games.");
+                // Format failure message as red
+                System.out.println("\u001B[31mFailed to retrieve the list of games.\u001B[0m");
             }
 
             connection.disconnect();
-        } catch (IOException e) {
+        } catch (IOException | JsonIOException e) {
             e.printStackTrace();
         }
     }
 
-//    private String toString(StringBuilder response){
-//
-//    }
+    // Helper method to format a single game
+    private String formatGame(JsonObject game) {
+        StringBuilder formattedGame = new StringBuilder();
+
+        // Add game ID
+        formattedGame.append("Game ID: ").append(game.get("gameID")).append("\n");
+
+        // Add white username
+        formattedGame.append("White User: ").append(game.get("whiteUsername")).append("\n");
+
+        // Add black username
+        formattedGame.append("Black User: ").append(game.get("blackUsername")).append("\n");
+
+        // Add game name
+        formattedGame.append("Name: ").append(game.get("gameName")).append("\n");
+
+        return formattedGame.toString();
+    }
+
+
+
 
     private void joinGame() {
         try {
@@ -321,10 +405,10 @@ public class ChessClient {
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String jsonResponse = in.readLine();
                 JoinResponse joinResponse = gson.fromJson(jsonResponse, JoinResponse.class);
-                System.out.println("Joined the game successfully.");
+                System.out.println("\u001B[36mJoined the game successfully.\u001B[0m");
                 drawStartBoards();
             } else {
-                System.out.println("Failed to join the game. Please try again later.");
+                System.out.println("\u001B[31mFailed to join the game. Please try again later.\u001B[0m");
             }
 
             connection.disconnect();
