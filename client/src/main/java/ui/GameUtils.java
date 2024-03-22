@@ -82,3 +82,35 @@ public class GameUtils {
 
 
 }
+//package ui;
+//
+//import com.google.gson.JsonArray;
+//import com.google.gson.JsonObject;
+//
+//public class GameUtils {
+//
+//    public static String formatGameList(String json) {
+//        StringBuilder formatted = new StringBuilder();
+//        int count = 1;
+//
+//        try {
+//            JsonObject gamesObject = new JsonObject(json);
+//            JsonArray gamesArray = gamesObject.getAsJsonArray("games");
+//            for (int i = 0; i < gamesArray.size(); i++) {
+//                JsonObject gameObj = gamesArray.getAsJsonObject(i);
+//                String gameName = gameObj.getAsString("gameName");
+//                String whitePlayer = gameObj.optString("whiteUsername", "No white player");
+//                String blackPlayer = gameObj.optString("blackUsername", "No black player");
+//
+//                formatted.append(count).append(". ").append(gameName).append("\n");
+//                formatted.append("   White Player: ").append(whitePlayer).append("\n");
+//                formatted.append("   Black Player: ").append(blackPlayer).append("\n\n");
+//                count++;
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        return formatted.toString();
+//    }
+//}

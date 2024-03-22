@@ -292,6 +292,144 @@ public class ChessClient {
 //    }
 
 
+//    private void listGames() {
+//        try {
+//            URL url = new URL("http://localhost:8080/game");
+//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//            connection.setRequestMethod("GET");
+//            connection.setRequestProperty("Authorization", authToken);
+//
+//            int responseCode = connection.getResponseCode();
+//            if (responseCode == HttpURLConnection.HTTP_OK) {
+//                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+//                StringBuilder response = new StringBuilder();
+//                String inputLine;
+//                while ((inputLine = in.readLine()) != null) {
+//                    response.append(inputLine);
+//                }
+//                in.close();
+//
+//                // Parse the response JSON array of games
+//                JsonArray gamesArray = null;
+//
+//                // Inside your method
+//                try {
+//                    // Your existing code to retrieve the JSON response
+//                    // Parse the JSON string into a JsonElement
+//                    JsonElement jsonElement = JsonParser.parseString(response.toString());
+//
+//                    // Check if the parsed element is a JsonArray
+//                    if (jsonElement.isJsonArray()) {
+//                        // Cast the JsonElement to JsonArray
+//                        gamesArray = jsonElement.getAsJsonArray();
+//
+//                        // Iterate over each game in the array
+//                        for (int i = 0; i < gamesArray.size(); i++) {
+//                            JsonObject gameObject = (JsonObject) gamesArray.get(i);
+//                            String formattedGame = formatGame(gameObject);
+//                            System.out.println(formattedGame);
+//                        }
+//                    } else {
+//                        // Handle the case where the JSON response is not an array
+//                        System.err.println("JSON response is either null or not an array.");
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            } else {
+//                // Format failure message as red
+//                System.out.println("\u001B[31mFailed to retrieve the list of games.\u001B[0m");
+//            }
+//
+//            connection.disconnect();
+//        } catch (IOException | JsonIOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+
+
+
+
+
+
+
+
+//    private void listGames() {
+//        try {
+//            URL url = new URL("http://localhost:8080/game");
+//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//            connection.setRequestMethod("GET");
+//            connection.setRequestProperty("Authorization", authToken);
+//
+//            int responseCode = connection.getResponseCode();
+//            if (responseCode == HttpURLConnection.HTTP_OK) {
+//                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+//                StringBuilder response = new StringBuilder();
+//                String inputLine;
+//                while ((inputLine = in.readLine()) != null) {
+//                    response.append(inputLine);
+//                }
+//                in.close();
+//
+//                // Parse the response JSON and extract the array of games
+//                try {
+//                    JsonObject jsonResponse = JsonParser.parseString(response.toString()).getAsJsonObject();
+//                    if (jsonResponse.has("games")) {
+//                        JsonArray jsonArray = jsonResponse.getAsJsonArray("games");
+//                        if (jsonArray.size() == 0) {
+//                            System.out.println("No games found.");
+//                        } else {
+//                            // Iterate over each game in the array
+//                            for (int i = 0; i < jsonArray.size(); i++) {
+//                                JsonObject gameObject = jsonArray.get(i).getAsJsonObject();
+//                                String formattedGame = formatGame(gameObject);
+//                                System.out.println(formattedGame);
+//                            }
+//                        }
+//                    } else {
+//                        System.err.println("Response does not contain a 'games' array.");
+//                    }
+//                } catch (Exception e) {
+//                    //System.err.println("Error parsing JSON response: " + e.getMessage());
+//                    System.err.println("Empty");
+//                    e.printStackTrace();
+//                }
+//            } else {
+//                // Format failure message as red
+//                System.out.println("\u001B[31mFailed to retrieve the list of games. HTTP Error Code: " + responseCode + "\u001B[0m");
+//            }
+//
+//            connection.disconnect();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//
+//    private String formatGame(JsonObject gameObject) {
+//        // Extract game attributes and format them as needed
+//        String gameName = gameObject.get("gameName").getAsString();
+//        String whiteUser = "N/A";
+//        String blackUser = "N/A";
+//        if(gameObject.get("whiteUsername") != null){
+//            whiteUser = gameObject.get("whiteUsername").getAsString();
+//        }
+//        if(gameObject.get("blackUsername") != null){
+//            blackUser = gameObject.get("blackUsername").getAsString();
+//        }
+//        int gameId = gameObject.get("gameID").getAsInt();
+//
+//        // Construct and return the formatted game string
+//        return String.format("Game ID: %d\nGame Name: %s\nWhite User: %s\nBlack User: %s\n", gameId, gameName, whiteUser, blackUser);
+//    }
+
+
+
+
+
+
+
     private void listGames() {
         try {
             URL url = new URL("http://localhost:8080/game");
@@ -309,70 +447,56 @@ public class ChessClient {
                 }
                 in.close();
 
-                // Parse the response JSON array of games
-                JsonArray gamesArray = null;
-
-                // Inside your method
+                // Parse the response JSON and extract the array of games
                 try {
-                    // Your existing code to retrieve the JSON response
-                    // Parse the JSON string into a JsonElement
-                    JsonElement jsonElement = JsonParser.parseString(response.toString());
-
-                    // Check if the parsed element is a JsonArray
-                    if (jsonElement.isJsonArray()) {
-                        // Cast the JsonElement to JsonArray
-                        gamesArray = jsonElement.getAsJsonArray();
-
-                        // Now you can work with the JsonArray as needed
-                        // Iterate over the array, process each game entry, etc.
+                    JsonObject jsonResponse = JsonParser.parseString(response.toString()).getAsJsonObject();
+                    if (jsonResponse.has("games")) {
+                        JsonArray jsonArray = jsonResponse.getAsJsonArray("games");
+                        if (jsonArray.size() == 0) {
+                            System.out.println("No games found.");
+                        } else {
+                            // Iterate over each game in the array
+                            for (int i = 0; i < jsonArray.size(); i++) {
+                                JsonObject gameObject = jsonArray.get(i).getAsJsonObject();
+                                String formattedGame = formatGame(gameObject, i + 1); // Adjusted to count from one
+                                System.out.println(formattedGame);
+                            }
+                        }
                     } else {
-                        // Handle the case where the JSON response is not an array
-                        System.err.println("JSON response is not an array.");
+                        System.err.println("Response does not contain a 'games' array.");
                     }
                 } catch (Exception e) {
+                    //System.err.println("Error parsing JSON response: " + e.getMessage());
+                    System.err.println("Empty");
                     e.printStackTrace();
-                }
-
-
-
-
-
-
-                // Iterate over each game in the array
-                for (int i = 0; i < gamesArray.size(); i++) {
-                    JsonObject gameObject = (JsonObject) gamesArray.get(i);
-                    String formattedGame = formatGame(gameObject);
-                    System.out.println(formattedGame);
                 }
             } else {
                 // Format failure message as red
-                System.out.println("\u001B[31mFailed to retrieve the list of games.\u001B[0m");
+                System.out.println("\u001B[31mFailed to retrieve the list of games. HTTP Error Code: " + responseCode + "\u001B[0m");
             }
 
             connection.disconnect();
-        } catch (IOException | JsonIOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // Helper method to format a single game
-    private String formatGame(JsonObject game) {
-        StringBuilder formattedGame = new StringBuilder();
+    private String formatGame(JsonObject gameObject, int index) {
+        // Extract game attributes and format them as needed
+        String gameName = gameObject.get("gameName").getAsString();
+        String whiteUser = "N/A";
+        String blackUser = "N/A";
+        if(gameObject.get("whiteUsername") != null){
+            whiteUser = gameObject.get("whiteUsername").getAsString();
+        }
+        if(gameObject.get("blackUsername") != null){
+            blackUser = gameObject.get("blackUsername").getAsString();
+        }
 
-        // Add game ID
-        formattedGame.append("Game ID: ").append(game.get("gameID")).append("\n");
-
-        // Add white username
-        formattedGame.append("White User: ").append(game.get("whiteUsername")).append("\n");
-
-        // Add black username
-        formattedGame.append("Black User: ").append(game.get("blackUsername")).append("\n");
-
-        // Add game name
-        formattedGame.append("Name: ").append(game.get("gameName")).append("\n");
-
-        return formattedGame.toString();
+        // Construct and return the formatted game string
+        return String.format("%d. Game Name: %s\nWhite User: %s\nBlack User: %s\n", index, gameName, whiteUser, blackUser);
     }
+
 
 
 
