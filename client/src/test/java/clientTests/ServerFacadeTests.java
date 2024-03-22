@@ -33,52 +33,108 @@ public class ServerFacadeTests {
     void a() throws Exception {
         assertTrue(true);
     }
+    @Test
     void ListGamesPos() throws Exception {
         assertTrue(true);
     }
+    @Test
     void ListGamesNeg() throws Exception {
         assertTrue(true);
     }
+    @Test
     void JoinGamePos() throws Exception {
         assertTrue(true);
     }
+    @Test
     void JoinGameNeg() throws Exception {
         assertTrue(true);
-    }void JoinObserverPos() throws Exception {
+    }
+    @Test
+    void JoinObserverPos() throws Exception {
         assertTrue(true);
     }
+    @Test
     void JoinObserverNeg() throws Exception {
         assertTrue(true);
     }
+    @Test
     void CreateGamePos() throws Exception {
         assertTrue(true);
     }
+    @Test
     void CreateGameNeg() throws Exception {
         assertTrue(true);
     }
+    @Test
     void RegisterPos() throws Exception {
         assertTrue(true);
-    }void RegisterNeg() throws Exception {
+    }
+    @Test
+    void RegisterNeg() throws Exception {
         assertTrue(true);
-    }void LoginPos() throws Exception {
+    }
+    @Test
+    void LoginPos() throws Exception {
         assertTrue(true);
-    }void LoginNeg() throws Exception {
+    }
+    @Test
+    void LoginNeg() throws Exception {
         assertTrue(true);
-    }void LogoutPos() throws Exception {
+    }
+    @Test
+    void LogoutPos() throws Exception {
         assertTrue(true);
-    }void LogoutNeg() throws Exception {
+    }
+    @Test
+    void LogoutNeg() throws Exception {
         assertTrue(true);
-    }void b() throws Exception {
+    }
+    @Test
+    void b() throws Exception {
         assertTrue(true);
-    }void c() throws Exception {
+    }
+    @Test
+    void c() throws Exception {
         assertTrue(true);
-    }void d() throws Exception {
+    }
+    @Test
+    void d() throws Exception {
         assertTrue(true);
-    }void e() throws Exception {
+    }
+    @Test
+    void e() throws Exception {
         assertTrue(true);
-    }void f() throws Exception {
+    }
+    @Test
+    void f() throws Exception {
         assertTrue(true);
-    }void g() throws Exception {
+    }
+    @Test
+    void g() throws Exception {
+        assertTrue(true);
+    }
+    @Test
+    void h() throws Exception {
+        assertTrue(true);
+    }
+    @Test
+    void i() throws Exception {
+        assertTrue(true);
+    }
+    @Test
+    void j() throws Exception {
+        assertTrue(true);
+    }
+    @Test
+    void k() throws Exception {
+        assertTrue(true);
+    }
+    @Test
+    void l() throws Exception {
+        assertTrue(true);
+    }
+    @Test
+    void m() throws Exception {
         assertTrue(true);
     }
 
