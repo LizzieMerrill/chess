@@ -33,20 +33,65 @@ public class ServerFacadeTests {
     void a() throws Exception {
         assertTrue(true);
     }
-    void d() throws Exception {
+    void ListGamesPos() throws Exception {
         assertTrue(true);
     }
-    void b() throws Exception {
+    void ListGamesNeg() throws Exception {
         assertTrue(true);
     }
-    void c() throws Exception {
+    void JoinGamePos() throws Exception {
         assertTrue(true);
     }
-    void e() throws Exception {
+    void JoinGameNeg() throws Exception {
+        assertTrue(true);
+    }void JoinObserverPos() throws Exception {
+        assertTrue(true);
+    }
+    void JoinObserverNeg() throws Exception {
+        assertTrue(true);
+    }
+    void CreateGamePos() throws Exception {
+        assertTrue(true);
+    }
+    void CreateGameNeg() throws Exception {
+        assertTrue(true);
+    }
+    void RegisterPos() throws Exception {
+        assertTrue(true);
+    }void RegisterNeg() throws Exception {
+        assertTrue(true);
+    }void LoginPos() throws Exception {
+        assertTrue(true);
+    }void LoginNeg() throws Exception {
+        assertTrue(true);
+    }void LogoutPos() throws Exception {
+        assertTrue(true);
+    }void LogoutNeg() throws Exception {
+        assertTrue(true);
+    }void b() throws Exception {
+        assertTrue(true);
+    }void c() throws Exception {
+        assertTrue(true);
+    }void d() throws Exception {
+        assertTrue(true);
+    }void e() throws Exception {
         assertTrue(true);
     }void f() throws Exception {
         assertTrue(true);
+    }void g() throws Exception {
+        assertTrue(true);
     }
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

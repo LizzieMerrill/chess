@@ -75,14 +75,22 @@ public class ChessClient {
     }
 
     private void displayPreloginOptions() {
-        System.out.println("Prelogin commands: Help, Quit, Login, Register");
+        System.out.println("Prelogin commands: \u001B[33mHelp\u001B[0m, \u001B[33mQuit\u001B[0m, \u001B[33mLogin\u001B[0m, \u001B[33mRegister\u001B[0m");
     }
 
+//    private void displayPreloginHelp() {
+//        System.out.println("Help - Displays available commands\n" +
+//                "Quit - Exits the program\n" +
+//                "Login - Login with existing credentials\n" +
+//                "Register - Register a new account");
+//    }
+
     private void displayPreloginHelp() {
-        System.out.println("Help - Displays available commands\n" +
+        // Format command words as yellow
+        System.out.println("\u001B[33mHelp - Displays available commands\n" +
                 "Quit - Exits the program\n" +
                 "Login - Login with existing credentials\n" +
-                "Register - Register a new account");
+                "Register - Register a new account\u001B[0m");
     }
 
     private void login() {
@@ -119,10 +127,12 @@ public class ChessClient {
                 if (loginResponse.message() == null) {
                     authToken = loginResponse.authToken();
                     loggedIn = true;
-                    System.out.println("Successfully logged in!");
+                    //System.out.println("Successfully logged in!");
+                    System.out.println("\u001B[36mSuccessfully logged in!\u001B[0m");
                 }
             } else {
-                System.out.println("Login failed. Please check your credentials.");
+                //System.out.println("Login failed. Please check your credentials.");
+                System.out.println("\u001B[31mLogin failed. Please check your credentials.\u001B[0m");
             }
 
             connection.disconnect();
@@ -202,7 +212,7 @@ public class ChessClient {
 
 
     private void displayPostloginOptions() {
-        System.out.println("Postlogin commands: Help, Logout, Create Game, List Games, Join Game, Join Observer");
+        System.out.println("Postlogin commands: \u001B[33mHelp\u001B[0m, \u001B[33mLogout\u001B[0m, \u001B[33mCreate Game\u001B[0m, \u001B[33mList Games\u001B[0m, \u001B[33mJoin Game\u001B[0m, \u001B[33mJoin Observer\u001B[0m");
     }
 
     private void displayPostloginHelp() {
