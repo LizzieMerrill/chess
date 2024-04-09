@@ -7,6 +7,7 @@ import dataAccess.access.DataAccessException;
 import dataAccess.dao.*;
 import deserializers.DeserializerUserGameCommand;
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import webSocketMessages.serverMessages.Error;
@@ -30,10 +31,13 @@ public class WSocketHandler {
 
     private final ConnectionManager connections = new ConnectionManager();
 
+//    @OnWebSocketError
+//    public void onError(Session session, String message) throws IOException, DataAccessException {
+//        Error error = new Error("Error");
+//    }
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException, DataAccessException {
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(UserGameCommand.class, new DeserializerUserGameCommand()).create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(UserGameCommand.class, new DeserializerUserGameCommand()).create();
         var userGameCommand = gson.fromJson(message, UserGameCommand.class);
         switch (userGameCommand.getCommandType()) {
             case JOIN_PLAYER -> joinPlayer(gson.fromJson(message, JoinPlayer.class), session);
@@ -43,6 +47,7 @@ public class WSocketHandler {
             case RESIGN -> resign(gson.fromJson(message, Resign.class), session);
         }
     }
+
 
     private void joinPlayer(JoinPlayer joinPlayerGameCommand, Session session) throws IOException {
         connections.add(joinPlayerGameCommand.getAuthString(), session); // store the websocket object
