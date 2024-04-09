@@ -645,6 +645,11 @@
 package ui;
 
 import com.google.gson.Gson;
+import dataAccess.dao.AuthDAO;
+import dataAccess.dao.GameDAO;
+import dataAccess.dao.SQLAuthDAO;
+import dataAccess.dao.SQLGameDAO;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketListener;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
@@ -653,6 +658,7 @@ import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
@@ -660,9 +666,12 @@ import java.util.concurrent.TimeUnit;
 
 public class ChessClient {
     private boolean loggedIn;
+    private boolean inGame;
     private String authToken;
     private Session session;
     private Gson gson = new Gson();
+    GameDAO gameDAO = new SQLGameDAO();
+    AuthDAO authDAO = new SQLAuthDAO();
 
     public ChessClient() {
         this.loggedIn = false;
@@ -693,6 +702,8 @@ public class ChessClient {
                         System.out.println("Invalid command. Please try again.");
                 }
             } else {
+                if(inGame){}//TODO
+                bruh
                 displayPostloginOptions();
                 String input = scanner.nextLine().trim().toLowerCase();
                 switch (input) {
@@ -837,12 +848,29 @@ public class ChessClient {
     }
 
     private void logout() {
+        boolean player = false;
         try {
-            UserGameCommand command = new UserGameCommand("LOGOUT", authToken);
-            session.getRemote().sendString(gson.toJson(command));
-            loggedIn = false;
-            authToken = null;
-            System.out.println("\u001B[36mLogged out successfully.\u001B[0m");
+            UserGameCommand command = new UserGameCommand(authToken);
+            if(loggedIn) {
+                Collection<GameData> games = gameDAO.getAllGameData();
+                for (GameData game : games) {
+                    if(authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getBlackUsername()
+                    || authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getWhiteUsername()){
+                        player = true;
+                    }
+                }
+                if(player){
+                    //resign logic and break
+                }
+                else{
+                    //leave game or log out
+                }
+                session.getRemote().sendString(gson.toJson(command));
+                loggedIn = false;
+                authToken = null;
+                System.out.println("\u001B[36mLogged out successfully.\u001B[0m");
+            }
+            System.out.println("\u001B[36mAlready logged out.\u001B[0m");
         } catch (Exception e) {
             e.printStackTrace();
         }
