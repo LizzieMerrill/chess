@@ -79,6 +79,11 @@
             <version>1.15</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.websocket</groupId>
+            <artifactId>javax.websocket-api</artifactId>
+            <version>1.1</version> <!-- Or any other version compatible with your project -->
+        </dependency>
     </dependencies>
 
 </project>

@@ -54,6 +54,11 @@ public class SQLAuthDAO implements AuthDAO {
         return authMap;
     }
 
+//    public String getUsernameByToken(String authToken){
+//        dbCreationCheck();
+//        return fetchDataByQuery(getAuthTokenQuery, authToken);
+//    }
+
     @Override
     public boolean clearAuthData() throws DataAccessException {
         dbCreationCheck();

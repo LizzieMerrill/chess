@@ -1,5 +1,9 @@
 package webSocketMessages.userCommands;
 
+
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.*;
+
 import java.util.Objects;
 
 /**
@@ -8,6 +12,7 @@ import java.util.Objects;
  * Note: You can add to this class, but you should not alter the existing
  * methods.
  */
+@WebSocket
 public class UserGameCommand {
 
     public UserGameCommand(String authToken) {
@@ -24,7 +29,7 @@ public class UserGameCommand {
 
     protected CommandType commandType;
 
-    private final String authToken;
+    final String authToken;
 
     public String getAuthString() {
         return authToken;
@@ -33,6 +38,45 @@ public class UserGameCommand {
     public CommandType getCommandType() {
         return this.commandType;
     }
+
+
+
+
+
+
+
+    @OnWebSocketConnect
+    public void onConnect(Session session) {
+        System.out.println("WebSocket connected: " + session.getRemoteAddress());
+        // Handle WebSocket connection
+    }
+
+    @OnWebSocketClose
+    public void onClose(int statusCode, String reason) {
+        //System.out.println("WebSocket closed: " + reason);
+        // Handle WebSocket close
+    }
+
+    @OnWebSocketMessage
+    public void onMessage(Session session, String message) {
+        System.out.println("Received message from client: " + message);
+        // Handle WebSocket message
+    }
+
+    @OnWebSocketError
+    public void onError(Throwable cause) {
+        System.err.println("WebSocket error:");
+        cause.printStackTrace();
+        // Handle WebSocket error
+    }
+
+
+
+
+
+
+
+
 
     @Override
     public boolean equals(Object o) {

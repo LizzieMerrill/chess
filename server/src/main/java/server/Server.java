@@ -6,8 +6,14 @@ import java.sql.SQLException;
 import java.util.Objects;
 import dataAccess.access.DataAccessException;
 import handlers.*;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.server.WebSocketHandler;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
+import server.WebSocket.WSocketHandler;
 import spark.Spark;
 import dataAccess.dao.*;
+import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.userCommands.UserGameCommand;
 
 public class Server {
 
@@ -23,6 +29,7 @@ public class Server {
     public int run(int desiredPort) {
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
+        registerWebSocketHandlers();
         registerEndpoints();
         Spark.awaitInitialization();
         return Spark.port();
@@ -32,6 +39,11 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
+
+    public void registerWebSocketHandlers() {
+        Spark.webSocket("/connect", new WSocketHandler());
+    }
+
 
     private void registerEndpoints() {
         //clear

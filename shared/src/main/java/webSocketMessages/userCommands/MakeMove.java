@@ -20,4 +20,7 @@ public class MakeMove extends UserGameCommand {
     public ChessMove getMove() {
         return move;
     }
+//    public String getAuthToken(){
+//        return authToken;
+//    }
 }
