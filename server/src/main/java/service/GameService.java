@@ -6,7 +6,6 @@ import model.AuthData;
 import model.GameData;
 import requests.CreateResponse;
 import requests.JoinResponse;
-import model.GameStatus;
 
 public class GameService {
 
@@ -45,14 +44,17 @@ public class GameService {
 
             if(teamColor == ChessGame.TeamColor.WHITE){
                 gameData.setWhiteUsername(authorization.getUsername());
+                authDAO.getJoinedGames().put(authorization.getAuthToken(), gameId);
                 gameDAO.updateGame(gameData);
             }
             else if(teamColor == ChessGame.TeamColor.BLACK){
                 gameData.setBlackUsername(authorization.getUsername());
+                authDAO.getJoinedGames().put(authorization.getAuthToken(), gameId);
                 gameDAO.updateGame(gameData);
             }
             else{
                 gameDAO.updateGame(gameData);
+                authDAO.getJoinedGames().put(authorization.getAuthToken(), gameId);
             }
             return new JoinResponse(null); // Success
 

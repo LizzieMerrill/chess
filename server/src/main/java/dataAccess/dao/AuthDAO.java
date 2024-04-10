@@ -3,6 +3,7 @@ package dataAccess.dao;
 import dataAccess.access.DataAccessException;
 import model.AuthData;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public interface AuthDAO {
@@ -12,4 +13,5 @@ public interface AuthDAO {
     boolean clearAuthData() throws DataAccessException;
     boolean isValidAuthToken(String authToken) throws DataAccessException;
     Map<String, AuthData> getAuthList() throws DataAccessException;
+    HashMap<String, Integer> getJoinedGames();
 }

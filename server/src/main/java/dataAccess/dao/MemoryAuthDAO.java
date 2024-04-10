@@ -43,4 +43,9 @@ public class MemoryAuthDAO implements AuthDAO {
     public Map<String, AuthData> getAuthList() {
         return authTokenMap;
     }
+
+    @Override
+    public HashMap<String, Integer> getJoinedGames() {
+        return null;
+    }
 }

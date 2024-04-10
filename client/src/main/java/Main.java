@@ -1,5 +1,8 @@
 import chess.*;
+import dataAccess.access.DataAccessException;
 import ui.ChessClient;
+
+import java.io.IOException;
 
 public class Main {
 //    public static void main(String[] args) {
@@ -7,7 +10,7 @@ public class Main {
 //        System.out.println("♕ 240 Chess Client: " + piece);
 //        //create phase 5
 //    }
-public static void main(String[] args) {
+public static void main(String[] args) throws DataAccessException, IOException {
     ChessClient chessClient = new ChessClient();
     chessClient.start();
 }

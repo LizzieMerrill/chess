@@ -49,44 +49,63 @@ public class WSocketHandler {
     }
 
 
-    private void joinPlayer(JoinPlayer joinPlayerGameCommand, Session session) throws IOException {
-        connections.add(joinPlayerGameCommand.getAuthString(), session); // store the websocket object
-        LoadGame loadGameMessage;
-        try {
-            if(joinPlayerGameCommand.getPlayerColor() == ChessGame.TeamColor.BLACK && gameDAO.getGame(joinPlayerGameCommand.getGameID()).getBlackUsername() == null){
-                loadGameMessage = new LoadGame(joinPlayerGameCommand.getGameID());
-                session.getRemote().sendString(new Gson().toJson(loadGameMessage));
-                Notification notification = new Notification(authDAO.getAuthToken(joinPlayerGameCommand.getAuthString()).getUsername() + " joined the game as the black team!");
-                connections.broadcast(joinPlayerGameCommand.getAuthString(), notification);
-            }
-            else if(joinPlayerGameCommand.getPlayerColor() == ChessGame.TeamColor.WHITE && gameDAO.getGame(joinPlayerGameCommand.getGameID()).getWhiteUsername() == null){
-                loadGameMessage = new LoadGame(joinPlayerGameCommand.getGameID());
-                session.getRemote().sendString(new Gson().toJson(loadGameMessage));
-                Notification notification = new Notification(authDAO.getAuthToken(joinPlayerGameCommand.getAuthString()).getUsername() + " joined the game as the white team!");
-                connections.broadcast(joinPlayerGameCommand.getAuthString(), notification);
-            }
-            else{
-                Error errorGameMessage = new Error("That color is already taken!");
+    private void joinPlayer(JoinPlayer joinPlayerGameCommand, Session session) throws IOException, DataAccessException {
+        if(!authDAO.isValidAuthToken(joinPlayerGameCommand.getAuthString())){
+            Error authError = new Error("Invalid auth token");
+        }
+        else {
+            connections.add(joinPlayerGameCommand.getAuthString(), session); // store the websocket object
+            LoadGame loadGameMessage;
+            try {
+                if(!(joinPlayerGameCommand.getPlayerColor() == ChessGame.TeamColor.BLACK || joinPlayerGameCommand.getPlayerColor() == ChessGame.TeamColor.WHITE)) {
+                    if (joinPlayerGameCommand.getPlayerColor() == ChessGame.TeamColor.BLACK && gameDAO.getGame(joinPlayerGameCommand.getGameID()).getBlackUsername() == null) {
+                        loadGameMessage = new LoadGame(joinPlayerGameCommand.getGameID());
+                        session.getRemote().sendString(new Gson().toJson(loadGameMessage));
+                        Notification notification = new Notification(authDAO.getAuthToken(joinPlayerGameCommand.getAuthString()).getUsername() + " joined the game as the black team!");
+                        connections.broadcast(joinPlayerGameCommand.getAuthString(), notification);
+                    } else if (joinPlayerGameCommand.getPlayerColor() == ChessGame.TeamColor.WHITE && gameDAO.getGame(joinPlayerGameCommand.getGameID()).getWhiteUsername() == null) {
+                        loadGameMessage = new LoadGame(joinPlayerGameCommand.getGameID());
+                        session.getRemote().sendString(new Gson().toJson(loadGameMessage));
+                        Notification notification = new Notification(authDAO.getAuthToken(joinPlayerGameCommand.getAuthString()).getUsername() + " joined the game as the white team!");
+                        connections.broadcast(joinPlayerGameCommand.getAuthString(), notification);
+                    } else {
+                        Error errorGameMessage = new Error("That color is already taken!");
+
+                        session.getRemote().sendString(new Gson().toJson(errorGameMessage));
+                    }
+                }
+                else{
+                    Error nullColorError = new Error("You must pick a team color!");
+                }
+            } catch (Exception e) {
+                Error errorGameMessage = new Error(e.getMessage());
                 session.getRemote().sendString(new Gson().toJson(errorGameMessage));
             }
-        } catch (Exception e) {
-            Error errorGameMessage = new Error(e.getMessage());
-            session.getRemote().sendString(new Gson().toJson(errorGameMessage));
         }
 //        System.out.println("test6");
     }
 
     private void joinObserver(JoinObserver joinObserverGameCommand, Session session) throws IOException, DataAccessException {
-        connections.add(joinObserverGameCommand.getAuthString(), session);
-        LoadGame loadGameMessage;
-        try {
-            loadGameMessage = new LoadGame(joinObserverGameCommand.getGameID());
-        } catch (Exception e) {
-            loadGameMessage = new LoadGame(e.getMessage());
+        if(!authDAO.isValidAuthToken(joinObserverGameCommand.getAuthString())){
+            Error authError = new Error("Bad auth token");
         }
-        session.getRemote().sendString(new Gson().toJson(loadGameMessage));
-        Notification notification = new Notification(authDAO.getAuthToken(joinObserverGameCommand.getAuthString()).getUsername() + " joined the game as an observer!");
-        connections.broadcast(joinObserverGameCommand.getAuthString(), notification);
+        else {
+            if(gameDAO.getGame(joinObserverGameCommand.getGameID()) == null){
+                Error idError = new Error("Game does not exist");
+            }
+            else {
+                connections.add(joinObserverGameCommand.getAuthString(), session);
+                LoadGame loadGameMessage;
+                try {
+                    loadGameMessage = new LoadGame(joinObserverGameCommand.getGameID());
+                } catch (Exception e) {
+                    loadGameMessage = new LoadGame(e.getMessage());
+                }
+                session.getRemote().sendString(new Gson().toJson(loadGameMessage));
+                Notification notification = new Notification(authDAO.getAuthToken(joinObserverGameCommand.getAuthString()).getUsername() + " joined the game as an observer!");
+                connections.broadcast(joinObserverGameCommand.getAuthString(), notification);
+            }
+        }
     }
 
     private void leave(Leave leaveGameCommand, Session session) throws IOException, DataAccessException {
@@ -119,21 +138,4 @@ public class WSocketHandler {
         connections.broadcast(null, notificationGameMessage);
         //TODO
     }
-
-//    private void exit(String visitorName) throws IOException {
-//        connections.remove(visitorName);
-//        var message = String.format("%s left the shop", visitorName);
-//        var notification = new Notification(Notification.Type.DEPARTURE, message);
-//        connections.broadcast(visitorName, notification);
-//    }
-//
-//    public void makeNoise(String petName, String sound) throws ResponseException {
-//        try {
-//            var message = String.format("%s says %s", petName, sound);
-//            var notification = new Notification(Notification.Type.NOISE, message);
-//            connections.broadcast("", notification);
-//        } catch (Exception ex) {
-//            throw new ResponseException(500, ex.getMessage());
-//        }
-//    }
 }

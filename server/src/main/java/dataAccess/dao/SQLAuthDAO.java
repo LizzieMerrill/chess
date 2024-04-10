@@ -23,6 +23,7 @@ public class SQLAuthDAO implements AuthDAO {
     private final String addAuthDataQuery = "INSERT INTO auth_table(username, auth_token) VALUES (?, ?)";
     private final String removeAuthDataQuery = "DELETE FROM auth_table WHERE auth_token = ?";
     private final String clearAuthDataQuery = "DELETE FROM auth_table";
+    private HashMap<String, Integer> joinedGames = new HashMap<String, Integer>();
 
     public SQLAuthDAO() {
         //dbCreationCheck();
@@ -54,6 +55,10 @@ public class SQLAuthDAO implements AuthDAO {
         return authMap;
     }
 
+    public HashMap<String, Integer> getJoinedGames(){
+        return joinedGames;
+    }
+
 //    public String getUsernameByToken(String authToken){
 //        dbCreationCheck();
 //        return fetchDataByQuery(getAuthTokenQuery, authToken);
@@ -66,6 +71,7 @@ public class SQLAuthDAO implements AuthDAO {
              PreparedStatement preparedStatement = connection.prepareStatement(clearAuthDataQuery)) {
 
             preparedStatement.executeUpdate();
+            joinedGames.clear();
             return true;
 
         } catch (SQLException e) {
@@ -84,6 +90,7 @@ public class SQLAuthDAO implements AuthDAO {
             preparedStatement.setString(1, authData.getUsername());
             preparedStatement.setString(2, authData.getAuthToken());
             preparedStatement.executeUpdate();
+            joinedGames.put(authData.getAuthToken(), -1);
             return true;
         } catch (SQLException e) {
         }
@@ -104,6 +111,7 @@ public class SQLAuthDAO implements AuthDAO {
 
             preparedStatement.setString(1, authToken);
             preparedStatement.executeUpdate();
+            joinedGames.remove(authToken);
             return true;
         } catch (SQLException e) {
         }
