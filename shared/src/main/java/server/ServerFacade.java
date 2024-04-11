@@ -1,11 +1,17 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
+import model.GameData;
+import requests.CreateResponse;
+import requests.ListResponse;
+import spark.Spark;
 //import model.Pet;
 
 import java.io.*;
 import java.net.*;
+import java.util.Collection;
 
 public class ServerFacade {
 
@@ -14,6 +20,47 @@ public class ServerFacade {
     public ServerFacade(String url) {
         serverUrl = url;
     }
+
+
+    public Collection<GameData> listGames() throws ResponseException {
+        var path = "/game";
+        var response = this.makeRequest("GET", path, null, ListResponse.class);
+        return response.games();
+    }
+    public void clear() throws ResponseException {
+        var path = "/db";
+        this.makeRequest("DELETE", path, null, null);
+    }
+    public int createGame() throws ResponseException{
+        var path = "/game";
+        var response = this.makeRequest("POST", path, null, CreateResponse.class);
+        return response.gameID();
+    }
+
+//    Spark.delete("/db", new ClearHandler(authDAO, userDAO, gameDAO));
+//
+//    //logout
+//        Spark.delete("/session", new LogoutHandler(authDAO));
+//
+//    //register
+//        Spark.post("/user", new RegisterHandler(gson, userDAO, authDAO));
+//
+//    //login
+//        Spark.post("/session", new LoginHandler(userDAO, authDAO));
+//
+//    //create game
+//        Spark.post("/game", new CreateGameHandler(authDAO, gameDAO, userDAO));
+//
+//    //join game
+//        Spark.put("/game", new JoinGameHandler(authDAO, gameDAO, userDAO));
+//
+//    //list game
+//        Spark.get("/game", new ListGamesHandler(authDAO, gameDAO, userDAO));
+
+
+
+
+
 
 
 //    public Pet addPet(Pet pet) throws ResponseException {
