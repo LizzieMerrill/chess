@@ -8,7 +8,7 @@ public class JoinPlayer extends UserGameCommand {
     //private CommandType commandType;
 
     public JoinPlayer(String authToken, CommandType commandType, int gameID, ChessGame.TeamColor playerColor) {
-        super(authToken, commandType, gameID, playerColor);
+        super(authToken, commandType);
         this.gameID = gameID;
         this.playerColor = playerColor;
         this.commandType = CommandType.JOIN_PLAYER;

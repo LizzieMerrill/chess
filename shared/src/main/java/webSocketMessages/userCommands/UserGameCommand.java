@@ -19,11 +19,9 @@ public class UserGameCommand {
     public UserGameCommand(String authToken) {
         this.authToken = authToken;
     }
-    public UserGameCommand(String authToken, CommandType commandType, int gameID, ChessGame.TeamColor playerColor) {
+    public UserGameCommand(String authToken, CommandType commandType) {
         this.authToken = authToken;
         this.commandType = commandType;
-        this.gameID = gameID;
-        this.playerColor = playerColor;
     }
 
     public enum CommandType {
@@ -37,8 +35,8 @@ public class UserGameCommand {
     protected CommandType commandType;
 
     final String authToken;
-    protected int gameID;
-    protected ChessGame.TeamColor playerColor;
+//    protected int gameID;
+//    protected ChessGame.TeamColor playerColor;
 
     public String getAuthString() {
         return authToken;

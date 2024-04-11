@@ -16,36 +16,22 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Scanner;
 import com.google.gson.Gson;
-import dataAccess.access.DataAccessException;
-import dataAccess.dao.AuthDAO;
-import dataAccess.dao.GameDAO;
-import dataAccess.dao.SQLAuthDAO;
 import WebSocket.NotificationHandler;
-import dataAccess.dao.SQLGameDAO;
 import org.eclipse.jetty.websocket.api.Session;
 import server.ServerFacade;
 import webSocketMessages.userCommands.*;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import WebSocket.WebSocketFacade;
-@WebSocket
 public class ChessClient {
     private boolean loggedIn;
     String authToken;
     private boolean inGame;
     private Session session;
     private final String serverUrl;
-    GameDAO gameDAO = new SQLGameDAO();
-    AuthDAO authDAO = new SQLAuthDAO();
     private State state = State.SIGNEDOUT;
     Scanner scanner = new Scanner(System.in);
     private WebSocketFacade ws;
     private ServerFacade server = null;
     private NotificationHandler notificationHandler = null;
-
-    public enum State {
-        SIGNEDOUT,
-        SIGNEDIN
-    }
 
     public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
         this.serverUrl = serverUrl;

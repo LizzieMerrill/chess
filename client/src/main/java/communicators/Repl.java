@@ -1,9 +1,9 @@
+package communicators;
+
 import WebSocket.NotificationHandler;
 import ui.ChessClient;
 import webSocketMessages.serverMessages.Notification;
-
 import java.util.Scanner;
-
 import ui.EscapeSequences;
 
 import static java.awt.Color.*;
