@@ -28,6 +28,7 @@ import webSocketMessages.userCommands.Leave;
 import webSocketMessages.userCommands.Resign;
 import webSocketMessages.userCommands.UserGameCommand;
 
+import javax.websocket.*;
 import java.net.URI;
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
@@ -40,13 +41,30 @@ public class ChessClient {
     private boolean loggedIn;
     String authToken;
     private boolean inGame;
-    public Session session;
+    private Session session;
     GameDAO gameDAO = new SQLGameDAO();
     AuthDAO authDAO = new SQLAuthDAO();
 
     public ChessClient() {
         this.loggedIn = false;
     }
+
+//        public ChessClient() throws Exception {
+//            this.loggedIn = false;
+//            URI uri = new URI("ws://localhost:8080/connect");
+//            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+//            this.session = container.connectToServer(this, uri);
+//
+//            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+//                public void onMessage(String message) {
+//                    System.out.println(message);
+//                }
+//            });
+//        }
+//        public void send(String msg) throws Exception {this.session.getBasicRemote().sendText(msg);}
+//        public void onOpen(Session session, EndpointConfig endpointConfig) {}
+//    }
+
 
     public void start() throws DataAccessException, IOException {
         Scanner scanner = new Scanner(System.in);
@@ -871,64 +889,67 @@ public class ChessClient {
 //            e.printStackTrace();
 //        }
 //    }
-    private void resignHandler() throws DataAccessException {
-        boolean player = false;
-        int resignId = -1;
-        Collection<GameData> games = gameDAO.getAllGameData();
-        UserGameCommand command = new UserGameCommand(authToken);
-        for (GameData game : games) {
-            if(authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getBlackUsername()
-                    || authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getWhiteUsername()){
-                player = true;
-                resignId = game.getGameID();
-            }
-        }
-        if(player){
-            //resign logic and break
-            command = new Resign(resignId, authToken);
-        }
-        else{
-            Error resignError = new Error("You cannot resign a game you are not playing in.");
-        }
-    }
-    private void leaveGameHandler() throws DataAccessException {
-        int leaveId = -1;
-        UserGameCommand command = new UserGameCommand(authToken);
+    private void resignHandler() throws DataAccessException, IOException {
+//        boolean player = false;
+//        int resignId = -1;
 //        Collection<GameData> games = gameDAO.getAllGameData();
+//        UserGameCommand command = new UserGameCommand(authToken);
 //        for (GameData game : games) {
 //            if(authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getBlackUsername()
 //                    || authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getWhiteUsername()){
-//                leaveId = game.getGameID();
+//                player = true;
+//                resignId = game.getGameID();
 //            }
 //        }
-        //JUST ASK THEM WHAT GAME THEY WANT TO LEAVE OR ACCESS WHICH GAME THEY ARE IN
-        if(leaveId != -1){
-            //leave logic and break
-            command = new Leave(leaveId, authToken);
-        }
-        else{
-            Error leaveError = new Error("You cannot leave a game that you are not playing or observing.");
-        }
+//        if(player){
+//            //resign logic and break
+//            command = new Resign(resignId, authToken);
+//        }
+//        else{
+//            Error resignError = new Error("You cannot resign a game you are not playing in.");
+//        }
+        session.getRemote().sendString("RESIGN");
     }
-    private void makeMoveHandler() throws DataAccessException {
-        boolean player = false;
-        int playersGameId = -1;
-        Collection<GameData> games = gameDAO.getAllGameData();
-        UserGameCommand command = new UserGameCommand(authToken);
-        for (GameData game : games) {
-            if(authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getBlackUsername()
-                    || authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getWhiteUsername()){
-                player = true;
-                playersGameId = game.getGameID();
-            }
-        }
-        if(player){
-            //resign logic and break
-            command = new Resign(playersGameId, authToken);
-        }
-        else{
-            Error resignError = new Error("You cannot resign a game you are not playing in.");
-        }
+    private void leaveGameHandler() throws DataAccessException, IOException {
+//        int leaveId = -1;
+//        UserGameCommand command = new UserGameCommand(authToken);
+////        Collection<GameData> games = gameDAO.getAllGameData();
+////        for (GameData game : games) {
+////            if(authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getBlackUsername()
+////                    || authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getWhiteUsername()){
+////                leaveId = game.getGameID();
+////            }
+////        }
+//        //JUST ASK THEM WHAT GAME THEY WANT TO LEAVE OR ACCESS WHICH GAME THEY ARE IN
+//        if(leaveId != -1){
+//            //leave logic and break
+//            command = new Leave(leaveId, authToken);
+//        }
+//        else{
+//            Error leaveError = new Error("You cannot leave a game that you are not playing or observing.");
+//        }
+        session.getRemote().sendString("LEAVE");
+    }
+    private void makeMoveHandler() throws DataAccessException, IOException {
+//        boolean player = false;
+//        int playersGameId = -1;
+//        Collection<GameData> games = gameDAO.getAllGameData();
+//        UserGameCommand command = new UserGameCommand(authToken);
+//        for (GameData game : games) {
+//            if(authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getBlackUsername()
+//                    || authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getWhiteUsername()){
+//                player = true;
+//                playersGameId = game.getGameID();
+//            }
+//        }
+//        if(player){
+//            //resign logic and break
+//            command = new Resign(playersGameId, authToken);
+//        }
+//        else{
+//            Error resignError = new Error("You cannot resign a game you are not playing in.");
+//        }
+        session.getRemote().sendString("MAKE_MOVE");
     }
     private void redrawBoard(){
 

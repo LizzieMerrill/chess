@@ -4,7 +4,9 @@ import chess.ChessBoard;
 
 public class DrawBoardHandler {
     public void draw(ChessBoard board){
+
         //extract each position and draw whats there
+
     }
     public void draw(char[][] pieces) {
         // Define the size of the chessboard

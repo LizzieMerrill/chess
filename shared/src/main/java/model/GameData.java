@@ -1,6 +1,9 @@
 package model;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
+
 import java.util.Objects;
 
 public class GameData {
@@ -52,6 +55,19 @@ public class GameData {
         return gameName;
     }
     public ChessGame getGame() {return game;}
+    public ChessGame.TeamColor getCurrentTurn(){return game.getTeamTurn(); }
+    public ChessBoard getBoard(){
+        return game.getBoard();
+    }
+    public boolean getIsGameOver(){
+        return game.getIsGameOver();
+    }
+    public void setIsGameOver(boolean isIt){
+        game.setIsGameOver(isIt);
+    }
+    public boolean isValidMove(ChessMove move){
+        return game.isValidMove(move);
+    }
 
 
     @Override

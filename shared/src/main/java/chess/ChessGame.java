@@ -13,14 +13,16 @@ import java.util.List;
  */
 public class ChessGame {
 
-    TeamColor color1;
+    TeamColor color1;//WHOSE TURN IT IS
     ChessBoard board1;
+    boolean isGameOver;
 
 
     private List<ChessMove> moveHistory = new ArrayList<>();
     public ChessGame() {
         color1 = TeamColor.WHITE;
         board1 = new ChessBoard();
+        isGameOver = false;
     }
 
 
@@ -42,6 +44,13 @@ public class ChessGame {
     public void setTeamTurn(TeamColor team) {
         color1 = team;
         //throw new RuntimeException("Not implemented");
+    }
+    public TeamColor getTeamTurn(){ return color1; }
+    public boolean getIsGameOver(){
+        return isGameOver;
+    }
+    public void setIsGameOver(boolean isGameOver){
+        this.isGameOver = isGameOver;
     }
 
     /**
@@ -92,7 +101,7 @@ public class ChessGame {
     }
 
 
-    private boolean isValidMove(ChessMove move) {
+    public boolean isValidMove(ChessMove move) {
 
         if (!board1.isValidPosition(move.getEndPosition())) {
             return false;
@@ -212,7 +221,7 @@ public class ChessGame {
                 return false;
             }
         }
-
+        isGameOver = true;
         return true;
     }
 
@@ -280,7 +289,7 @@ public class ChessGame {
 
             undoLastMove();
         }
-
+        isGameOver = true;
         return true;
     }
 
