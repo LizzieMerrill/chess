@@ -22,7 +22,7 @@ public class Repl implements NotificationHandler {
         //client.help();
 
         Scanner scanner = new Scanner(System.in);
-        var result = "";
+        String result = "";
         while (!result.equals("quit")) {
             printPrompt();
             String line = scanner.nextLine();

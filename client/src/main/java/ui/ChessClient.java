@@ -1,6 +1,7 @@
 package ui;
 
 import com.google.gson.*;
+import dataAccess.access.DataAccessException;
 import deserializers.DeserializerUserGameCommand;
 import exception.ResponseException;
 import inGameHandlers.DrawBoardHandler;
@@ -71,7 +72,7 @@ public class ChessClient {
         }
     }
 
-    public String eval(String input) {
+    public String eval(String input) throws DataAccessException, IOException {
         try {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
@@ -79,15 +80,15 @@ public class ChessClient {
             return switch (cmd) {
                 case "login" -> login(params);
                 case "register" -> register();
-                case "join player" -> joinPlayer(params);
+                case "join player" -> joinPlayer(session, params);
                 case "list games" -> listGames();
                 case "logout" -> logout(params);
-                case "join observer" -> joinObserver(params);
-                case "make move" -> makeMoveHandler(params);
+                case "join observer" -> joinObserver(session, params);
+                case "make move" -> makeMoveHandler(session, params);
                 case "highlight legal moves" -> legalMoves(params);
                 case "redraw board" -> redrawBoard(params);
-                case "leave" -> leaveGameHandler(params);
-                case "resign" -> resignHandler(params);
+                case "leave" -> leaveGameHandler(session, params);
+                case "resign" -> resignHandler(session, params);
                 case "create game" -> createGame(params);
                 case "quit" -> "quit";
                 default -> help();
@@ -111,7 +112,7 @@ public class ChessClient {
         session.getRemote().sendString("WebSocket response: " + message);
     }
 
-    private void login() {
+    private String login(String... params) {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             System.out.print("Enter username: ");
@@ -147,19 +148,22 @@ public class ChessClient {
                     loggedIn = true;
                     //System.out.println("Successfully logged in!");
                     System.out.println("\u001B[36mSuccessfully logged in!\u001B[0m");
+                    return "\u001B[36mSuccessfully logged in!\u001B[0m";
                 }
             } else {
                 //System.out.println("Login failed. Please check your credentials.");
                 System.out.println("\u001B[31mLogin failed. Please check your credentials.\u001B[0m");
+                return "\u001B[31mLogin failed. Please check your credentials.\u001B[0m";
             }
 
             connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
-    private void register() {
+    private String register() {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             System.out.print("Enter email: ");
@@ -194,18 +198,22 @@ public class ChessClient {
                     authToken = registerResponse.authToken();
                     loggedIn = true;
                     System.out.println("\u001B[36mSuccessfully registered and logged in!\u001B[0m");
+                    return "\u001B[36mSuccessfully registered and logged in!\u001B[0m";
                 }
             } else {
                 System.out.println("\u001B[31mRegistration failed. Please try again later.\u001B[0m");
+                return "\u001B[31mRegistration failed. Please try again later.\u001B[0m";
             }
 
             connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
-    private void logout() {
+    private String logout(String... params) {
+        String response = null;
         try {
             URL url = new URL("http://localhost:8080/session");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -218,14 +226,17 @@ public class ChessClient {
                 loggedIn = false;
                 authToken = null;
                 System.out.println("\u001B[36mLogged out successfully.\u001B[0m");
+                response = "\u001B[36mLogged out successfully.\u001B[0m";
             } else {
                 System.out.println("\u001B[31mLogout failed.\u001B[0m");
+                response = "\u001B[31mLogout failed.\u001B[0m";
             }
 
             connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return response;
     }
 
     //NEW
@@ -267,7 +278,7 @@ public class ChessClient {
         return result.toString();
     }
 
-    private void redrawBoard(String... params) throws ResponseException, DataAccessException {
+    private String redrawBoard(String... params) throws ResponseException, DataAccessException {
         assertSignedIn();
         if (params.length == 1) {
             try {
@@ -275,6 +286,7 @@ public class ChessClient {
                 var game = getGame(id);
                 if (game != null) {
                     new DrawBoardHandler(params).draw(game.getBoard());
+                    return "Board redrawn.";
                 }
             } catch (NumberFormatException ignored) {
             }
@@ -282,7 +294,7 @@ public class ChessClient {
         throw new ResponseException(400, "Game does not exist");//throw new error object?
     }
 
-    private void legalMoves(String... params) throws ResponseException, DataAccessException {
+    private String legalMoves(String... params) throws ResponseException, DataAccessException {
         assertSignedIn();
         if (params.length == 1) {
             try {
@@ -290,6 +302,7 @@ public class ChessClient {
                 var game = getGame(id);
                 if (game != null) {
                     new LegalMovesHandler(params);
+                    return "Legal moves";
                 }
             } catch (NumberFormatException ignored) {
             }
@@ -354,29 +367,13 @@ public class ChessClient {
         return new UserData(username, password, email);
     }
 
-    private void resignHandler(Session session, String message) throws DataAccessException, IOException {
-//        boolean player = false;
-//        int resignId = -1;
-//        Collection<GameData> games = gameDAO.getAllGameData();
-//        UserGameCommand command = new UserGameCommand(authToken);
-//        for (GameData game : games) {
-//            if(authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getBlackUsername()
-//                    || authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getWhiteUsername()){
-//                player = true;
-//                resignId = game.getGameID();
-//            }
-//        }
-//        if(player){
-//            //resign logic and break
-//            command = new Resign(resignId, authToken);
-//        }
-//        else{
-//            Error resignError = new Error("You cannot resign a game you are not playing in.");
-//        }
+    private String resignHandler(Session session, String... params) throws DataAccessException, IOException {
         session.getRemote().sendString("RESIGN");
+        return "resigned";
     }
 
-    private void leaveGameHandler(Session session, String message) throws DataAccessException, IOException {
+    //private void leaveGameHandler(Session session, String message) throws DataAccessException, IOException {
+    private String leaveGameHandler(Session session, String... params) throws DataAccessException, IOException {
 //        int leaveId = -1;
 //        UserGameCommand command = new UserGameCommand(authToken);
 ////        Collection<GameData> games = gameDAO.getAllGameData();
@@ -395,9 +392,10 @@ public class ChessClient {
 //            Error leaveError = new Error("You cannot leave a game that you are not playing or observing.");
 //        }
         session.getRemote().sendString("LEAVE");
+        return "left game";
     }
 
-    private void makeMoveHandler(Session session, String message) throws DataAccessException, IOException {
+    private String makeMoveHandler(Session session, String... params) throws DataAccessException, IOException {
 //        boolean player = false;
 //        int playersGameId = -1;
 //        Collection<GameData> games = gameDAO.getAllGameData();
@@ -417,6 +415,7 @@ public class ChessClient {
 //            Error resignError = new Error("You cannot resign a game you are not playing in.");
 //        }
         session.getRemote().sendString("MAKE_MOVE");
+        return "Move completed";
     }
 
     private void displayPostloginOptions() {
@@ -432,12 +431,14 @@ public class ChessClient {
                 "Join Observer - Observe a game");
     }
 
-    private void joinPlayer(Session session, String message) throws IOException {
+    private String joinPlayer(Session session, String... params) throws IOException {
         session.getRemote().sendString("JOIN_PLAYER");
+        return "Joined as a player";
     }
 
-    private void joinObserver(Session session, String message) throws IOException {
+    private String joinObserver(Session session, String... params) throws IOException {
         session.getRemote().sendString("JOIN_OBSERVER");
+        return "Joined as an observer";
     }
 
     private static class UserData {

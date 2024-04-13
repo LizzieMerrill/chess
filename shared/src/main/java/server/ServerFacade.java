@@ -6,7 +6,6 @@ import exception.ResponseException;
 import model.GameData;
 import requests.CreateResponse;
 import requests.ListResponse;
-import spark.Spark;
 //import model.Pet;
 
 import java.io.*;

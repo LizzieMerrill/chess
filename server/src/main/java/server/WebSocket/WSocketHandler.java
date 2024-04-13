@@ -84,12 +84,12 @@ public void onError(Session session, Throwable throwable) {
             try {
                 if((joinPlayerGameCommand.getPlayerColor() == ChessGame.TeamColor.BLACK || joinPlayerGameCommand.getPlayerColor() == ChessGame.TeamColor.WHITE)) {
                     if (joinPlayerGameCommand.getPlayerColor() == ChessGame.TeamColor.BLACK && Objects.equals(gameDAO.getGame(joinPlayerGameCommand.getGameID()).getBlackUsername(), authData.getUsername())) {
-                        loadGameMessage = new LoadGame(joinPlayerGameCommand.getGameID());
+                        loadGameMessage = new LoadGame(gameDAO.getGame(joinPlayerGameCommand.getGameID()).getGame());
                         session.getRemote().sendString(new Gson().toJson(loadGameMessage));
                         Notification notification = new Notification(authDAO.getAuthToken(joinPlayerGameCommand.getAuthString()).getUsername() + " joined the game as the black team!");
                         connections.broadcast(joinPlayerGameCommand.getAuthString(), notification);
                     } else if (joinPlayerGameCommand.getPlayerColor() == ChessGame.TeamColor.WHITE && Objects.equals(gameDAO.getGame(joinPlayerGameCommand.getGameID()).getWhiteUsername(), authData.getUsername())) {
-                        loadGameMessage = new LoadGame(joinPlayerGameCommand.getGameID());
+                        loadGameMessage = new LoadGame(gameDAO.getGame(joinPlayerGameCommand.getGameID()).getGame());
                         session.getRemote().sendString(new Gson().toJson(loadGameMessage));
                         Notification notification = new Notification(authDAO.getAuthToken(joinPlayerGameCommand.getAuthString()).getUsername() + " joined the game as the white team!");
                         connections.broadcast(joinPlayerGameCommand.getAuthString(), notification);
@@ -124,7 +124,7 @@ public void onError(Session session, Throwable throwable) {
                 connections.add(joinObserverGameCommand.getAuthString(), session);
                 LoadGame loadGameMessage;
                 try {
-                    loadGameMessage = new LoadGame(joinObserverGameCommand.getGameID());
+                    loadGameMessage = new LoadGame(gameDAO.getGame(joinObserverGameCommand.getGameID()).getGame());
                 } catch (Exception e) {
                     loadGameMessage = new LoadGame(e.getMessage());
                 }
@@ -161,8 +161,10 @@ public void onError(Session session, Throwable throwable) {
 //            java.lang.Error leaveError = new java.lang.Error("You cannot leave a game that you are not playing or observing.");
 //        }
         connections.add(leaveGameCommand.getAuthString(), session);
+        session.getRemote().sendString(new Gson().toJson(leaveGameCommand));
         Notification notificationGameMessage = new Notification(authDAO.getAuthToken(leaveGameCommand.getAuthString()).getUsername() + " left the game");
         connections.broadcast(null, notificationGameMessage);
+        session.getRemote().sendString(new Gson().toJson(notificationGameMessage));
     }
 
     private void makeMove(MakeMove makeMoveCommand, Session session) throws DataAccessException, IOException {
@@ -227,7 +229,7 @@ public void onError(Session session, Throwable throwable) {
     }
 
     //normal move, make sure its valid and check that the game is not over and nobody has resigned
-    private void makeMoveNormalHelper(MakeMove makeMoveCommand, Session session, String authToken) throws DataAccessException, IOException {
+    private boolean makeMoveNormalHelper(MakeMove makeMoveCommand, Session session, String authToken) throws DataAccessException, IOException {
         //        boolean player = false;
 //        int playersGameId = -1;
 //        Collection<GameData> games = gameDAO.getAllGameData();
@@ -246,26 +248,32 @@ public void onError(Session session, Throwable throwable) {
 //        else{
 //            Error resignError = new Error("You cannot resign a game you are not playing in.");
 //        }
-    if(gameDAO.getGame(makeMoveCommand.getGameID()).getIsGameOver() == true){
+        if(gameDAO.getGame(makeMoveCommand.getGameID()).getIsGameOver() == true){
             Error gameOverMove = new Error("You cannot move after the game has ended");
-            //session.getRemote().sendString(new Gson().toJson(gameOverMove));
+            session.getRemote().sendString(new Gson().toJson(gameOverMove));
+            return false;
         }
         else{
             if(!gameDAO.getGame(makeMoveCommand.getGameID()).isValidMove(makeMoveCommand.getMove())){
                 Error invalidMove = new Error("Invalid move");
-                //session.getRemote().sendString(new Gson().toJson(invalidMove));
+                session.getRemote().sendString(new Gson().toJson(invalidMove));
+                return false;
             }
             else{
                 //FINALLY SUCCESS
+                session.getRemote().sendString(new Gson().toJson(makeMoveCommand));
                 connections.add(makeMoveCommand.getAuthString(), session);
                 makeMoveCommand = new MakeMove(makeMoveCommand.getGameID(), makeMoveCommand.getMove(), authToken);
                 Notification notificationGameMessage = new Notification(authDAO.getAuthToken(makeMoveCommand.getAuthString()).getUsername() +
                         " moved their " + gameDAO.getGame(makeMoveCommand.getGameID()).getGame().getBoard().getPiece(makeMoveCommand.getMove().getEndPosition()) +
                         " from " + makeMoveCommand.getMove().getStartPosition() + " to " + makeMoveCommand.getMove().getEndPosition());
                 connections.broadcast(null, notificationGameMessage);
-                session.getRemote().sendString(new Gson().toJson(makeMoveCommand));
+//                session.getRemote().sendString(new Gson().toJson(notificationGameMessage));
+//                session.getRemote().sendString(new Gson().toJson(makeMoveCommand));
             }
         }
+        session.getRemote().sendString(new Gson().toJson(makeMoveCommand));
+        return true;
     }
 
 
@@ -290,6 +298,7 @@ public void onError(Session session, Throwable throwable) {
             //resign logic and break
             //command = new Resign(resignId, resignGameCommand.getAuthString());
             connections.add(resignGameCommand.getAuthString(), session);
+            session.getRemote().sendString(new Gson().toJson(resignGameCommand));
             gameDAO.getGame(resignGameCommand.getGameID()).setIsGameOver(true);
             Notification notificationGameMessage = new Notification(
                     authDAO.getAuthToken(resignGameCommand.getAuthString()).getUsername()
