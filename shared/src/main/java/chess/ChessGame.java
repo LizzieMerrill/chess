@@ -22,6 +22,7 @@ public class ChessGame {
     public ChessGame() {
         color1 = TeamColor.WHITE;
         board1 = new ChessBoard();
+        board1.resetBoard();
         isGameOver = false;
     }
 

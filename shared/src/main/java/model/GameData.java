@@ -55,6 +55,9 @@ public class GameData {
         return gameName;
     }
     public ChessGame getGame() {return game;}
+    public void setGame(ChessGame game){
+        this.game = game;
+    }
     public ChessGame.TeamColor getCurrentTurn(){return game.getTeamTurn(); }
     public ChessBoard getBoard(){
         return game.getBoard();

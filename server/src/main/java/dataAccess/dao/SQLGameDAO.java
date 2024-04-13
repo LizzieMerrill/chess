@@ -1,5 +1,7 @@
 package dataAccess.dao;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import dataAccess.DatabaseManager;
 import dataAccess.access.DataAccessException;
 import model.GameData;
@@ -21,7 +23,7 @@ public class SQLGameDAO implements GameDAO {
 //    private final String password = "JavaRulez2!";
 private static final DatabaseManager manager = new DatabaseManager();
 
-    private final String addGameQuery = "INSERT INTO game_table(white_username, black_username, game_name, game_id) VALUES (?, ?, ?, ?)";
+    //private final String addGameQuery = "INSERT INTO game_table(white_username, black_username, game_name, game_id) VALUES (?, ?, ?, ?)";
     private final String getGameQuery = "SELECT * FROM game_table WHERE game_id = ?";
     private final String clearGameDataQuery = "DELETE FROM game_table";
 
@@ -50,6 +52,7 @@ private static final DatabaseManager manager = new DatabaseManager();
                     gameData.setWhiteUsername(resultSet.getString("white_username"));
                     gameData.setBlackUsername(resultSet.getString("black_username"));
                     gameData.setGameName(resultSet.getString("game_name"));
+                    gameData.setGame(new Gson().fromJson(resultSet.getString("game"), ChessGame.class));
 
                     return gameData;
                 }
@@ -81,11 +84,13 @@ private static final DatabaseManager manager = new DatabaseManager();
     public int createGame(String gameName) throws DataAccessException {
         dbCreationCheck();
         try (Connection connection = manager.getConnection()) {
-            String query = "INSERT INTO game_table (white_username, black_username, game_name) VALUES (?, ?, ?)";
+            String query = "INSERT INTO game_table (white_username, black_username, game_name, game) VALUES (?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 statement.setString(1, null);
                 statement.setString(2, null);
                 statement.setString(3, gameName);
+                statement.setString(4, new Gson().toJson(new ChessGame()));
+
 
                 int affectedRows = statement.executeUpdate();
                 if (affectedRows == 0) {

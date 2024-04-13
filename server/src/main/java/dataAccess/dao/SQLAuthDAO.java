@@ -207,7 +207,8 @@ public class SQLAuthDAO implements AuthDAO {
                             + "white_username VARCHAR(255),"
                             + "black_username VARCHAR(255),"
                             + "game_name VARCHAR(255),"
-                            + "game_id INT PRIMARY KEY AUTO_INCREMENT)";
+                            + "game_id INT PRIMARY KEY AUTO_INCREMENT,"
+                    + "game BLOB)";
                 }
                 if(tableName.equals("user_table")){
                     createTableQuery = "CREATE TABLE " + tableName + " ("
