@@ -1,13 +1,11 @@
 package ui;
 
 import com.google.gson.*;
-import dataAccess.access.DataAccessException;
 import deserializers.DeserializerUserGameCommand;
 import exception.ResponseException;
 import inGameHandlers.DrawBoardHandler;
 import inGameHandlers.LegalMovesHandler;
 import model.GameData;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import requests.*;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,7 +16,6 @@ import java.util.Arrays;
 import java.util.Scanner;
 import com.google.gson.Gson;
 import WebSocket.NotificationHandler;
-import org.eclipse.jetty.websocket.api.Session;
 import server.ServerFacade;
 import webSocketMessages.userCommands.*;
 import WebSocket.WebSocketFacade;
@@ -26,7 +23,7 @@ public class ChessClient {
     private boolean loggedIn;
     String authToken;
     private boolean inGame;
-    private Session session;
+    //private Session session;
     private final String serverUrl;
     private State state = State.SIGNEDOUT;
     Scanner scanner = new Scanner(System.in);
@@ -72,7 +69,7 @@ public class ChessClient {
         }
     }
 
-    public String eval(String input) throws DataAccessException, IOException {
+    public String eval(String input) throws IOException {
         try {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
@@ -80,15 +77,15 @@ public class ChessClient {
             return switch (cmd) {
                 case "login" -> login(params);
                 case "register" -> register();
-                case "join player" -> joinPlayer(session, params);
+                case "join player" -> joinPlayer(params);
                 case "list games" -> listGames();
                 case "logout" -> logout(params);
-                case "join observer" -> joinObserver(session, params);
-                case "make move" -> makeMoveHandler(session, params);
+                case "join observer" -> joinObserver(params);
+                case "make move" -> makeMoveHandler(params);
                 case "highlight legal moves" -> legalMoves(params);
                 case "redraw board" -> redrawBoard(params);
-                case "leave" -> leaveGameHandler(session, params);
-                case "resign" -> resignHandler(session, params);
+                case "leave" -> leaveGameHandler(params);
+                case "resign" -> resignHandler(params);
                 case "create game" -> createGame(params);
                 case "quit" -> "quit";
                 default -> help();
@@ -98,19 +95,19 @@ public class ChessClient {
         }
     }
 
-    @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws IOException, DataAccessException {
-        Gson gson = new GsonBuilder().registerTypeAdapter(UserGameCommand.class, new DeserializerUserGameCommand()).create();
-        var userGameCommand = gson.fromJson(message, UserGameCommand.class);
-        switch (userGameCommand.getCommandType()) {
-            case JOIN_PLAYER -> joinPlayer(session, message);
-            case JOIN_OBSERVER -> joinObserver(session, message);
-            case LEAVE -> leaveGameHandler(session, message);
-            case MAKE_MOVE -> makeMoveHandler(session, message);
-            case RESIGN -> resignHandler(session, message);
-        }
-        session.getRemote().sendString("WebSocket response: " + message);
-    }
+//    @OnWebSocketMessage
+//    public void onMessage(Session session, String message) throws IOException, DataAccessException {
+//        Gson gson = new GsonBuilder().registerTypeAdapter(UserGameCommand.class, new DeserializerUserGameCommand()).create();
+//        var userGameCommand = gson.fromJson(message, UserGameCommand.class);
+//        switch (userGameCommand.getCommandType()) {
+//            case JOIN_PLAYER -> joinPlayer(session, message);
+//            case JOIN_OBSERVER -> joinObserver(session, message);
+//            case LEAVE -> leaveGameHandler(session, message);
+//            case MAKE_MOVE -> makeMoveHandler(session, message);
+//            case RESIGN -> resignHandler(session, message);
+//        }
+//        session.getRemote().sendString("WebSocket response: " + message);
+//    }
 
     private String login(String... params) {
         try {
@@ -278,7 +275,7 @@ public class ChessClient {
         return result.toString();
     }
 
-    private String redrawBoard(String... params) throws ResponseException, DataAccessException {
+    private String redrawBoard(String... params) throws ResponseException {
         assertSignedIn();
         if (params.length == 1) {
             try {
@@ -294,7 +291,7 @@ public class ChessClient {
         throw new ResponseException(400, "Game does not exist");//throw new error object?
     }
 
-    private String legalMoves(String... params) throws ResponseException, DataAccessException {
+    private String legalMoves(String... params) throws ResponseException {
         assertSignedIn();
         if (params.length == 1) {
             try {
@@ -367,13 +364,13 @@ public class ChessClient {
         return new UserData(username, password, email);
     }
 
-    private String resignHandler(Session session, String... params) throws DataAccessException, IOException {
-        session.getRemote().sendString("RESIGN");
+    private String resignHandler(String... params) throws IOException {
+        //session.getRemote().sendString("RESIGN");
         return "resigned";
     }
 
     //private void leaveGameHandler(Session session, String message) throws DataAccessException, IOException {
-    private String leaveGameHandler(Session session, String... params) throws DataAccessException, IOException {
+    private String leaveGameHandler(String... params) throws IOException {
 //        int leaveId = -1;
 //        UserGameCommand command = new UserGameCommand(authToken);
 ////        Collection<GameData> games = gameDAO.getAllGameData();
@@ -391,11 +388,11 @@ public class ChessClient {
 //        else{
 //            Error leaveError = new Error("You cannot leave a game that you are not playing or observing.");
 //        }
-        session.getRemote().sendString("LEAVE");
+        //session.getRemote().sendString("LEAVE");
         return "left game";
     }
 
-    private String makeMoveHandler(Session session, String... params) throws DataAccessException, IOException {
+    private String makeMoveHandler(String... params) throws IOException {
 //        boolean player = false;
 //        int playersGameId = -1;
 //        Collection<GameData> games = gameDAO.getAllGameData();
@@ -414,7 +411,7 @@ public class ChessClient {
 //        else{
 //            Error resignError = new Error("You cannot resign a game you are not playing in.");
 //        }
-        session.getRemote().sendString("MAKE_MOVE");
+        //session.getRemote().sendString("MAKE_MOVE");
         return "Move completed";
     }
 
@@ -431,13 +428,13 @@ public class ChessClient {
                 "Join Observer - Observe a game");
     }
 
-    private String joinPlayer(Session session, String... params) throws IOException {
-        session.getRemote().sendString("JOIN_PLAYER");
+    private String joinPlayer(String... params) throws IOException {
+        //session.getRemote().sendString("JOIN_PLAYER");
         return "Joined as a player";
     }
 
-    private String joinObserver(Session session, String... params) throws IOException {
-        session.getRemote().sendString("JOIN_OBSERVER");
+    private String joinObserver(String... params) throws IOException {
+        //session.getRemote().sendString("JOIN_OBSERVER");
         return "Joined as an observer";
     }
 
