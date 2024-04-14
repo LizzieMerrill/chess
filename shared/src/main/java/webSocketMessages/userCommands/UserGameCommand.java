@@ -29,7 +29,9 @@ public class UserGameCommand {
         JOIN_OBSERVER,
         MAKE_MOVE,
         LEAVE,
-        RESIGN
+        RESIGN,
+        REDRAW_CHESS_BOARD,
+        HIGHLIGHT_LEGAL_MOVES
     }
 
     protected CommandType commandType;

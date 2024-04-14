@@ -1,10 +1,7 @@
 package ui;
 
 import com.google.gson.*;
-import deserializers.DeserializerUserGameCommand;
 import exception.ResponseException;
-import inGameHandlers.DrawBoardHandler;
-import inGameHandlers.LegalMovesHandler;
 import model.GameData;
 import requests.*;
 import java.io.BufferedReader;
@@ -17,7 +14,6 @@ import java.util.Scanner;
 import com.google.gson.Gson;
 import WebSocket.NotificationHandler;
 import server.ServerFacade;
-import webSocketMessages.userCommands.*;
 import WebSocket.WebSocketFacade;
 public class ChessClient {
     private boolean loggedIn;
@@ -282,7 +278,7 @@ public class ChessClient {
                 var id = Integer.parseInt(params[0]);
                 var game = getGame(id);
                 if (game != null) {
-                    new DrawBoardHandler(params).draw(game.getBoard());
+                    //new DrawBoardHandler(params).draw(game.getBoard());
                     return "Board redrawn.";
                 }
             } catch (NumberFormatException ignored) {
@@ -298,7 +294,7 @@ public class ChessClient {
                 var id = Integer.parseInt(params[0]);
                 var game = getGame(id);
                 if (game != null) {
-                    new LegalMovesHandler(params);
+                    //new LegalMovesHandler(params);
                     return "Legal moves";
                 }
             } catch (NumberFormatException ignored) {
@@ -366,6 +362,7 @@ public class ChessClient {
 
     private String resignHandler(String... params) throws IOException {
         //session.getRemote().sendString("RESIGN");
+        System.out.print(Arrays.toString(params));
         return "resigned";
     }
 

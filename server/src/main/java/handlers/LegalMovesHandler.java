@@ -1,12 +1,10 @@
-package inGameHandlers;
+package handlers;
 
-import chess.ChessBoard;
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import dataAccess.access.DataAccessException;
 import dataAccess.dao.GameDAO;
 import dataAccess.dao.SQLGameDAO;
+
 import java.util.Scanner;
 import java.util.Collection;
 
@@ -18,6 +16,10 @@ public class LegalMovesHandler {
     public LegalMovesHandler(String... params) throws DataAccessException {
         gameId =  Integer.parseInt(params[0]);
         board = gameDAO.getGame(gameId).getBoard();
+        listLegalMoves(board);
+    }
+    public LegalMovesHandler(ChessGame game){
+        board = game.getBoard();
         listLegalMoves(board);
     }
     public Collection<ChessMove> listLegalMoves(ChessBoard board){

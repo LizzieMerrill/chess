@@ -6,6 +6,9 @@ import com.google.gson.GsonBuilder;
 import dataAccess.access.DataAccessException;
 import dataAccess.dao.*;
 import deserializers.DeserializerUserGameCommand;
+import exception.ResponseException;
+import handlers.DrawBoardHandler;
+import handlers.LegalMovesHandler;
 import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
@@ -58,7 +61,7 @@ public void onError(Session session, Throwable throwable) {
     throwable.printStackTrace();
 }
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws IOException, DataAccessException {
+    public void onMessage(Session session, String message) throws IOException, DataAccessException, ResponseException {
         Gson gson = new GsonBuilder().registerTypeAdapter(UserGameCommand.class, new DeserializerUserGameCommand()).create();
         var userGameCommand = gson.fromJson(message, UserGameCommand.class);//EXCEPTION
         switch (userGameCommand.getCommandType()) {
@@ -67,6 +70,8 @@ public void onError(Session session, Throwable throwable) {
             case LEAVE -> leave(gson.fromJson(message, Leave.class), session);
             case MAKE_MOVE -> makeMove(gson.fromJson(message, MakeMove.class), session);
             case RESIGN -> resign(gson.fromJson(message, Resign.class), session);
+            case REDRAW_CHESS_BOARD -> redrawBoard(gson.fromJson(message, RedrawBoard.class), session);
+            case HIGHLIGHT_LEGAL_MOVES -> legalMoves(gson.fromJson(message, HighlightMoves.class), session);
         }
     }
 
@@ -194,15 +199,18 @@ public void onError(Session session, Throwable throwable) {
                     else{
                         //normal move, make sure its valid and check that the game is not over and nobody has resigned
                         makeMoveNormalHelper(makeMoveCommand, session, authDAO.getAuthToken(makeMoveCommand.getAuthString()).getAuthToken());
+                        session.getRemote().sendString(new Gson().toJson(makeMoveCommand));
                     }
                 }
                 else{
                     if (!Objects.equals(gameDAO.getGame(makeMoveCommand.getGameID()).getBlackUsername(), authDAO.getAuthToken(makeMoveCommand.getAuthString()).getUsername())){
                         Error badMove = new Error("You are not allowed to move right now");
+                        session.getRemote().sendString(new Gson().toJson(badMove));
                     }
                     else{
                         //normal move, make sure its valid and check that the game is not over and nobody has resigned
                         makeMoveNormalHelper(makeMoveCommand, session, authDAO.getAuthToken(makeMoveCommand.getAuthString()).getAuthToken());
+                        session.getRemote().sendString(new Gson().toJson(makeMoveCommand));
                     }
                 }
             }
@@ -280,21 +288,23 @@ public void onError(Session session, Throwable throwable) {
 
 
     private void resign(Resign resignGameCommand, Session session) throws DataAccessException, IOException {
-        String player = "no";
+        boolean player = false;
         int resignId = -1;
         Collection<GameData> games = gameDAO.getAllGameData();
         UserGameCommand command = new UserGameCommand(resignGameCommand.getAuthString());
         for (GameData game : games) {
             if(authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getBlackUsername()){
-                player = "black";
+                player = true;
+                session.getRemote().sendString(new Gson().toJson(resignGameCommand));
                 resignId = game.getGameID();
             }
             if(authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getWhiteUsername()){
-                player = "white";
+                player = true;
+                session.getRemote().sendString(new Gson().toJson(resignGameCommand));
                 resignId = game.getGameID();
             }
         }
-        if(!Objects.equals(player, "no")){
+        if(player){
             //resign logic and break
             //command = new Resign(resignId, resignGameCommand.getAuthString());
             connections.add(resignGameCommand.getAuthString(), session);
@@ -309,5 +319,40 @@ public void onError(Session session, Throwable throwable) {
             Error resignError = new Error("You cannot resign a game you are not playing in.");
             session.getRemote().sendString(new Gson().toJson(resignError));
         }
+    }
+    private void legalMoves(HighlightMoves legalMovesCommand, Session session) throws DataAccessException, IOException, ResponseException {
+        if(!authDAO.isValidAuthToken(authDAO.getAuthToken(legalMovesCommand.getAuthString()).getAuthToken())){
+            Error authError = new Error("Unauthorized");
+            session.getRemote().sendString(new Gson().toJson(authError));
+        }
+        else{
+            try {
+                ChessGame game = legalMovesCommand.getGame();
+                if (game != null) {
+                    LegalMovesHandler legalHandler = new LegalMovesHandler(game);
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        throw new ResponseException(400, "Game does not exist");//throw new error object?
+    }
+    private void redrawBoard(RedrawBoard redrawBoardCommand, Session session) throws DataAccessException, ResponseException, IOException {
+        //assertSignedIn();
+        if(!authDAO.isValidAuthToken(authDAO.getAuthToken(redrawBoardCommand.getAuthString()).getAuthToken())){
+            Error authError = new Error("Unauthorized");
+            session.getRemote().sendString(new Gson().toJson(authError));
+        }
+        else{
+            try {
+                var game = redrawBoardCommand.getGame();
+                if (game != null) {
+                    //new DrawBoardHandler(params).draw(game.getBoard());
+                    DrawBoardHandler draw = new DrawBoardHandler(game);
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+            throw new ResponseException(400, "Game does not exist");//throw new error object?
     }
 }

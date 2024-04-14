@@ -1,4 +1,4 @@
-package inGameHandlers;
+package handlers;
 
 import chess.ChessBoard;
 import chess.ChessGame;
@@ -7,7 +7,6 @@ import chess.ChessPosition;
 import dataAccess.access.DataAccessException;
 import dataAccess.dao.GameDAO;
 import dataAccess.dao.SQLGameDAO;
-import static ui.EscapeSequences.*;
 
 public class DrawBoardHandler {
 
@@ -17,6 +16,10 @@ public class DrawBoardHandler {
     public DrawBoardHandler(String... params) throws DataAccessException {
         gameId =  Integer.parseInt(params[0]);
         board = gameDAO.getGame(gameId).getBoard();
+        draw(board);
+    }
+    public DrawBoardHandler(ChessGame game){
+        board = game.getBoard();
         draw(board);
     }
 
@@ -67,44 +70,45 @@ public class DrawBoardHandler {
     public String pieceTypeChecker(ChessPiece piece){
         if(piece.getTeamColor() == ChessGame.TeamColor.WHITE){
             if(piece.getPieceType() == ChessPiece.PieceType.KING){
-                return WHITE_KING;
+                return " ♔ ";
             }
             if(piece.getPieceType() == ChessPiece.PieceType.QUEEN){
-                return WHITE_QUEEN;
+                return " ♕ ";
             }
             if(piece.getPieceType() == ChessPiece.PieceType.BISHOP){
-                return WHITE_BISHOP;
+                return " ♗ ";
             }
             if(piece.getPieceType() == ChessPiece.PieceType.ROOK){
-                return WHITE_ROOK;
+                return " ♖ ";
             }
             if(piece.getPieceType() == ChessPiece.PieceType.KNIGHT){
-                return WHITE_KNIGHT;
+                return " ♘ ";
             }
             if(piece.getPieceType() == ChessPiece.PieceType.PAWN){
-                return WHITE_PAWN;
+                return " ♙ ";
             }
         }
         else{
             if(piece.getPieceType() == ChessPiece.PieceType.KING){
-                return BLACK_KING;
+                return " ♚ ";
             }
             if(piece.getPieceType() == ChessPiece.PieceType.QUEEN){
-                return BLACK_QUEEN;
+                return " ♛ ";
             }
             if(piece.getPieceType() == ChessPiece.PieceType.BISHOP){
-                return BLACK_BISHOP;
+                return " ♝ ";
             }
             if(piece.getPieceType() == ChessPiece.PieceType.ROOK){
-                return BLACK_ROOK;
+                return " ♜ ";
             }
             if(piece.getPieceType() == ChessPiece.PieceType.KNIGHT){
-                return BLACK_KNIGHT;
+                return " ♞ ";
             }
             if(piece.getPieceType() == ChessPiece.PieceType.PAWN){
-                return BLACK_PAWN;
+                return " ♟ ";
             }
         }
-        return EMPTY;//empty space
+        return " \u2003 ";//empty space
     }
 }
+
