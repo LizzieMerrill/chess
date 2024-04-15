@@ -14,9 +14,6 @@ import static dataAccess.dao.SQLAuthDAO.dbCreationCheck;
 import static java.sql.DriverManager.getConnection;
 
 public class SQLUserDAO implements UserDAO {
-//    private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
-//    private final String username = "root";
-//    private final String password = "JavaRulez2!";
 private static final DatabaseManager manager = new DatabaseManager();
     private final String addUserQuery = "INSERT INTO user_table(username, password, email) VALUES (?, ?, ?)";
     private final String authenticateUserQuery = "SELECT * FROM user_table WHERE username = ? AND password = ?";
@@ -106,10 +103,4 @@ private static final DatabaseManager manager = new DatabaseManager();
 
         return userMap;
     }
-
-//    private void handleSQLException(SQLException e) throws DataAccessException {
-//        dbCreationCheck();
-//        //e.printStackTrace();
-//        throw new DataAccessException("SQL Exception: " + e.getMessage(), e);
-//    }
 }

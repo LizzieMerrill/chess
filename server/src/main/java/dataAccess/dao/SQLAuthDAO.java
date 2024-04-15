@@ -11,9 +11,6 @@ import java.util.Objects;
 import static java.sql.DriverManager.getConnection;
 
 public class SQLAuthDAO implements AuthDAO {
-//    private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
-//    private final String username = "root";
-//    private final String password = "JavaRulez2!";
     private static final DatabaseManager manager = new DatabaseManager();
     private final String authenticateUserQuery = "SELECT * FROM user_table WHERE username = ? AND password = ?";
     private final String addAuthTokenQuery = "INSERT INTO auth_table(username, auth_token) VALUES (?, ?)";
@@ -59,10 +56,6 @@ public class SQLAuthDAO implements AuthDAO {
         return joinedGames;
     }
 
-//    public String getUsernameByToken(String authToken){
-//        dbCreationCheck();
-//        return fetchDataByQuery(getAuthTokenQuery, authToken);
-//    }
 
     @Override
     public boolean clearAuthData() throws DataAccessException {
@@ -234,9 +227,4 @@ public class SQLAuthDAO implements AuthDAO {
         return resultSet.next();
     }
 
-//    private static void handleSQLException(SQLException e) throws DataAccessException {
-//        //e.printStackTrace();
-//        dbCreationCheck();
-//        throw new DataAccessException("SQL Exception: " + e.getMessage());
-//    }
 }

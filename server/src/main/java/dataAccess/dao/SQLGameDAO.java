@@ -18,9 +18,6 @@ import java.sql.ResultSet;
 
 
 public class SQLGameDAO implements GameDAO {
-//    private final String jdbcUrl = "jdbc:mysql://localhost:3306/chess";
-//    private final String username = "root";
-//    private final String password = "JavaRulez2!";
 private static final DatabaseManager manager = new DatabaseManager();
 
     //private final String addGameQuery = "INSERT INTO game_table(white_username, black_username, game_name, game_id) VALUES (?, ?, ?, ?)";
@@ -183,9 +180,4 @@ try {
 
         return authMap;
     }
-//    private void handleSQLException(SQLException e) throws DataAccessException {
-//        dbCreationCheck();
-//        //e.printStackTrace();
-//        throw new DataAccessException("SQL Exception: " + e.getMessage(), e);
-//    }
 }
