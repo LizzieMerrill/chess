@@ -1,9 +1,6 @@
 package server.WebSocket;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dataAccess.access.DataAccessException;
@@ -25,6 +22,7 @@ import webSocketMessages.userCommands.UserGameCommand;
 import webSocketMessages.userCommands.*;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -45,7 +43,7 @@ public void onError(Session session, Throwable throwable) {
     throwable.printStackTrace();
 }
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws IOException, DataAccessException, ResponseException {
+    public void onMessage(Session session, String message) throws IOException, DataAccessException, ResponseException, SQLException, InvalidMoveException {
         Gson gson = new GsonBuilder().registerTypeAdapter(UserGameCommand.class, new DeserializerUserGameCommand()).create();
         var userGameCommand = gson.fromJson(message, UserGameCommand.class);//EXCEPTION
         switch (userGameCommand.getCommandType()) {
@@ -132,7 +130,7 @@ public void onError(Session session, Throwable throwable) {
         session.getRemote().sendString(new Gson().toJson(notificationGameMessage));
     }
 
-    private void makeMove(MakeMove makeMoveCommand, Session session) throws DataAccessException, IOException {
+    private void makeMove(MakeMove makeMoveCommand, Session session) throws DataAccessException, IOException, InvalidMoveException, SQLException {
         String username = authDAO.getAuthToken(makeMoveCommand.getAuthString()).getUsername();
         GameData game = gameDAO.getGame(makeMoveCommand.getGameID());
         ChessBoard board = game.getGame().getBoard();
@@ -141,6 +139,7 @@ public void onError(Session session, Throwable throwable) {
         ChessPiece piece = board.getPiece(start);
         String whiteUsername = game.getWhiteUsername();
         String blackUsername = game.getBlackUsername();
+        ChessMove move = makeMoveCommand.getMove();
         if (gameDAO.getGame(makeMoveCommand.getGameID()).getGame().getIsGameOver()) {
             Error empty = new Error("Game is over");
             session.getRemote().sendString(new Gson().toJson(empty));
@@ -154,6 +153,8 @@ public void onError(Session session, Throwable throwable) {
             session.getRemote().sendString(new Gson().toJson(invalid));
         }
         else {
+            game.getGame().makeMove(move);
+            gameDAO.updateGame(game);
             session.getRemote().sendString(new Gson().toJson(new LoadGame(gameDAO.getGame(makeMoveCommand.getGameID()).getGame())));
         }
     }
