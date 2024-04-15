@@ -36,16 +36,17 @@ public class ChessClient {
 
 
     public String help() {
-        if (state == State.SIGNEDOUT) {
-            return """
+        while(true){
+            if (state == State.SIGNEDOUT) {
+                return """
                     - Login
                     - Register
                     - Help
                     - Quit
                     """;
-        }
-        if (inGame) {
-            return """
+            }
+            if (inGame) {
+                return """
                     - Make Move
                     - Leave
                     - Resign
@@ -53,8 +54,8 @@ public class ChessClient {
                     - Highlight Legal Moves
                     - Help
                     """;
-        } else {
-            return """
+            } else {
+                return """
                     - Logout
                     - Create Game
                     - List Games
@@ -62,6 +63,7 @@ public class ChessClient {
                     - Join Observer
                     - Help
                     """;
+            }
         }
     }
 
@@ -84,6 +86,7 @@ public class ChessClient {
                 case "resign" -> resignHandler(params);
                 case "create game" -> createGame(params);
                 case "quit" -> "quit";
+                case "" -> help();
                 default -> help();
             };
         } catch (ResponseException ex) {

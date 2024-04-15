@@ -1,6 +1,9 @@
 package server.WebSocket;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dataAccess.access.DataAccessException;
@@ -173,49 +176,76 @@ public void onError(Session session, Throwable throwable) {
     }
 
     private void makeMove(MakeMove makeMoveCommand, Session session) throws DataAccessException, IOException {
-    if(!authDAO.isValidAuthToken(authDAO.getAuthToken(makeMoveCommand.getAuthString()).getAuthToken())){
-        Error unauth = new Error("Game does not exist");
-        session.getRemote().sendString(new Gson().toJson(unauth));
-    }
-    else{
-        if(gameDAO.getGame(makeMoveCommand.getGameID()) == null){
-            Error empty = new Error("Game does not exist");
+//    if(!authDAO.isValidAuthToken(authDAO.getAuthToken(makeMoveCommand.getAuthString()).getAuthToken())){
+//        Error unauthor = new Error("Unauthorized");
+//        session.getRemote().sendString(new Gson().toJson(unauthor));
+//    }
+//    else{
+        String username = authDAO.getAuthToken(makeMoveCommand.getAuthString()).getUsername();
+        GameData game = gameDAO.getGame(makeMoveCommand.getGameID());
+        ChessBoard board = game.getGame().getBoard();
+        ChessPosition start = makeMoveCommand.getMove().getStartPosition();
+        ChessPosition end = makeMoveCommand.getMove().getEndPosition();
+        ChessPiece piece = board.getPiece(start);
+        String whiteUsername = game.getWhiteUsername();
+        String blackUsername = game.getBlackUsername();
+        if (gameDAO.getGame(makeMoveCommand.getGameID()).getGame().getIsGameOver()) {
+            Error empty = new Error("Game is over");
             session.getRemote().sendString(new Gson().toJson(empty));
+        } else if (gameDAO.getGame(makeMoveCommand.getGameID()).getCurrentTurn() !=
+                gameDAO.getGame(makeMoveCommand.getGameID()).getBoard().getPiece(makeMoveCommand.getMove().getStartPosition()).getTeamColor()) {
+            Error turnTaker = new Error("You cannot move for the opponent");
+            session.getRemote().sendString(new Gson().toJson(turnTaker));
+        } else if(!piece.pieceMoves(board, start).contains(end)){
+            //invalid move
+            Error invalid = new Error("Invalid move");
+            session.getRemote().sendString(new Gson().toJson(invalid));
         }
-        else{
-            //checks if user is trying to make move for the opponent
-            if(gameDAO.getGame(makeMoveCommand.getGameID()).getCurrentTurn() !=
-                    gameDAO.getGame(makeMoveCommand.getGameID()).getBoard().getPiece(makeMoveCommand.getMove().getStartPosition()).getTeamColor()){
-                Error turnTaker = new Error("You cannot move for the opponent");
-                session.getRemote().sendString(new Gson().toJson(turnTaker));
-            }
-            else{
-                //checks if user is moving out of turn OR is an observer
-                if(gameDAO.getGame(makeMoveCommand.getGameID()).getCurrentTurn() == ChessGame.TeamColor.WHITE){
-                    if (!Objects.equals(gameDAO.getGame(makeMoveCommand.getGameID()).getWhiteUsername(), authDAO.getAuthToken(makeMoveCommand.getAuthString()).getUsername())){
-                        Error badMove = new Error("You are not allowed to move right now");
-                        session.getRemote().sendString(new Gson().toJson(badMove));
-                    }
-                    else{
-                        //normal move, make sure its valid and check that the game is not over and nobody has resigned
-                        makeMoveNormalHelper(makeMoveCommand, session, authDAO.getAuthToken(makeMoveCommand.getAuthString()).getAuthToken());
-                        session.getRemote().sendString(new Gson().toJson(makeMoveCommand));
-                    }
-                }
-                else{
-                    if (!Objects.equals(gameDAO.getGame(makeMoveCommand.getGameID()).getBlackUsername(), authDAO.getAuthToken(makeMoveCommand.getAuthString()).getUsername())){
-                        Error badMove = new Error("You are not allowed to move right now");
-                        session.getRemote().sendString(new Gson().toJson(badMove));
-                    }
-                    else{
-                        //normal move, make sure its valid and check that the game is not over and nobody has resigned
-                        makeMoveNormalHelper(makeMoveCommand, session, authDAO.getAuthToken(makeMoveCommand.getAuthString()).getAuthToken());
-                        session.getRemote().sendString(new Gson().toJson(makeMoveCommand));
-                    }
-                }
-            }
+        else {
+            session.getRemote().sendString(new Gson().toJson(new LoadGame(gameDAO.getGame(makeMoveCommand.getGameID()).getGame())));
         }
     }
+
+
+
+
+//        else{
+//            //checks if user is trying to make move for the opponent
+////            if(gameDAO.getGame(makeMoveCommand.getGameID()).getCurrentTurn() !=
+////                    gameDAO.getGame(makeMoveCommand.getGameID()).getBoard().getPiece(makeMoveCommand.getMove().getStartPosition()).getTeamColor()){
+////                Error turnTaker = new Error("You cannot move for the opponent");
+////                session.getRemote().sendString(new Gson().toJson(turnTaker));
+////            }
+//            else{
+//                //checks if user is moving out of turn OR is an observer
+//                if(gameDAO.getGame(makeMoveCommand.getGameID()).getCurrentTurn() == ChessGame.TeamColor.WHITE){
+////                    if (!Objects.equals(gameDAO.getGame(makeMoveCommand.getGameID()).getWhiteUsername(), authDAO.getAuthToken(makeMoveCommand.getAuthString()).getUsername())){
+////                        Error badMove = new Error("You are not allowed to move right now");
+////                        session.getRemote().sendString(new Gson().toJson(badMove));
+////                    }
+////                    else{
+//                        //normal move, make sure its valid and check that the game is not over and nobody has resigned
+//                        makeMoveNormalHelper(makeMoveCommand, session, authDAO.getAuthToken(makeMoveCommand.getAuthString()).getAuthToken());
+//                        LoadGame loadGame = new LoadGame(gameDAO.getGame(makeMoveCommand.getGameID()).getGame());
+//                        session.getRemote().sendString(new Gson().toJson(loadGame));
+//                        //session.getRemote().sendString(new Gson().toJson(makeMoveCommand));
+//                    //}
+//                }
+//                else{
+////                    if (!Objects.equals(gameDAO.getGame(makeMoveCommand.getGameID()).getBlackUsername(), authDAO.getAuthToken(makeMoveCommand.getAuthString()).getUsername())){
+////                        Error badMove = new Error("You are not allowed to move right now");
+////                        session.getRemote().sendString(new Gson().toJson(badMove));
+////                    }
+////                    else{
+//                        //normal move, make sure its valid and check that the game is not over and nobody has resigned
+////                        makeMoveNormalHelper(makeMoveCommand, session, authDAO.getAuthToken(makeMoveCommand.getAuthString()).getAuthToken());
+////                        LoadGame loadGame = new LoadGame(gameDAO.getGame(makeMoveCommand.getGameID()).getGame());
+////                        session.getRemote().sendString(new Gson().toJson(loadGame));
+//                        //session.getRemote().sendString(new Gson().toJson(makeMoveCommand));
+//                    //}
+//                }
+//            }
+//        }
 //        boolean player = false;
 //        int playersGameId = -1;
 //        Collection<GameData> games = gameDAO.getAllGameData();
@@ -234,55 +264,62 @@ public void onError(Session session, Throwable throwable) {
 //        else{
 //            java.lang.Error resignError = new java.lang.Error("You cannot resign a game you are not playing in.");
 //        }
-    }
 
     //normal move, make sure its valid and check that the game is not over and nobody has resigned
-    private boolean makeMoveNormalHelper(MakeMove makeMoveCommand, Session session, String authToken) throws DataAccessException, IOException {
-        //        boolean player = false;
-//        int playersGameId = -1;
-//        Collection<GameData> games = gameDAO.getAllGameData();
-//        UserGameCommand command = new UserGameCommand(authToken);
-//        for (GameData game : games) {
-//            if(authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getBlackUsername()
-//                    || authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getWhiteUsername()){
-//                player = true;
-//                playersGameId = game.getGameID();
-//            }
-//        }
-//        if(player){
-//            //resign logic and break
-//            command = new Resign(playersGameId, authToken);
-//        }
-//        else{
-//            Error resignError = new Error("You cannot resign a game you are not playing in.");
-//        }
-        if(gameDAO.getGame(makeMoveCommand.getGameID()).getIsGameOver() == true){
-            Error gameOverMove = new Error("You cannot move after the game has ended");
-            session.getRemote().sendString(new Gson().toJson(gameOverMove));
-            return false;
-        }
-        else{
-            if(!gameDAO.getGame(makeMoveCommand.getGameID()).isValidMove(makeMoveCommand.getMove())){
-                Error invalidMove = new Error("Invalid move");
-                session.getRemote().sendString(new Gson().toJson(invalidMove));
-                return false;
-            }
-            else{
-                //FINALLY SUCCESS
-                session.getRemote().sendString(new Gson().toJson(makeMoveCommand));
-                connections.add(makeMoveCommand.getAuthString(), session);
-                makeMoveCommand = new MakeMove(makeMoveCommand.getGameID(), makeMoveCommand.getMove(), authToken);
-                Notification notificationGameMessage = new Notification(authDAO.getAuthToken(makeMoveCommand.getAuthString()).getUsername() +
-                        " moved their " + gameDAO.getGame(makeMoveCommand.getGameID()).getGame().getBoard().getPiece(makeMoveCommand.getMove().getEndPosition()) +
-                        " from " + makeMoveCommand.getMove().getStartPosition() + " to " + makeMoveCommand.getMove().getEndPosition());
-                connections.broadcast(null, notificationGameMessage);
-//                session.getRemote().sendString(new Gson().toJson(notificationGameMessage));
-//                session.getRemote().sendString(new Gson().toJson(makeMoveCommand));
-            }
-        }
-        session.getRemote().sendString(new Gson().toJson(makeMoveCommand));
-        return true;
-    }
+//    private boolean makeMoveNormalHelper(MakeMove makeMoveCommand, Session session, String authToken) throws DataAccessException, IOException {
+//        //        boolean player = false;
+////        int playersGameId = -1;
+////        Collection<GameData> games = gameDAO.getAllGameData();
+////        UserGameCommand command = new UserGameCommand(authToken);
+////        for (GameData game : games) {
+////            if(authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getBlackUsername()
+////                    || authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getWhiteUsername()){
+////                player = true;
+////                playersGameId = game.getGameID();
+////            }
+////        }
+////        if(player){
+////            //resign logic and break
+////            command = new Resign(playersGameId, authToken);
+////        }
+////        else{
+////            Error resignError = new Error("You cannot resign a game you are not playing in.");
+////        }
+//
+//
+//
+//
+//
+//
+////        if(gameDAO.getGame(makeMoveCommand.getGameID()).getIsGameOver() == true){
+////            Error gameOverMove = new Error("You cannot move after the game has ended");
+////            session.getRemote().sendString(new Gson().toJson(gameOverMove));
+////            return false;
+////        }
+////        else{
+////            if(!gameDAO.getGame(makeMoveCommand.getGameID()).isValidMove(makeMoveCommand.getMove())){
+////                Error invalidMove = new Error("Invalid move");
+////                session.getRemote().sendString(new Gson().toJson(invalidMove));
+////                return false;
+////            }
+////            else{
+//                //FINALLY SUCCESS
+//                //session.getRemote().sendString(new Gson().toJson(makeMoveCommand));
+//                LoadGame loadGame = new LoadGame(gameDAO.getGame(makeMoveCommand.getGameID()).getGame());
+//                session.getRemote().sendString(new Gson().toJson(loadGame));
+////                connections.add(makeMoveCommand.getAuthString(), session);
+////                makeMoveCommand = new MakeMove(makeMoveCommand.getGameID(), makeMoveCommand.getMove(), authToken);
+////                Notification notificationGameMessage = new Notification(authDAO.getAuthToken(makeMoveCommand.getAuthString()).getUsername() +
+////                        " moved their " + gameDAO.getGame(makeMoveCommand.getGameID()).getGame().getBoard().getPiece(makeMoveCommand.getMove().getEndPosition()) +
+////                        " from " + makeMoveCommand.getMove().getStartPosition() + " to " + makeMoveCommand.getMove().getEndPosition());
+////                connections.broadcast(null, notificationGameMessage);
+////                session.getRemote().sendString(new Gson().toJson(notificationGameMessage));
+////                session.getRemote().sendString(new Gson().toJson(makeMoveCommand));
+////            }
+////        }
+//        //session.getRemote().sendString(new Gson().toJson(makeMoveCommand));
+//        return true;
+//    }
 
 
 
@@ -295,25 +332,31 @@ public void onError(Session session, Throwable throwable) {
         for (GameData game : games) {
             if(authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getBlackUsername()){
                 player = true;
-                session.getRemote().sendString(new Gson().toJson(resignGameCommand));
+                Notification notificationGameMessage = new Notification(
+                        authDAO.getAuthToken(resignGameCommand.getAuthString()).getUsername()
+                                + " resigned, game over!");
+                session.getRemote().sendString(new Gson().toJson(notificationGameMessage));
                 resignId = game.getGameID();
             }
             if(authDAO.getAuthToken(command.getAuthString()).getUsername() == game.getWhiteUsername()){
                 player = true;
-                session.getRemote().sendString(new Gson().toJson(resignGameCommand));
+                Notification notificationGameMessage = new Notification(
+                        authDAO.getAuthToken(resignGameCommand.getAuthString()).getUsername()
+                                + " resigned, game over!");
+                session.getRemote().sendString(new Gson().toJson(notificationGameMessage));
                 resignId = game.getGameID();
             }
         }
         if(player){
             //resign logic and break
             //command = new Resign(resignId, resignGameCommand.getAuthString());
-            connections.add(resignGameCommand.getAuthString(), session);
-            session.getRemote().sendString(new Gson().toJson(resignGameCommand));
-            gameDAO.getGame(resignGameCommand.getGameID()).setIsGameOver(true);
             Notification notificationGameMessage = new Notification(
                     authDAO.getAuthToken(resignGameCommand.getAuthString()).getUsername()
                             + " resigned, game over!");
-            connections.broadcast(null, notificationGameMessage);
+            //connections.add(resignGameCommand.getAuthString(), session);
+            session.getRemote().sendString(new Gson().toJson(notificationGameMessage));
+            gameDAO.getGame(resignGameCommand.getGameID()).setIsGameOver(true);
+            //connections.broadcast(null, notificationGameMessage);
         }
         else{
             Error resignError = new Error("You cannot resign a game you are not playing in.");
