@@ -1,13 +1,10 @@
 package server;
 
-import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.GameData;
 import requests.CreateResponse;
 import requests.ListResponse;
-//import model.Pet;
-
 import java.io.*;
 import java.net.*;
 import java.util.Collection;
@@ -36,54 +33,6 @@ public class ServerFacade {
         return response.gameID();
     }
 
-//    Spark.delete("/db", new ClearHandler(authDAO, userDAO, gameDAO));
-//
-//    //logout
-//        Spark.delete("/session", new LogoutHandler(authDAO));
-//
-//    //register
-//        Spark.post("/user", new RegisterHandler(gson, userDAO, authDAO));
-//
-//    //login
-//        Spark.post("/session", new LoginHandler(userDAO, authDAO));
-//
-//    //create game
-//        Spark.post("/game", new CreateGameHandler(authDAO, gameDAO, userDAO));
-//
-//    //join game
-//        Spark.put("/game", new JoinGameHandler(authDAO, gameDAO, userDAO));
-//
-//    //list game
-//        Spark.get("/game", new ListGamesHandler(authDAO, gameDAO, userDAO));
-
-
-
-
-
-
-
-//    public Pet addPet(Pet pet) throws ResponseException {
-//        var path = "/pet";
-//        return this.makeRequest("POST", path, pet, Pet.class);
-//    }
-//
-//    public void deletePet(int id) throws ResponseException {
-//        var path = String.format("/pet/%s", id);
-//        this.makeRequest("DELETE", path, null, null);
-//    }
-//
-//    public void deleteAllPets() throws ResponseException {
-//        var path = "/pet";
-//        this.makeRequest("DELETE", path, null, null);
-//    }
-//
-//    public Pet[] listPets() throws ResponseException {
-//        var path = "/pet";
-//        record listPetResponse(Pet[] pet) {
-//        }
-//        var response = this.makeRequest("GET", path, null, listPetResponse.class);
-//        return response.pet();
-//    }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {

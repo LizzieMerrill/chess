@@ -54,42 +54,5 @@ public class WebSocketFacade extends Endpoint {
             throw new ResponseException(500, ex.getMessage());
         }
     }
-    public void joinObserver(int gameId, ChessGame.TeamColor color, String authToken) throws ResponseException{
-        try {
-            var joinObserver = new JoinObserver(gameId, authToken);
-            this.session.getBasicRemote().sendText(new Gson().toJson(joinObserver));
-            this.session.close();
-        } catch (IOException ex) {
-            throw new ResponseException(500, ex.getMessage());
-        }
-    }
-    public void leave(int gameId, ChessGame.TeamColor color, String authToken) throws ResponseException{
-        try {
-            var leave = new Leave(gameId, authToken);
-            this.session.getBasicRemote().sendText(new Gson().toJson(leave));
-            this.session.close();
-        } catch (IOException ex) {
-            throw new ResponseException(500, ex.getMessage());
-        }
-    }
-
-    public void resign(int gameId, ChessGame.TeamColor color, String authToken) throws ResponseException{
-        try {
-            var resign = new Resign(gameId, authToken);
-            this.session.getBasicRemote().sendText(new Gson().toJson(resign));
-            this.session.close();
-        } catch (IOException ex) {
-            throw new ResponseException(500, ex.getMessage());
-        }
-    }
-    public void makeMove(int gameId, ChessMove move, String authToken) throws ResponseException{
-        try {
-            var makeMove = new MakeMove(gameId, move, authToken);
-            this.session.getBasicRemote().sendText(new Gson().toJson(makeMove));
-            this.session.close();
-        } catch (IOException ex) {
-            throw new ResponseException(500, ex.getMessage());
-        }
-    }
 
 }

@@ -1,11 +1,5 @@
 package webSocketMessages.userCommands;
 
-//import org.eclipse.jetty.websocket.api.Session;
-//import org.eclipse.jetty.websocket.api.annotations.*;
-
-//import org.eclipse.jetty.websocket.api.annotations.*;
-
-//import javax.websocket.Session;
 import java.util.Objects;
 
 /**
@@ -37,8 +31,6 @@ public class UserGameCommand {
     protected CommandType commandType;
 
     final String authToken;
-//    protected int gameID;
-//    protected ChessGame.TeamColor playerColor;
 
     public String getAuthString() {
         return authToken;
