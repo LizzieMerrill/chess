@@ -29,7 +29,7 @@ public class Repl implements NotificationHandler {
 
             try {
                 result = client.eval(line);
-                System.out.print(BLUE + result);
+                System.out.print("\u001B[12m" + result + "\u001B[0m");
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -44,7 +44,7 @@ public class Repl implements NotificationHandler {
     }
 
     private void printPrompt() {
-        System.out.print("\n" + RESET + ">>> " + GREEN);
+        System.out.print("\n" + ">>> " + "\u001B[46m");
     }
 
 }

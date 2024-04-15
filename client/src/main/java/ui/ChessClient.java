@@ -151,7 +151,7 @@ public class ChessClient {
 
             connection.disconnect();
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         return null;
     }
@@ -200,7 +200,7 @@ public class ChessClient {
 
             connection.disconnect();
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         return null;
     }
@@ -227,7 +227,7 @@ public class ChessClient {
 
             connection.disconnect();
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         return response;
     }

@@ -28,7 +28,7 @@ private static final DatabaseManager manager = new DatabaseManager();
         try {
             manager.createDatabase();
         } catch (DataAccessException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }//bla
     }
 

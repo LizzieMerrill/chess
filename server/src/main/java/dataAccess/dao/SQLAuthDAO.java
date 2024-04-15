@@ -30,7 +30,7 @@ public class SQLAuthDAO implements AuthDAO {
         try {
             manager.createDatabase();
         } catch (DataAccessException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
     @Override
